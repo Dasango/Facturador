@@ -1,0 +1,50 @@
+# --- GLOBAL & OS ---
+.DS_Store
+Thumbs.db
+*.log
+
+# --- IDEs (Entornos de desarrollo) ---
+# VS Code
+.vscode/
+# IntelliJ IDEA
+.idea/
+*.iml
+# Eclipse
+.classpath
+.project
+.settings/
+
+# --- BACKEND (Java & Spring Boot) ---
+# Archivos compilados (Maven)
+target/
+# Archivos compilados (Gradle - por si acaso)
+build/
+.gradle/
+
+# Archivos de logs de la aplicación
+logs/
+*.log
+
+# Archivos temporales de Spring
+tms/
+
+# --- FRONTEND (JS, CSS, HTML) ---
+# Dependencias (Si usas npm o yarn en el futuro)
+node_modules/
+
+# Archivos de distribución/producción (si usas bundlers como Webpack/Vite)
+dist/
+build/
+out/
+
+# Logs de npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- SEGURIDAD (¡MUY IMPORTANTE!) ---
+# Ignora archivos de configuración con contraseñas reales
+# (Ejemplo: variables de entorno o propiedades locales)
+.env
+.env.local
+**/application-secret.properties
