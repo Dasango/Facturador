@@ -4,37 +4,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Componentes (Design System)</title>
+    <title>Catálogo de UI - Design System</title>
     <link rel="stylesheet" href="assets/css/main.css">
 
     <style>
-        /* Estilos SOLO para este catálogo (para organizar la presentación) */
+        /* --- ESTILOS DE DOCUMENTACIÓN (Solo para el catálogo) --- */
+        body {
+            background-color: #fafafa;
+            /* Fondo ligeramente gris para resaltar las tarjetas blancas */
+            padding-bottom: 100px;
+        }
+
         .catalog-container {
             max-width: 1000px;
-            margin: 0 auto;
-            padding: 40px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .catalog-header {
+            margin-bottom: 60px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 20px;
         }
 
         .catalog-section {
-            margin-bottom: 80px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 40px;
+            background: #fff;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
 
-        .catalog-label {
+        .catalog-title {
             font-family: monospace;
-            color: #888;
-            margin-bottom: 20px;
+            font-size: 14px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
             display: block;
-            background: #f9f9f9;
-            padding: 5px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
         }
 
-        .component-grid {
+        .component-row {
             display: flex;
-            gap: 32px;
+            gap: 40px;
             flex-wrap: wrap;
             align-items: flex-start;
+            margin-bottom: 30px;
+        }
+
+        /* Estilo para mostrar el nombre de la clase */
+        .doc-class {
+            display: inline-block;
+            font-family: 'Consolas', 'Monaco', monospace;
+            background-color: #f4f4f4;
+            color: #d63384;
+            /* Color rosado tipo código */
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-top: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .doc-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .doc-note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+            font-style: italic;
         }
     </style>
 </head>
@@ -43,211 +89,198 @@
 
     <main class="catalog-container">
 
-        <h1 class="text-h1">Catálogo de UI</h1>
-        <p class="text-body">Guía de estilos visuales. Copia las clases correspondientes para construir nuevas páginas.
-        </p>
+        <div class="catalog-header">
+            <h1 class="text-h1">Design System</h1>
+            <p class="text-body">Catálogo de componentes base para la aplicación de Facturación.</p>
+        </div>
 
         <section class="catalog-section">
-            <span class="catalog-label">Componente: Tipografía</span>
+            <span class="catalog-title">1. Tipografía</span>
 
-            <span class="text-subtitle">SUBTÍTULO PEQUEÑO (.text-subtitle)</span>
-            <h1 class="text-h1">Título H1 Principal (.text-h1)</h1>
-            <h2 class="text-h2">Título H2 Secundario (.text-h2)</h2>
-            <p class="text-body">
-                Párrafo de cuerpo (.text-body). Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Utiliza esta clase para bloques de texto largos para asegurar una lectura cómoda.
-            </p>
-        </section>
+            <div style="margin-bottom: 24px;">
+                <span class="text-subtitle">Subtítulo / Label</span>
+                <code class="doc-class">.text-subtitle</code>
+            </div>
 
+            <div style="margin-bottom: 24px;">
+                <h1 class="text-h1" style="margin-bottom: 4px;">H1 Título Principal</h1>
+                <code class="doc-class">.text-h1</code>
+            </div>
 
-        <section class="catalog-section">
-            <span class="catalog-label">Componente: Botones (.btn)</span>
+            <div style="margin-bottom: 24px;">
+                <h2 class="text-h2" style="margin-bottom: 4px;">H2 Título de Sección</h2>
+                <code class="doc-class">.text-h2</code>
+            </div>
 
-            <div class="component-grid">
-                <div>
-                    <p class="text-body" style="margin-bottom:10px">Primario (.btn-primary)</p>
-                    <a href="#" class="btn btn-primary">Empezar Ahora</a>
-                </div>
-
-                <div>
-                    <p class="text-body" style="margin-bottom:10px">Secundario (.btn-secondary)</p>
-                    <a href="#" class="btn btn-secondary">Leer Más</a>
-                </div>
+            <div>
+                <p class="text-body" style="margin-bottom: 4px;">
+                    Cuerpo de texto estándar. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Ideal para descripciones largas.
+                </p>
+                <code class="doc-class">.text-body</code>
             </div>
         </section>
 
 
         <section class="catalog-section">
-            <span class="catalog-label">Componente: Checkbox</span>
+            <span class="catalog-title">2. Botones & Acciones</span>
 
-            <label class="checkbox-wrapper">
-                <input type="checkbox" checked>
-                <div class="checkbox-box"></div>
-                <span class="text-body" style="margin:0;">Acepto los términos</span>
-            </label>
-        </section>
-
-
-        <section class="catalog-section">
-            <span class="catalog-label">Componente: Feature Card (.feature-card)</span>
-
-            <div class="feature-card">
-                <img src="https://picsum.photos/400/300" alt="Demo" class="feature-card__image">
-                <div class="feature-card__content">
-                    <h3 class="text-h2" style="font-size: 24px;">Título Carta</h3>
-                    <p class="text-body" style="font-size: 14px;">Descripción corta de la funcionalidad de la tarjeta.
-                    </p>
+            <div class="component-row">
+                <div class="doc-item">
+                    <a href="#" class="btn btn-primary">Guardar Cambios</a>
+                    <code class="doc-class">.btn .btn-primary</code>
                 </div>
-            </div>
-            <div class="testimonial-card">
-                <p class="testimonial-quote">"Soy pmaul y me gusta facturar"</p>
 
-                <div class="testimonial-profile">
-                    <div class="testimonial-avatar">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
-                            <line x1="9" y1="9" x2="9.01" y2="9"></line>
-                            <line x1="15" y1="9" x2="15.01" y2="9"></line>
-                        </svg>
+                <div class="doc-item">
+                    <a href="#" class="btn btn-secondary">Cancelar</a>
+                    <code class="doc-class">.btn .btn-secondary</code>
+                </div>
+
+                <div class="doc-item">
+                    <div class="toggle-group">
+                        <button class="toggle-btn active">Mes</button>
+                        <button class="toggle-btn">Año</button>
                     </div>
-
-                    <div class="testimonial-info">
-                        <span class="testimonial-name">Pmaul</span>
-                        <span class="testimonial-role">Ingeniero en potencia</span>
-                    </div>
+                    <code class="doc-class">.toggle-group > .toggle-btn (.active)</code>
                 </div>
+            </div>
         </section>
 
 
         <section class="catalog-section">
-            <span class="catalog-label">Componente: Pricing Cards</span>
+            <span class="catalog-title">3. Inputs y Formularios</span>
 
-            <div class="component-grid">
+            <div class="component-row">
 
-                <div class="pricing-card">
-                    <span class="text-subtitle">Estándar</span>
-                    <h3 class="pricing-price">$0 <span>/mes</span></h3>
-                    <p class="text-body">Para empezar.</p>
-                    <ul class="pricing-features text-body">
-                        <li>1 usuario</li>
-                        <li>5 proyectos</li>
-                    </ul>
-                    <a href="#" class="btn btn-secondary" style="width:100%">Elegir</a>
+                <div class="doc-item">
+                    <div class="form-group">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" class="input-control" placeholder="Texto aquí...">
+                    </div>
+                    <code class="doc-class">.form-group > label + .input-control</code>
                 </div>
 
-                <div class="pricing-card pricing-card--featured">
-                    <span class="text-subtitle" style="color: #ccc;">Pro</span>
-                    <h3 class="pricing-price">$29 <span>/mes</span></h3>
-                    <p class="text-body">Para equipos grandes.</p>
-                    <ul class="pricing-features text-body">
-                        <li>Usuarios ilimitados</li>
-                        <li>Proyectos ilimitados</li>
-                        <li>Soporte VIP</li>
-                    </ul>
-                    <a href="#" class="btn btn-primary"
-                        style="background: white; color: black; border-color: white; width:100%">Elegir</a>
+                <div class="doc-item">
+                    <div class="form-group">
+                        <label class="form-label">Selección</label>
+                        <select class="input-control">
+                            <option>Opción 1</option>
+                            <option>Opción 2</option>
+                        </select>
+                    </div>
+                    <code class="doc-class">select.input-control</code>
+                    <span class="doc-note">Incluye flecha SVG personalizada</span>
+                </div>
+
+                <div class="doc-item">
+                    <div class="form-group">
+                        <label class="form-label">Checkbox Custom</label>
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox" checked>
+                            <div class="checkbox-box"></div>
+                            <span class="text-body" style="margin:0; font-size:14px;">Confirmar</span>
+                        </label>
+                    </div>
+                    <code class="doc-class">.checkbox-wrapper > input + .checkbox-box</code>
                 </div>
 
             </div>
+
+            <div class="component-row">
+                <div class="doc-item" style="width: 100%; max-width: 400px;">
+                    <label class="form-label">Input Group (Búsqueda)</label>
+                    <div class="input-group-wrapper">
+                        <input type="text" class="input-control" placeholder="Buscar...">
+                        <button class="input-addon-btn">Buscar</button>
+                    </div>
+                    <code class="doc-class">.input-group-wrapper > input + .input-addon-btn</code>
+                </div>
+            </div>
         </section>
+
+
         <section class="catalog-section">
-            <span class="catalog-label">Componente: Tabla de Datos</span>
+            <span class="catalog-title">4. Tablas y Badges</span>
+
+            <div style="margin-bottom: 20px;">
+                <span class="badge badge-authorized">Autorizado</span>
+                <span class="badge badge-pending">Pendiente</span>
+                <span class="badge badge-rejected">Rechazado</span>
+                <br>
+                <code class="doc-class">.badge .badge-{estado}</code>
+            </div>
 
             <div class="table-container">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
+                            <th>Cliente</th>
                             <th>Estado</th>
-                            <th class="text-right">Deuda Total</th>
+                            <th class="text-right">Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Juan</td>
-                            <td>Pérez</td>
+                            <td>Empresa A</td>
                             <td><span class="badge badge-authorized">Autorizado</span></td>
-                            <td class="text-right">$1,200.00</td>
+                            <td class="text-right">$150.00</td>
                         </tr>
                         <tr>
-                            <td>María</td>
-                            <td>Gómez</td>
+                            <td>Empresa B</td>
                             <td><span class="badge badge-pending">Pendiente</span></td>
-                            <td class="text-right">$450.50</td>
-                        </tr>
-                        <tr>
-                            <td>Carlos</td>
-                            <td>Ruiz</td>
-                            <td><span class="badge badge-rejected">Rechazado</span></td>
-                            <td class="text-right">$0.00</td>
+                            <td class="text-right">$200.00</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+            <code class="doc-class">.table-container > .table</code>
+            <code class="doc-class">th.text-right / td.text-right</code>
         </section>
 
-        <section class="catalog-section">
-            <span class="catalog-label">Componente: Selección Única (Toggle Group)</span>
-            <p class="text-body" style="font-size:14px; margin-bottom:10px;">
-                Solo una opción puede tener la clase <code>.active</code> a la vez. (Requiere JS para cambiar).
-            </p>
-
-            <div class="toggle-group">
-                <button class="toggle-btn active">Efectivo</button>
-                <button class="toggle-btn">Tarjeta</button>
-                <button class="toggle-btn">Transferencia</button>
-            </div>
-        </section>
 
         <section class="catalog-section">
-            <span class="catalog-label">Componente: Badges de Estado</span>
+            <span class="catalog-title">5. Tarjetas (Cards)</span>
 
-            <div style="display: flex; gap: 16px; align-items: center;">
-                <span class="badge badge-authorized">Autorizado</span>
-                <span class="badge badge-pending">Pendiente</span>
-                <span class="badge badge-rejected">Rechazado</span>
-            </div>
-        </section>
+            <div class="component-row">
 
-        <section class="catalog-section">
-            <span class="catalog-label">Componente: Inputs y Búsquedas</span>
-
-            <div class="form-group">
-                <label class="form-label">Nombre del Cliente</label>
-                <input type="text" class="input-control" placeholder="Ingrese nombre...">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Categoría del Producto</label>
-                <select class="input-control" required>
-                    <option value="" disabled selected hidden>Seleccione una opción...</option>
-                    <option value="1">Electrónica</option>
-                    <option value="2">Hogar y Muebles</option>
-                    <option value="3">Ropa y Accesorios</option>
-                    <option value="4">Deportes</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Monto y Moneda</label>
-                <div class="input-group-wrapper">
-                    <input type="number" class="input-control" placeholder="Ingrese monto...">
-                    <select class="input-addon-select">
-                        <option>USD</option>
-                        <option>EUR</option>
-                    </select>
+                <div class="doc-item">
+                    <div class="feature-card" style="width: 280px;">
+                        <div class="feature-card__image"></div>
+                        <div class="feature-card__content">
+                            <h3 class="text-h2" style="font-size: 20px;">Feature</h3>
+                            <p class="text-body" style="font-size: 14px; margin:0;">Descripción corta.</p>
+                        </div>
+                    </div>
+                    <code class="doc-class">.feature-card</code>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label class="form-label">Búsqueda Global</label>
-                <div class="input-group-wrapper">
-                    <input type="text" class="input-control" placeholder="Buscar producto...">
-                    <button class="input-addon-btn">Buscar</button>
+                <div class="doc-item">
+                    <div class="testimonial-card" style="width: 280px; min-height: auto;">
+                        <p class="testimonial-quote">"El sistema es excelente."</p>
+                        <div class="testimonial-profile">
+                            <div class="testimonial-avatar">👤</div>
+                            <div class="testimonial-info">
+                                <span class="testimonial-name">Usuario</span>
+                                <span class="testimonial-role">Admin</span>
+                            </div>
+                        </div>
+                    </div>
+                    <code class="doc-class">.testimonial-card</code>
                 </div>
+
+                <div class="doc-item">
+                    <div class="pricing-card pricing-card--featured"
+                        style="width: 260px; padding: 20px; transform: none;">
+                        <span class="text-subtitle" style="color:#eee">Pro</span>
+                        <h3 class="pricing-price" style="font-size: 32px;">$29</h3>
+                        <ul class="pricing-features text-body" style="color:#fff; font-size: 14px;">
+                            <li>Todo incluido</li>
+                        </ul>
+                        <a class="btn btn-primary" style="background:white; color:black; width:100%">Elegir</a>
+                    </div>
+                    <code class="doc-class">.pricing-card .pricing-card--featured</code>
+                </div>
+
             </div>
         </section>
 
