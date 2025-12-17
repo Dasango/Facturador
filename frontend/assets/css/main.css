@@ -421,3 +421,79 @@ select.input-control:invalid {
     color: #999;
     /* Color gris si está seleccionada la opción por defecto (placeholder) */
 }
+
+/* --- COMPONENTE: TESTIMONIO (Testimonial Card) --- */
+
+.testimonial-card {
+    background-color: var(--color-white);
+    border: 1px solid #E5E5E5;
+    /* Borde sutil */
+    border-radius: var(--radius-md);
+    /* 12px */
+    padding: 32px;
+    width: 320px;
+    /* Ancho estándar */
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* Texto arriba, perfil abajo */
+    gap: 24px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+    /* Sombra muy suave */
+    transition: transform 0.3s ease;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-5px);
+}
+
+.testimonial-quote {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--color-black);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Sección del perfil (Avatar + Texto) */
+.testimonial-profile {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* El cuadro naranja del avatar */
+.testimonial-avatar {
+    width: 48px;
+    height: 48px;
+    background-color: #FFF0E6;
+    /* Naranja muy suave */
+    color: #FF8A65;
+    /* Naranja más fuerte para el ícono */
+    border-radius: 12px;
+    /* Un poco menos redondeado que un círculo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    /* Tamaño del emoji/icono */
+}
+
+.testimonial-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.testimonial-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-black);
+    line-height: 1.2;
+}
+
+.testimonial-role {
+    font-size: 14px;
+    color: var(--color-text-gray);
+    margin-top: 4px;
+}
