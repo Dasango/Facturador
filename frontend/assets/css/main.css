@@ -7,7 +7,8 @@
 @import "base/reset.css";
 @import "base/typography.css";
 
-/* 4. Layout (Vacio) */
+/* 4. Layout */
+@import "layout/footer.css";
 
 /* 5. Components */
 @import "components/buttons.css";

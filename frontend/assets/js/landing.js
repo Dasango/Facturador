@@ -27,6 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    fetch('partials/footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer-container').innerHTML = data;
+        });
+
     // Add slight animation to cards on scroll (Optional simple implementation)
     const observerOptions = {
         threshold: 0.1
