@@ -1,0 +1,23 @@
+# Facturador Project Structure
+
+frontend/
+├── index.html              # Main Landing Page
+├── catalago.html           # UI Design System Catalog / Documentation
+├── script.js               # Main script (likely for the app itself, to be verified)
+├── style.css               # Main style (likely for the app itself, to be verified)
+├── pages/                  # HTML pages for the application (e.g., dashboard, login)
+├── partials/               # Reusable HTML snippets (headers, footers)
+└── assets/                 # Static assets
+    ├── images/             # Images and icons
+    ├── js/                 # JavaScript files
+    │   └── landing.js      # JS specific to the landing page
+    └── css/                # CSS Stylesheets
+        ├── main.css        # Main entry point (imports all other CSS)
+        ├── abstracts/      # Variables, mixins, functions
+        ├── base/           # Reset, typography, global styles
+        ├── components/     # Reusable UI components (buttons, forms, cards)
+        ├── layout/         # Layout specific styles (header, footer, grid)
+        ├── pages/          # Page-specific styles
+        │   └── landing.css # Styles specific to index.html
+        ├── themes/         # Theme specific styles (dark/light)
+        └── vendors/        # 3rd party CSS

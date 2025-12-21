@@ -1,35 +1,286 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saludador</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Facto - Tu facturación fácil</title>
+    <!-- Main CSS (Design System) -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <!-- Landing Page Specific CSS -->
+    <link rel="stylesheet" href="assets/css/pages/landing.css">
+    <!-- Fonts (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="container">
-        <h1>¡Hola!</h1>
-        <p class="subtitle">Ingresa tu nombre</p>
-        
-        <div class="input-group">
-            <input 
-                type="text" 
-                id="nameInput" 
-                placeholder="Escribe tu nombre aquí"
-                autocomplete="off"
-            >
-            <button id="submitBtn">Enviar</button>
-        </div>
-        
-        <div id="responseContainer" class="response-container hidden">
-            <p id="responseMessage"></p>
-        </div>
-        
-        <div id="errorContainer" class="error-container hidden">
-            <p id="errorMessage"></p>
-        </div>
-    </div>
 
-    <script src="script.js"></script>
+<body>
+
+    <!-- HEADER -->
+    <header
+        style="padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
+        <div class="logo">
+            <h1 style="font-size: 32px; font-weight: 900; margin: 0;">Facto</h1>
+        </div>
+        <nav style="display: flex; gap: 30px; align-items: center;">
+            <a href="#about" style="text-decoration: none; color: var(--color-black); font-weight: 500;">Sobre
+                Nosotros</a>
+            <a href="#login" style="text-decoration: none; color: var(--color-black); font-weight: 500;">Pruebalo
+                Hoy</a>
+        </nav>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="login">
+        <div class="hero-content">
+            <h1 class="hero-title">Bienvenido a Facto</h1>
+            <span class="hero-subtitle">Únete ahora</span>
+
+            <form class="hero-login-form">
+                <div class="form-group">
+                    <label class="form-label" style="font-weight: 700;">Correo o cédula</label>
+                    <input type="text" class="input-control" placeholder="Ingresa tu correo o cédula">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" style="font-weight: 700;">Contraseña</label>
+                    <input type="password" class="input-control" placeholder="Ingresa tu contraseña">
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox">
+                        <div class="checkbox-box"></div>
+                        <span class="text-body" style="margin: 0; font-size: 14px; font-weight: 500;">Recuerdame</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary"
+                    style="align-self: flex-start; min-width: 120px; border-radius: 8px;">Ingresar</button>
+            </form>
+        </div>
+        <div class="hero-image">
+            <img src="assets/images/FactoCuaderno.png" alt="Facto Art">
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="section">
+        <div class="features-grid">
+            <!-- Feature 1 -->
+            <div class="feature-card" style="border: none; box-shadow: none; background: transparent;">
+                <div class="feature-card__content" style="padding: 0 0 20px 0;">
+                    <h3 class="text-h2" style="font-size: 20px;">Facturas 100%real no fake</h3>
+                    <p class="text-body" style="font-size: 14px; color: #666; line-height: 1.5;">
+                        Call out a feature, benefit, or value that can stand on its own.
+                    </p>
+                </div>
+                <!-- Masked Image Style -->
+                <div style="width: 100%; height: 250px; border-radius: 20px; overflow: hidden;">
+                    <img src="assets/images/FactoSorprendido.png" style="width: 100%; height: 100%; object-fit: cover;"
+                        alt="Feature 1">
+                </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="feature-card" style="border: none; box-shadow: none; background: transparent;">
+                <div class="feature-card__content" style="padding: 0 0 20px 0;">
+                    <h3 class="text-h2" style="font-size: 20px;">Facil</h3>
+                    <p class="text-body" style="font-size: 14px; color: #666; line-height: 1.5;">
+                        Call out a feature, benefit, or value that can stand on its own.
+                    </p>
+                </div>
+                <div style="width: 100%; height: 250px; border-radius: 20px; overflow: hidden;">
+                    <img src="assets/images/FactoSorprendido.png" style="width: 100%; height: 100%; object-fit: cover;"
+                        alt="Feature 2">
+                </div>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="feature-card" style="border: none; box-shadow: none; background: transparent;">
+                <div class="feature-card__content" style="padding: 0 0 20px 0;">
+                    <h3 class="text-h2" style="font-size: 20px;">Difícil</h3>
+                    <p class="text-body" style="font-size: 14px; color: #666; line-height: 1.5;">
+                        Call out a feature, benefit, or value that can stand on its own.
+                    </p>
+                </div>
+                <div style="width: 100%; height: 250px; border-radius: 20px; overflow: hidden;">
+                    <!-- Using feature-3 or reused image if limited -->
+                    <img src="assets/images/FactoSorprendido.png" style="width: 100%; height: 100%; object-fit: cover;"
+                        alt="Feature 3">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING SECTION -->
+    <section class="section">
+        <div class="pricing-grid">
+            <!-- Plan 1 -->
+            <div class="pricing-card" style="width: 300px;">
+                <div>
+                    <span class="text-subtitle"
+                        style="text-transform: none; color: #000; font-weight: 700; font-size: 18px;">Plan 1</span>
+                    <p style="margin: 4px 0 0 0; color: #666; font-size: 14px;">For individuals</p>
+                </div>
+                <h3 class="pricing-price">$0 <span>/ month</span></h3>
+                <ul class="pricing-features text-body" style="font-size: 14px;">
+                    <li>10 facturas</li>
+                    <li>Pmaul te baila</li>
+                    <li>Jonathan te baila</li>
+                </ul>
+                <a href="#" class="btn btn-secondary" style="width: 100%; border: 1px solid #ddd;">Sign up</a>
+            </div>
+
+            <!-- Plan 2 -->
+            <div class="pricing-card pricing-card--featured" style="width: 300px;">
+                <div>
+                    <span class="text-subtitle"
+                        style="text-transform: none; color: #fff; font-weight: 700; font-size: 18px;">Plan 2</span>
+                    <p style="margin: 4px 0 0 0; color: #ccc; font-size: 14px;">For medium teams</p>
+                </div>
+                <h3 class="pricing-price" style="color: #fff;">$1 <span>/ month</span></h3>
+                <ul class="pricing-features text-body" style="font-size: 14px; color: #fff;">
+                    <li>100 facturas</li>
+                    <li>Pmaul te baila</li>
+                    <li>Pmaul te baila</li>
+                </ul>
+                <a href="#" class="btn btn-primary"
+                    style="width: 100%; background: #000; color: #fff; border: 1px solid #fff;">Sign up</a>
+            </div>
+
+            <!-- Plan 3 -->
+            <div class="pricing-card" style="width: 300px;">
+                <div>
+                    <span class="text-subtitle"
+                        style="text-transform: none; color: #000; font-weight: 700; font-size: 18px;">Plan 3</span>
+                    <p style="margin: 4px 0 0 0; color: #666; font-size: 14px;">For large teams</p>
+                </div>
+                <h3 class="pricing-price">$1.99 <span>/ month</span></h3>
+                <ul class="pricing-features text-body" style="font-size: 14px;">
+                    <li>500 facturas</li>
+                    <li>Pmaul te baila</li>
+                    <li>Pmaul te baila</li>
+                </ul>
+                <a href="#" class="btn btn-secondary" style="width: 100%; border: 1px solid #ddd;">Sign up</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT US SECTION -->
+    <section class="section" id="about">
+        <h2 class="section-title" style="margin-bottom: 10px;">Sobre nosotros</h2>
+        <p style="color: #666; margin-bottom: 60px;">Quienes somos</p>
+
+        <div class="testimonials-grid">
+            <!-- Team Member 1 -->
+            <div class="testimonial-card"
+                style="align-items: flex-start; justify-content: flex-start; min-height: 250px;">
+                <p class="testimonial-quote" style="font-size: 16px; font-weight: 600;">"Quiero estar aquí"</p>
+                <div class="testimonial-profile" style="margin-top: auto;">
+                    <div class="testimonial-avatar" style="background: #fff; border: 1px solid #eee;">
+                        <img src="https://ui-avatars.com/api/?name=Jhon&background=random"
+                            style="width:100%; border-radius:12px;">
+                    </div>
+                    <div class="testimonial-info">
+                        <span class="testimonial-name">Jhon</span>
+                        <span class="testimonial-role">CEO</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Member 2 -->
+            <div class="testimonial-card"
+                style="align-items: flex-start; justify-content: flex-start; min-height: 250px;">
+                <p class="testimonial-quote" style="font-size: 16px; font-weight: 600;">"Soy pmaul y me gusta facturar"
+                </p>
+                <div class="testimonial-profile" style="margin-top: auto;">
+                    <div class="testimonial-avatar" style="background: #ffe0e0;">
+                        <span>🙂</span>
+                    </div>
+                    <div class="testimonial-info">
+                        <span class="testimonial-name">Pmaul</span>
+                        <span class="testimonial-role">Ingeniero en potencia</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Member 3 -->
+            <div class="testimonial-card"
+                style="align-items: flex-start; justify-content: flex-start; min-height: 250px;">
+                <p class="testimonial-quote" style="font-size: 16px; font-weight: 600;">"Creé esto porque necesitaba la
+                    nota"</p>
+                <div class="testimonial-profile" style="margin-top: auto;">
+                    <div class="testimonial-avatar" style="background: #e0f0ff;">
+                        <span>😊</span>
+                    </div>
+                    <div class="testimonial-info">
+                        <span class="testimonial-name">Jonathan</span>
+                        <span class="testimonial-role">Abogado</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Member 4 -->
+            <div class="testimonial-card"
+                style="align-items: flex-start; justify-content: flex-start; min-height: 250px;">
+                <p class="testimonial-quote" style="font-size: 16px; font-weight: 600;">"No quiero"</p>
+                <div class="testimonial-profile" style="margin-top: auto;">
+                    <div class="testimonial-avatar" style="background: #e0ffe0;">
+                        <span>😐</span>
+                    </div>
+                    <div class="testimonial-info">
+                        <span class="testimonial-name">JI</span>
+                        <span class="testimonial-role">C</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <a href="#" class="footer-logo">Facto</a>
+                <p style="color: #666; font-size: 14px; line-height: 1.6;">
+                    Descripcion de facturas asi bien reales para nada fake
+                </p>
+                <div class="social-icons">
+                    <!-- Using text for icons as placeholders -->
+                    <span style="font-size: 24px; color: #999;">📷</span>
+                    <span style="font-size: 24px; color: #999;">👔</span>
+                    <span style="font-size: 24px; color: #999;">✖</span>
+                </div>
+            </div>
+
+            <div class="footer-links-col">
+                <span class="footer-col-title">Features</span>
+                <a href="#" class="footer-link">Core features</a>
+                <a href="#" class="footer-link">Pro experience</a>
+                <a href="#" class="footer-link">Integrations</a>
+            </div>
+
+            <div class="footer-links-col">
+                <span class="footer-col-title">Learn more</span>
+                <a href="#" class="footer-link">Blog</a>
+                <a href="#" class="footer-link">Case studies</a>
+                <a href="#" class="footer-link">Customer stories</a>
+                <a href="#" class="footer-link">Best practices</a>
+            </div>
+
+            <div class="footer-links-col">
+                <span class="footer-col-title">Support</span>
+                <a href="#" class="footer-link">Contact</a>
+                <a href="#" class="footer-link">Support</a>
+                <a href="#" class="footer-link">Legal</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="assets/js/landing.js"></script>
 </body>
+
 </html>
