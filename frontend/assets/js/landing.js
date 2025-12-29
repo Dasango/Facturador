@@ -2,14 +2,17 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Landing page loaded');
 
     // Hero Login Form Handling
+    // Login form handling is now native HTML form submission to backend
+    /*
     const loginForm = document.querySelector('.hero-login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+            e.preventDefault(); // Removed to allow form submission to backend
             console.log('Login attempt prevented. Backend implementation pending.');
             alert('¡Gracias por probar Facto! La funcionalidad de inicio de sesión estará disponible pronto.');
         });
     }
+    */
 
     // Smooth scrolling for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {

@@ -12,7 +12,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo [2/3] Iniciando Backend en nueva ventana...
-start "Facturador Backend" cmd /k "cd backend && mvnw spring-boot:run"
+start "Facturador Backend" cmd /k "cd backend && ./mvn spring-boot:run"
 
 echo [3/3] Iniciando Frontend...
 echo Intentando usar npx serve para URLs limpias...
@@ -20,7 +20,8 @@ call npx --version >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
     echo Node.js detectado. Iniciando servidor frontend...
     echo La aplicacion se abrira en http://localhost:3000
-    start "Facturador Frontend" cmd /k "npx serve frontend"
+    echo npx serve . es por si no funciona el frontend
+    start "Facturador Frontend" cmd /k "npx serve frontend" cmd /k"npx serve ."
 ) else (
     echo Node.js no encontrado. 
     echo Por favor, usa Live Server en VS Code para el frontend o instala Node.js.
