@@ -2,15 +2,21 @@
 
 frontend/
 ├── index.html              # Main Landing Page
-├── catalago.html           # UI Design System Catalog / Documentation
-├── script.js               # Main script (likely for the app itself, to be verified)
-├── style.css               # Main style (likely for the app itself, to be verified)
-├── pages/                  # HTML pages for the application (e.g., dashboard, login)
-├── partials/               # Reusable HTML snippets (headers, footers)
+├── Catalogo.html           # UI Design System Catalog / Documentation
+├── script.js               # Main script
+├── style.css               # Main style
+├── pages/                  # HTML pages
+│   ├── home.html           # Dashboard/Home
+│   └── signup.html         # Registration page
+├── partials/               # Reusable HTML snippets
+│   └── footer.html         # Footer partial
 └── assets/                 # Static assets
     ├── images/             # Images and icons
     ├── js/                 # JavaScript files
-    │   └── landing.js      # JS specific to the landing page
+    │   ├── landing.js      # JS specific to the landing page
+    │   ├── signup.js       # JS specific to the signup page
+    │   ├── core/           # Core JS logic
+    │   └── modules/        # JS Modules
     └── css/                # CSS Stylesheets
         ├── main.css        # Main entry point (imports all other CSS)
         ├── abstracts/      # Variables, mixins, functions
@@ -21,3 +27,38 @@ frontend/
         │   └── landing.css # Styles specific to index.html
         ├── themes/         # Theme specific styles (dark/light)
         └── vendors/        # 3rd party CSS
+
+backend/
+├── pom.xml                 # Maven dependencies
+├── src/
+│   └── main/
+│       ├── resources/
+│       │   └── application.properties # App config (DB, server port)
+│       └── java/
+│           └── com/
+│               └── uce/
+│                   └── emprendimiento/
+│                       └── backend/
+│                           ├── BackendApplication.java # Entry Point
+│                           ├── config/                  # Global Config (CORS, Swagger)
+│                           │   └── WebConfig.java
+│                           ├── controller/              # REST Endpoints
+│                           │   └── auth/
+│                           │       └── AuthController.java
+│                           ├── dto/                     # Data Transfer Objects
+│                           │   ├── request/
+│                           │   │   └── RegisterRequest.java
+│                           │   └── response/
+│                           │       └── AuthResponse.java
+│                           ├── entity/                  # JPA Entities
+│                           │   └── User.java
+│                           ├── repository/              # JPA Repositories
+│                           │   └── UserRepository.java
+│                           ├── service/                 # Business Logic
+│                           │   ├── UserService.java     # Interface
+│                           │   └── impl/
+│                           │       └── UserServiceImpl.java
+│                           ├── exception/               # Global Error Handling
+│                           │   └── GlobalExceptionHandler.java
+│                           └── util/                    # Utilities
+
