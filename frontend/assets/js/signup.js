@@ -17,30 +17,51 @@ document.addEventListener('DOMContentLoaded', () => {
  * Handles the signup form submission
  * @param {Event} event 
  */
-function handleSignup(event) {
+/**
+ * Handles the signup form submission
+ * @param {Event} event 
+ */
+async function handleSignup(event) {
     event.preventDefault();
 
     // 1. Capture Data
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData.entries());
 
-    // 2. Validate (Simple check)
+    // 2. Validate
     if (data.password !== data.confirm_password) {
         alert("Las contraseñas no coinciden");
         return;
     }
 
-    // 3. Consume Data (Boilerplate log)
-    console.group('Signup Attempt');
-    console.log('RUC/Cedula:', data.ruc);
-    console.log('Email:', data.email);
-    console.log('Password:', '******'); // Should not log actual password in prod
-    console.log('Full Data Object:', data);
-    console.groupEnd();
+    // 3. Prepare Payload (Mapping fields to Backend DTO)
+    const payload = {
+        cedula: data.ruc,
+        correo: data.email,
+        contrasena: data.password
+    };
 
-    // 4. Mimic API Call
-    // fetch('/api/signup', { method: 'POST', body: JSON.stringify(data) }) ...
-    alert('Datos capturados. Revisa la consola (F12) para ver el objeto JSON.');
+    try {
+        const response = await fetch('http://localhost:8080/api/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
 
+        const result = await response.json();
 
+        if (response.ok && result.success) {
+            alert('Registro exitoso: ' + result.message);
+            window.location.href = '../index.html'; // Redirect to landing or login
+        } else {
+            alert('Error: ' + (result.message || 'Error desconocido'));
+            console.error('Signup Validation Error:', result);
+        }
+
+    } catch (error) {
+        console.error('Network Error:', error);
+        alert('Error de conexión con el servidor. Asegúrate de que el backend esté corriendo.');
+    }
 }
