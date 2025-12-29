@@ -35,7 +35,18 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity in this setup
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/login", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/login",
+                                "/",
+                                "/index.html",
+                                "/Catalogo.html",
+                                "/assets/**",
+                                "/pages/**",
+                                "/partials/**",
+                                "/*.css",
+                                "/*.js")
+                        .permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         // We will use the default Spring Security login URL processing but configured
