@@ -1,6 +1,6 @@
 # Facturador Project Structure
 
-frontend/
+resources/
 ├── index.html              # Main Landing Page
 ├── Catalogo.html           # UI Design System Catalog / Documentation
 ├── script.js               # Main script
@@ -33,7 +33,7 @@ backend/
 ├── src/
 │   └── main/
 │       ├── resources/
-│       │   └── application.properties # App config (DB, server port)
+│       │   └──             # Arriba
 │       └── java/
 │           └── com/
 │               └── uce/

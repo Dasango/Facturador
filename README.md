@@ -1,67 +1,80 @@
-# Facturador - Guía de Inicio
+# FACTO 🧾
 
-Esta guía te ayudará a encender la aplicación completa (Base de datos, Backend y Frontend) y solucionar los problemas de visualización.
+> Facturador electrónico funcional con el SRI.
 
-## Requisitos Previos
-
-Asegúrate de tener instalado lo siguiente:
-1.  **Docker Desktop**: Para la base de datos MySQL.
-2.  **Java JDK 17+**: Para el backend.
-3.  **Node.js** (Opcional pero recomendado): Para correr el frontend con URLs limpias (sin `.html`).
+Este proyecto es una solución de facturación diseñada para cumplir con los requisitos del SRI, simplificando el proceso de emisión de comprobantes.
 
 ---
 
-## Paso 1: Encender la Base de Datos
+## 👥 Equipo de Desarrollo
 
-La base de datos corre en un contenedor de Docker.
+**⚠️ TAREA:** Poner bien sus nombres aquí abajo.
 
-1.  Abre una terminal en la carpeta raíz del proyecto (`Facturador`).
-2.  Ejecuta el siguiente comando:
-    ```powershell
-    docker-compose up -d
-    ```
-    *Esto descargará la imagen de MySQL e iniciará la base de datos en el puerto 3307.*
-
-## Paso 2: Encender el Backend (API)
-
-El backend está hecho en Spring Boot (Java).
-
-1.  En la terminal, entra a la carpeta `backend`:
-    ```powershell
-    cd backend
-    ```
-2.  Ejecuta la aplicación usando el wrapper de Maven (no necesitas instalar Maven manualmente):
-    ```powershell
-    .\mvnw spring-boot:run
-    ```
-    *Espera hasta ver un mensaje que diga "Started BackendApplication in..."*. El backend correrá usualmente en `http://localhost:8080`.
-
-## Paso 3: Encender el Frontend
-
-Aquí tienes dos opciones. La **Opción A** es la que soluciona tu problema de las URLs feas (ej. `.html`).
-
-### Opción A: Usar Node.js (Recomendada para URLs limpias)
-Esta opción elimina el `.html` de la URL y se ve más profesional.
-
-1.  Asegúrate de estar en la carpeta raíz (`Facturador`).
-2.  Ejecuta este comando (si tienes Node.js instalado):
-    ```powershell
-    npx serve frontend
-    ```
-3.  Te dará una URL local (ej. `http://localhost:3000`). Ábrela en tu navegador.
-    *Nota: `serve` maneja automáticamente las rutas, ocultando el .html visualmente.*
-
-### Opción B: Usar Live Server (VS Code)
-Si prefieres usar la extensión de VS Code:
-
-1.  Abre el archivo `frontend/index.html`.
-2.  Haz clic derecho y selecciona **"Open with Live Server"**.
-3.  **Truco para la URL**: En lugar de entrar a `.../index.html`, borra el `index.html` de la barra de direcciones en el navegador para quedarte solo con la raíz (ej. `http://127.0.0.1:5500/frontend/`).
-    *Sin embargo, para navegar a otras páginas sin ver `.html`, la Opción A es mejor.*
+* Pmaul
+* David Sango
+* Jon
+* Jonatn
 
 ---
 
-## Solución de Problemas Comunes
+## 🚀 Pasos para comenzar a trabajar
 
--   **Error de puerto ocupado**: Si el puerto 3307 o 8080 está ocupado, asegúrate de no tener otros servicios corriendo.
--   **No se conecta a la BD**: Verifica que Docker esté corriendo (`docker ps`).
+Sigue esta guía para levantar el entorno de desarrollo localmente.
+
+### 1. Clonar el repositorio
+
+Abre tu terminal y ejecuta:
+
+    git clone <URL_DEL_REPOSITORIO>
+
+### 2. Base de Datos
+
+Tienen dos opciones para levantar la base de datos.
+
+#### Opción A: Con Docker (Recomendado) 🐳
+1. Abran **Docker Desktop** y asegúrense de que esté corriendo.
+2. En la terminal, dentro de la carpeta del proyecto, ejecuten:
+
+        docker-compose up -d
+
+#### Opción B: Sin Docker (Manual) 🛠️
+> **Nota:** Si no quieren usar Docker, ahí ven ustedes cómo le hacen para que funcione.
+> La base de datos (script) se encuentra en la carpeta `/db`. Tendrán que configurarla manualmente en su motor de base de datos local.
+
+---
+
+## 💻 Ejecutar el Backend
+
+1. Vayan a la carpeta `backend`.
+2. Busquen la clase `BackendApplication.java`.
+3. Ejecútenlo con el botón **Play** de su IDE (IntelliJ / VSCode) o vía terminal:
+
+        ./mvnw spring-boot:run
+
+### ✅ Verificación de éxito
+
+Si todo salió bien (y no se olvidaron de abrir el Docker Desktop), les saldrá al final de la consola algo como esto:
+
+    .BackendApplication      : Started BackendApplication in 5.787 seconds (process running for 6.286)
+
+*Si no sale eso, es que en algo fallaron.*
+
+---
+
+## 🌐 Acceder a la Aplicación
+
+Una vez que la consola muestre el mensaje de éxito, abran su navegador y vayan a:
+
+[http://localhost:8080](http://localhost:8080)
+
+Deberían ver la siguiente pantalla:
+
+<img width="1599" height="836" alt="Captura de pantalla de Facto" src="https://github.com/user-attachments/assets/ad14c5dd-4eba-45e9-b665-3d55c7b0f1c9" />
+
+**LISTO** 🎉
+
+## 😲 start-app.sh
+
+También pueden usar el script `start-app.sh` para levantar el entorno de desarrollo.
+
+Pero eso es muy épico asi que no lo usen.
