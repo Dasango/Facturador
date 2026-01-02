@@ -9,6 +9,7 @@
 
 /* 4. Layout */
 @import "layout/footer.css";
+@import "layout/dashboard.css";
 
 /* 5. Components */
 @import "components/buttons.css";

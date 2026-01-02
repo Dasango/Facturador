@@ -37,3 +37,19 @@ CREATE TABLE IF NOT EXISTS facturas (
 -- Dejo un usuario de prueba base. Password: password123 (Hash BCrypt aprox)
 INSERT INTO usuarios (cedula, nombres, apellidos, correo, contrasena) VALUES 
 ('root', 'root', 'root', 'root', '$2a$12$HkTTBg0OR0BaMMZigBggLOGb82b1QV.78l.NaPDPxfn8bmY9cRi/K'); 
+
+-- Insertar productos de prueba para el usuario root (ID 1)
+INSERT INTO productos (codigo_principal, codigo_auxiliar, nombre, valor_unitario, iva, ice, usuario_id) VALUES
+('PROD001', 'REF001', 'Consultoría de Software', 150.00, '15%', 'No aplicable', 1),
+('PROD002', 'REF002', 'Mantenimiento de Servidores', 80.00, '15%', 'No aplicable', 1),
+('PROD003', 'REF003', 'Licencia Antivirus Anual', 45.00, '15%', 'No aplicable', 1),
+('PROD004', 'REF004', 'Soporte Remoto (Hora)', 30.00, '15%', 'No aplicable', 1),
+('PROD005', 'REF005', 'Cable de Red CAT6', 15.00, '15%', 'No aplicable', 1);
+
+-- Insertar facturas de prueba para el usuario root (ID 1)
+INSERT INTO facturas (numero_comprobante, fecha_emision, cliente_nombre, cliente_identificacion, total, estado, usuario_id) VALUES
+('001-001-000000001', '2025-12-01', 'Juan Perez', '1712345678', 172.50, 'Autorizado', 1),
+('001-001-000000002', '2025-12-05', 'María López', '1718765432', 92.00, 'Autorizado', 1),
+('001-001-000000003', '2025-12-10', 'Carlos Sánchez', '1709876543', 51.75, 'Pendiente', 1),
+('001-001-000000004', '2025-12-15', 'Empresa XYZ S.A.', '1790011223001', 345.00, 'Rechazado', 1),
+('001-001-000000005', '2025-12-20', 'Ana Martínez', '1715556667', 17.25, 'Autorizado', 1); 

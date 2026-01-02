@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tableBody = document.getElementById('productsTableBody');
     const productCountLabel = document.getElementById('productCount');
 
-    fetch('/assets/data/products.json')
+    fetch('/api/products')
         .then(response => response.json())
         .then(data => {
             renderTable(data);
@@ -48,10 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
         products.forEach(p => {
             const row = `
                 <tr>
-                    <td>${p.codigo}</td>
-                    <td>${p.auxiliar}</td>
+                    <td>${p.codigoPrincipal}</td>
+                    <td>${p.codigoAuxiliar || ''}</td>
                     <td>${p.nombre}</td>
-                    <td class="text-right">$${p.valor.toFixed(2)}</td>
+                    <td class="text-right">$${p.valorUnitario?.toFixed(2)}</td>
                     <td>${p.iva}</td>
                     <td>${p.ice}</td>
                     <td class="text-right">

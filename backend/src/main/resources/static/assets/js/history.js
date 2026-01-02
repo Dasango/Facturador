@@ -1,22 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // 1. CARGAR PARTIALS (Reutilizado)
-    const loadPartial = (elementId, path) => {
+    const loadPartial = (elementId, path, callback) => {
         fetch(path)
-            .then(response => response.text())
+            .then(response => {
+                if (!response.ok) throw new Error('Error loading partial');
+                return response.text();
+            })
             .then(html => {
                 document.getElementById(elementId).innerHTML = html;
-                // Activar link 'Historial' en sidebar
-                if (elementId === 'sidebar-container') {
-                    const navItems = document.querySelectorAll('.nav-item');
-                    // Buscar por texto aproximado
-                    navItems.forEach(item => {
-                        item.classList.remove('active');
-                        if (item.textContent.includes('Historial')) item.classList.add('active');
-                    });
-                }
-            });
+                if (callback) callback();
+            })
+            .catch(error => console.error('Error:', error));
     };
+
 
     loadPartial('sidebar-container', '/partials/sidebar.html');
     loadPartial('header-container', '/partials/header.html');
@@ -31,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const statRej = document.getElementById('stat-rejected');
     const statTotal = document.getElementById('stat-total');
 
-    fetch('/assets/data/history.json')
+    fetch('/api/invoices')
         .then(response => response.json())
         .then(data => {
             renderTable(data);
@@ -54,11 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const row = `
                 <tr>
-                    <td>${formatDate(item.fecha)}</td>
-                    <td>${item.tipo}</td>
-                    <td>${item.numero}</td>
-                    <td>${item.identificacion}</td>
-                    <td>${item.cliente}</td>
+                    <td>${formatDate(item.fechaEmision)}</td>
+                    <td>Factura</td> 
+                    <td>${item.numeroComprobante}</td>
+                    <td>${item.clienteIdentificacion}</td>
+                    <td>${item.clienteNombre}</td>
                     <td style="font-weight:600;">$${item.total.toFixed(2)}</td>
                     <td><span class="status-badge ${badgeClass}">${item.estado}</span></td>
                     <td>
