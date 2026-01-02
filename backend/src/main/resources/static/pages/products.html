@@ -24,68 +24,72 @@
 
             <div class="page-container">
 
-                <h2 class="text-h2" style="font-size: 24px; margin-bottom: 20px;">Mis Productos y Servicios</h2>
+                <div class="main-card">
+                    <h2 class="text-h2" style="font-size: 24px; margin-bottom: 20px;">Mis Productos y Servicios</h2>
 
-                <div class="search-card">
-                    <h5 class="card-subtitle">BUSCAR</h5>
+                    <div class="search-card" style="margin-bottom: 40px; box-shadow: none; border: 1px solid #eee;">
+                        <h5 class="card-subtitle">BUSCAR</h5>
 
-                    <form class="search-form-grid">
-                        <div class="form-group">
-                            <label class="form-label">CÓDIGO</label>
-                            <input type="text" class="input-control" placeholder="Ingrese código principal">
-                        </div>
+                        <form class="search-form-grid">
+                            <div class="form-group">
+                                <label class="form-label">CÓDIGO</label>
+                                <input type="text" class="input-control" placeholder="Ingrese código principal">
+                            </div>
 
-                        <div class="form-group">
-                            <label class="form-label">NOMBRE</label>
-                            <input type="text" class="input-control" placeholder="Ingrese nombre / descripción">
-                        </div>
+                            <div class="form-group">
+                                <label class="form-label">NOMBRE</label>
+                                <input type="text" class="input-control" placeholder="Ingrese nombre / descripción">
+                            </div>
 
-                        <div class="form-group button-container">
-                            <button type="button" class="btn btn-primary btn-black">
-                                🔍 Buscar
+                            <div class="form-group button-container">
+                                <button type="button" class="btn btn-primary btn-black">
+                                    🔍 Buscar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="list-header">
+                        <h3 class="text-body" style="font-weight: 800; text-transform: uppercase; font-size: 14px;">
+                            LISTA DE
+                            PRODUCTOS</h3>
+                        <div class="list-actions">
+                            <button class="btn btn-primary btn-black btn-sm">
+                                + Nuevo
+                            </button>
+                            <button class="btn btn-secondary btn-sm btn-delete-all">
+                                🗑️ Eliminar todos
                             </button>
                         </div>
-                    </form>
-                </div>
-
-                <div class="list-header">
-                    <h3 class="text-body" style="font-weight: 800; text-transform: uppercase; font-size: 14px;">LISTA DE
-                        PRODUCTOS</h3>
-                    <div class="list-actions">
-                        <button class="btn btn-primary btn-black btn-sm">
-                            + Nuevo
-                        </button>
-                        <button class="btn btn-secondary btn-sm btn-delete-all">
-                            🗑️ Eliminar todos
-                        </button>
                     </div>
-                </div>
 
-                <div class="table-container products-table-container">
-                    <table class="table products-table">
-                        <thead>
-                            <tr>
-                                <th>CÓDIGO</th>
-                                <th>AUXILIAR</th>
-                                <th>NOMBRE</th>
-                                <th class="text-right">VALOR</th>
-                                <th>IVA</th>
-                                <th>ICE</th>
-                                <th class="text-right">ACCIONES</th>
-                            </tr>
-                        </thead>
-                        <tbody id="productsTableBody">
-                            <tr>
-                                <td colspan="7" style="text-align: center; padding: 30px;">Cargando productos...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="table-container products-table-container">
+                        <table class="table products-table">
+                            <thead>
+                                <tr>
+                                    <th>CÓDIGO</th>
+                                    <th>AUXILIAR</th>
+                                    <th>NOMBRE</th>
+                                    <th class="text-right">VALOR</th>
+                                    <th>IVA</th>
+                                    <th>ICE</th>
+                                    <th class="text-right">ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTableBody">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 30px;">Cargando productos...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-                <div class="list-footer">
-                    <span class="text-body" style="font-size: 12px; color: #666;" id="productCount">(0 productos
-                        mostrados)</span>
-                    <a href="#" class="download-link">Descargar reporte</a>
+                    <div class="list-footer">
+                        <span class="text-body" style="font-size: 12px; color: #666;" id="productCount">(0 productos
+                            mostrados)</span>
+                        <a href="#" class="download-link">Descargar reporte</a>
+                    </div>
                 </div>
 
             </div>

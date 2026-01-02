@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS facturas (
 -- Para que funcione con BCrypt del backend, idealmente deberíamos insertar hashes o dejar que la app los cree.
 -- Dejo un usuario de prueba base. Password: password123 (Hash BCrypt aprox)
 INSERT INTO usuarios (cedula, nombres, apellidos, correo, contrasena) VALUES 
-('root', 'root', 'root', 'root', '$2a$12$HkTTBg0OR0BaMMZigBggLOGb82b1QV.78l.NaPDPxfn8bmY9cRi/K'); 
+('root', 'root', 'root', 'root', 'root'); 
 
 -- Insertar productos de prueba para el usuario root (ID 1)
 INSERT INTO productos (codigo_principal, codigo_auxiliar, nombre, valor_unitario, iva, ice, usuario_id) VALUES

@@ -1,10 +1,9 @@
 /* --- SEARCH CARD --- */
 .search-card {
-    background: white;
-    border: 1px solid #e5e5e5;
-    border-radius: 8px;
-    padding: 24px;
-    margin-bottom: 40px;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin-bottom: 30px;
 }
 
 .card-subtitle {
