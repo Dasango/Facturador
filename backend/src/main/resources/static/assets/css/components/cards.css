@@ -79,20 +79,24 @@
 .testimonial-card {
     background-color: var(--color-white);
     border: 1px solid #E5E5E5;
-    border-radius: var(--radius-md);
-    padding: 32px;
-    width: 320px;
-    min-height: 200px;
+    border-radius: calc(var(--radius-md) * 0.8);
+    padding: calc(32px * 0.8);
+    /* 25.6px */
+    width: calc(320px * 0.8);
+    /* 256px */
+    min-height: calc(200px * 0.8);
+    /* 160px */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 24px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+    gap: calc(24px * 0.8);
+    /* 19.2px */
+    box-shadow: 0 3.2px 4.8px rgba(0, 0, 0, 0.02);
     transition: transform 0.3s ease;
 }
 
 .testimonial-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-52px);
 }
 
 .testimonial-quote {

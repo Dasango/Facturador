@@ -6,7 +6,13 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class WebConfig {
+public class WebConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addViewControllers(org.springframework.web.servlet.config.annotation.ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("forward:/index.html");
+        registry.addViewController("/signup").setViewName("forward:/pages/signup.html");
+    }
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
