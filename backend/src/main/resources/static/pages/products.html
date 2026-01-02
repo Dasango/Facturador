@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facto - Mis Productos</title>
+
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/pages/products.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="dashboard-layout">
+
+        <div id="sidebar-container"></div>
+
+        <div class="main-content">
+
+            <div id="header-container"></div>
+
+            <div class="page-container">
+
+                <h2 class="text-h2" style="font-size: 24px; margin-bottom: 20px;">Mis Productos y Servicios</h2>
+
+                <div class="search-card">
+                    <h5 class="card-subtitle">BUSCAR</h5>
+
+                    <form class="search-form-grid">
+                        <div class="form-group">
+                            <label class="form-label">CÓDIGO</label>
+                            <input type="text" class="input-control" placeholder="Ingrese código principal">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">NOMBRE</label>
+                            <input type="text" class="input-control" placeholder="Ingrese nombre / descripción">
+                        </div>
+
+                        <div class="form-group button-container">
+                            <button type="button" class="btn btn-primary btn-black">
+                                🔍 Buscar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="list-header">
+                    <h3 class="text-body" style="font-weight: 800; text-transform: uppercase; font-size: 14px;">LISTA DE
+                        PRODUCTOS</h3>
+                    <div class="list-actions">
+                        <button class="btn btn-primary btn-black btn-sm">
+                            + Nuevo
+                        </button>
+                        <button class="btn btn-secondary btn-sm btn-delete-all">
+                            🗑️ Eliminar todos
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container products-table-container">
+                    <table class="table products-table">
+                        <thead>
+                            <tr>
+                                <th>CÓDIGO</th>
+                                <th>AUXILIAR</th>
+                                <th>NOMBRE</th>
+                                <th class="text-right">VALOR</th>
+                                <th>IVA</th>
+                                <th>ICE</th>
+                                <th class="text-right">ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 30px;">Cargando productos...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="list-footer">
+                    <span class="text-body" style="font-size: 12px; color: #666;" id="productCount">(0 productos
+                        mostrados)</span>
+                    <a href="#" class="download-link">Descargar reporte</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/products.js"></script>
+</body>
+
+</html>

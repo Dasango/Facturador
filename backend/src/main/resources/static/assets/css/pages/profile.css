@@ -1,0 +1,186 @@
+/* --- LAYOUT DEL DASHBOARD --- */
+body {
+    background-color: #f4f4f4;
+    /* Color de fondo gris claro de la imagen */
+}
+
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 250px;
+    background-color: white;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100%;
+    left: 0;
+    top: 0;
+}
+
+.sidebar-nav {
+    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.nav-item {
+    text-decoration: none;
+    color: #666;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 0;
+    transition: color 0.2s;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    color: black;
+    font-weight: 700;
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    margin-left: 250px;
+    /* Mismo ancho que el sidebar */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Styles */
+.top-header {
+    height: 70px;
+    background-color: transparent;
+    /* En la imagen parece transparente o blanco */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.user-profile-widget {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* --- ESTILOS DE LA PÁGINA DE PERFIL --- */
+.page-container {
+    padding: 20px 40px 40px 40px;
+}
+
+.profile-card {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 60px;
+}
+
+/* Upload Boxes */
+.upload-box {
+    background-color: #f0f2f5;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+}
+
+.profile-upload {
+    height: 240px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.placeholder-icon {
+    font-size: 80px;
+    color: #ccc;
+    margin-bottom: 10px;
+}
+
+.btn-upload {
+    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    width: 90%;
+}
+
+.logo-upload {
+    height: 120px;
+    border-radius: 50%;
+    /* Circular container for logo widget logic */
+    width: 120px;
+    margin: 0 auto;
+    cursor: pointer;
+    border: 2px dashed #ddd;
+    background: white;
+}
+
+/* Form Styles */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-label {
+    text-transform: uppercase;
+    font-size: 12px;
+    color: #333;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.input-control {
+    background-color: #fafafa;
+    border: 1px solid #e0e0e0;
+}
+
+/* Bottom Actions */
+.form-actions-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.save-actions {
+    display: flex;
+    gap: 15px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .upload-box.logo-upload {
+        margin: 0;
+        /* Reset margin si cambia layout */
+    }
+}

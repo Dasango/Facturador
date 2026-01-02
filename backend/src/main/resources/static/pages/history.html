@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facto - Historial de Comprobantes</title>
+
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/pages/history.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="dashboard-layout">
+
+        <div id="sidebar-container"></div>
+
+        <div class="main-content">
+
+            <div id="header-container"></div>
+
+            <div class="page-container">
+
+                <h2 class="text-h2" style="font-size: 24px; margin-bottom: 20px;">Historial</h2>
+
+                <div class="filters-card">
+                    <h3 class="text-body" style="font-weight: 600; margin-bottom: 15px;">Opciones de Búsqueda y Filtro
+                    </h3>
+
+                    <form class="filters-grid">
+                        <div class="form-group span-2">
+                            <label class="form-label">Búsqueda general</label>
+                            <div class="input-with-icon">
+                                <span class="search-icon">🔍</span>
+                                <input type="text" class="input-control pl-30"
+                                    placeholder="Número, Cliente, Clave de acceso...">
+                            </div>
+                        </div>
+
+                        <div class="form-group span-2">
+                            <label class="form-label">Identificación</label>
+                            <div class="input-with-icon">
+                                <span class="search-icon">🔍</span>
+                                <input type="text" class="input-control pl-30" placeholder="RUC/Cédula del Cliente">
+                            </div>
+                        </div>
+
+                        <div class="form-group span-2">
+                            <label class="form-label">Tipo de Comprobante</label>
+                            <select class="input-control">
+                                <option>Todos los Tipos</option>
+                                <option>Factura</option>
+                                <option>Nota de Crédito</option>
+                                <option>Retención</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Fecha inicio:</label>
+                            <input type="date" class="input-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Fecha fin:</label>
+                            <input type="date" class="input-control">
+                        </div>
+
+                        <div class="form-group span-2">
+                            <label class="form-label">Por autorización</label>
+                            <div class="input-with-icon">
+                                <span class="search-icon">FILTER_ICON</span> <select class="input-control pl-30">
+                                    <option>Todos</option>
+                                    <option>Autorizados</option>
+                                    <option>Pendientes</option>
+                                    <option>Rechazados</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-label">Autorizados</span>
+                        <span class="stat-value" id="stat-authorized">0 Comprobantes</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Pendientes</span>
+                        <span class="stat-value" id="stat-pending">0 Comprobantes</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Rechazados</span>
+                        <span class="stat-value" id="stat-rejected">0 Comprobantes</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Total Valor Filtrado</span>
+                        <span class="stat-value highlight" id="stat-total">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="table-container history-table-container">
+                    <table class="table" id="historyTable">
+                        <thead>
+                            <tr>
+                                <th>Fecha de emisión</th>
+                                <th>Tipo de comprobante</th>
+                                <th>Número de comprobante</th>
+                                <th>Identificación</th>
+                                <th>Razón social</th>
+                                <th>Valor total</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 40px;">Cargando datos...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination-footer">
+                    <span class="showing-text" id="showingText">Mostrando 0 de 0 comprobantes.</span>
+                    <div class="pagination-controls">
+                        <button class="btn btn-primary btn-sm btn-black">
+                            📥 Descargar reporte
+                        </button>
+                        <div class="page-buttons">
+                            <button class="btn btn-secondary btn-sm" disabled>Anterior</button>
+                            <button class="btn btn-secondary btn-sm">Siguiente</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/history.js"></script>
+</body>
+
+</html>

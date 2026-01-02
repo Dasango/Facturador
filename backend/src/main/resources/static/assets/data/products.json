@@ -1,0 +1,26 @@
+[
+    {
+        "codigo": "001",
+        "auxiliar": "AUX1",
+        "nombre": "Producto A",
+        "valor": 950.00,
+        "iva": "15%",
+        "ice": "-"
+    },
+    {
+        "codigo": "002",
+        "auxiliar": "AUX2",
+        "nombre": "Producto B de Prueba",
+        "valor": 50.30,
+        "iva": "15%",
+        "ice": "-"
+    },
+    {
+        "codigo": "003",
+        "auxiliar": "-",
+        "nombre": "Servicio C",
+        "valor": 10.50,
+        "iva": "0%",
+        "ice": "Aplica"
+    }
+]

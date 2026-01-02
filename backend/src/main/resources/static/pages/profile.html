@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facto - Mi Perfil</title>
+
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/pages/profile.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="dashboard-layout">
+
+        <div id="sidebar-container"></div>
+
+        <div class="main-content">
+
+            <div id="header-container"></div>
+
+            <div class="page-container">
+
+                <div class="profile-card">
+                    <form id="profileForm">
+                        <div class="profile-grid">
+
+                            <div class="profile-media-col">
+
+                                <div class="upload-box profile-upload">
+                                    <div class="placeholder-icon">👤</div>
+                                    <button type="button" class="btn-upload">📷 Cargar foto de perfil</button>
+                                </div>
+
+                                <div class="upload-box logo-upload">
+                                    <div class="upload-icon">⬆️</div>
+                                    <span class="text-body" style="font-size: 14px; font-weight: 500;">Cargar
+                                        logo</span>
+                                </div>
+
+                            </div>
+
+                            <div class="profile-form-col">
+
+                                <div class="form-group">
+                                    <label class="form-label">NOMBRES:</label>
+                                    <input type="text" class="input-control" value="Juan Perez">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">DESCRIPCIÓN:</label>
+                                    <textarea class="input-control" rows="3"></textarea>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">TELEFONO:</label>
+                                        <input type="tel" class="input-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">CÉDULA:</label>
+                                        <input type="text" class="input-control">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">PLAN:</label>
+                                    <input type="text" class="input-control" value="Básico" disabled
+                                        style="background-color: #f9f9f9;">
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+
+                        <div class="form-actions-wrapper">
+
+                            <button type="button" class="btn btn-primary"
+                                style="background-color: #2c3e50; display: flex; align-items: center; gap: 8px;">
+                                <span>↑</span> Cargar firma electrónica <span>📄</span>
+                            </button>
+
+                            <div class="save-actions">
+                                <button type="submit" class="btn btn-primary">GUARDAR</button>
+                                <button type="button" class="btn btn-secondary">CANCELAR</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/profile.js"></script>
+</body>
+
+</html>

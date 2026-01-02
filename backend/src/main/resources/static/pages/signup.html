@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facto - Regístrate</title>
+    <!-- Main CSS (Design System) -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <!-- Signup Page Specific CSS -->
+    <link rel="stylesheet" href="../assets/css/pages/signup.css">
+    <!-- Fonts (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header/Nav -->
+    <header
+        style="position: sticky; top: 0; z-index: 1000; background-color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; margin: 0 auto;">
+
+        <a href="/" class="logo" style="text-decoration: none; color: inherit; display: block;">
+            <h1 style="font-size: 32px; font-weight: 900; margin: 0;">Facto</h1>
+        </a>
+
+        <nav class="nav-menu" id="navMenu">
+            <a href="/" style="text-decoration: none; color: black; font-weight: 500;">Regresar</a>
+        </nav>
+    </header>
+
+    <div class="signup-container">
+        <!-- LEFT SIDE -->
+        <div class="signup-content">
+
+            <main class="signup-main">
+                <h2 class="signup-title">Hola!</h2>
+                <p class="signup-subtitle">Completa los datos para comenzar</p>
+
+                <form class="signup-form" id="signupForm">
+                    <div class="form-group">
+                        <label class="form-label">Cedula o RUC</label>
+                        <input type="text" name="ruc" class="input-control" placeholder="">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Correo</label>
+                        <input type="email" name="email" class="input-control" placeholder="">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Contraseña</label>
+                        <input type="password" name="password" class="input-control" placeholder="">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Confirmar Contraseña</label>
+                        <input type="password" name="confirm_password" class="input-control" placeholder="">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" style="margin-top: 20px;">Ingresar</button>
+                </form>
+            </main>
+
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="signup-image">
+            <img src="../assets/images/FactoCuaderno.png" alt="Signup Art">
+        </div>
+    </div>
+
+    <div id="footer-container"></div>
+
+    <script src="../assets/js/signup.js"></script>
+</body>
+
+</html>
