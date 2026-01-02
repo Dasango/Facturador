@@ -15,8 +15,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    // @Autowired
+    // private PasswordEncoder passwordEncoder;
 
     @Override
     public AuthResponse register(RegisterRequest request) {
@@ -32,7 +32,8 @@ public class UserServiceImpl implements UserService {
         user.setNombres(request.getNombres());
         user.setApellidos(request.getApellidos());
         user.setCorreo(request.getCorreo());
-        user.setContrasena(passwordEncoder.encode(request.getContrasena()));
+        // user.setContrasena(passwordEncoder.encode(request.getContrasena()));
+        user.setContrasena(request.getContrasena());
 
         userRepository.save(user);
 

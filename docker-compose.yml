@@ -5,7 +5,7 @@ services:
     container_name: mysql_universidad
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: universidad_db
     ports:
       - "3307:3306"
