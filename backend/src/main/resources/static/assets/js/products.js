@@ -19,14 +19,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     };
 
-    loadPartial('sidebar-container', 'partials/sidebar.html');
-    loadPartial('header-container', 'partials/header.html');
+    loadPartial('sidebar-container', '/partials/sidebar.html');
+    loadPartial('header-container', '/partials/header.html');
 
     // 2. CARGAR DATOS DE PRODUCTOS
     const tableBody = document.getElementById('productsTableBody');
     const productCountLabel = document.getElementById('productCount');
 
-    fetch('data/products.json')
+    fetch('/assets/data/products.json')
         .then(response => response.json())
         .then(data => {
             renderTable(data);

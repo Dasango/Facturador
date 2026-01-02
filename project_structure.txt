@@ -1,64 +1,60 @@
 # Facturador Project Structure
 
-resources/
-├── index.html              # Main Landing Page
-├── Catalogo.html           # UI Design System Catalog / Documentation
-├── script.js               # Main script
-├── style.css               # Main style
-├── pages/                  # HTML pages
-│   ├── home.html           # Dashboard/Home
-│   └── signup.html         # Registration page
-├── partials/               # Reusable HTML snippets
-│   └── footer.html         # Footer partial
-└── assets/                 # Static assets
-    ├── images/             # Images and icons
-    ├── js/                 # JavaScript files
-    │   ├── landing.js      # JS specific to the landing page
-    │   ├── signup.js       # JS specific to the signup page
-    │   ├── core/           # Core JS logic
-    │   └── modules/        # JS Modules
-    └── css/                # CSS Stylesheets
-        ├── main.css        # Main entry point (imports all other CSS)
-        ├── abstracts/      # Variables, mixins, functions
-        ├── base/           # Reset, typography, global styles
-        ├── components/     # Reusable UI components (buttons, forms, cards)
-        ├── layout/         # Layout specific styles (header, footer, grid)
-        ├── pages/          # Page-specific styles
-        │   └── landing.css # Styles specific to index.html
-        ├── themes/         # Theme specific styles (dark/light)
-        └── vendors/        # 3rd party CSS
+db/
+├── init.sql                    # Database initialization script
 
 backend/
-├── pom.xml                 # Maven dependencies
+├── pom.xml                     # Maven dependencies
 ├── src/
 │   └── main/
 │       ├── resources/
-│       │   └──             # Arriba
+│       │   ├── application.properties
+│       │   └── static/         # Frontend Assets & Pages
+│       │       ├── index.html  # Landing/Login Page
+│       │       ├── pages/
+│       │       │   ├── profile.html
+│       │       │   ├── products.html
+│       │       │   ├── history.html
+│       │       │   ├── invoice.html
+│       │       │   └── signup.html
+│       │       ├── partials/
+│       │       │   ├── header.html
+│       │       │   ├── sidebar.html
+│       │       │   └── footer.html
+│       │       └── assets/
+│       │           ├── css/    # Modern CSS Structure
+│       │           ├── js/     # Logic
+│       │           │   ├── landing.js
+│       │           │   ├── profile.js
+│       │           │   ├── products.js
+│       │           │   ├── history.js
+│       │           │   ├── invoice.js
+│       │           │   └── signup.js
+│       │           └── data/   # JSON Mock Data
 │       └── java/
 │           └── com/
 │               └── uce/
 │                   └── emprendimiento/
 │                       └── backend/
-│                           ├── BackendApplication.java # Entry Point
-│                           ├── config/                  # Global Config (CORS, Swagger)
-│                           │   └── WebConfig.java
-│                           ├── controller/              # REST Endpoints
+│                           ├── BackendApplication.java
+│                           ├── config/
+│                           │   └── SecurityConfig.java
+│                           ├── controller/
+│                           │   ├── ViewController.java (New)
 │                           │   └── auth/
 │                           │       └── AuthController.java
-│                           ├── dto/                     # Data Transfer Objects
+│                           ├── dto/
 │                           │   ├── request/
 │                           │   │   └── RegisterRequest.java
 │                           │   └── response/
 │                           │       └── AuthResponse.java
-│                           ├── entity/                  # JPA Entities
-│                           │   └── User.java
-│                           ├── repository/              # JPA Repositories
+│                           ├── entity/
+│                           │   ├── User.java
+│                           │   ├── Product.java (New)
+│                           │   └── Invoice.java (New)
+│                           ├── repository/
 │                           │   └── UserRepository.java
-│                           ├── service/                 # Business Logic
-│                           │   ├── UserService.java     # Interface
-│                           │   └── impl/
-│                           │       └── UserServiceImpl.java
-│                           ├── exception/               # Global Error Handling
-│                           │   └── GlobalExceptionHandler.java
-│                           └── util/                    # Utilities
-
+│                           └── service/
+│                               ├── UserService.java
+│                               └── impl/
+│                                   └── UserServiceImpl.java

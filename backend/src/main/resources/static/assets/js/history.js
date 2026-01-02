@@ -18,8 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     };
 
-    loadPartial('sidebar-container', 'partials/sidebar.html');
-    loadPartial('header-container', 'partials/header.html');
+    loadPartial('sidebar-container', '/partials/sidebar.html');
+    loadPartial('header-container', '/partials/header.html');
 
     // 2. FETCH Y RENDER DE DATOS
     const tableBody = document.getElementById('tableBody');
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const statRej = document.getElementById('stat-rejected');
     const statTotal = document.getElementById('stat-total');
 
-    fetch('data/history.json')
+    fetch('/assets/data/history.json')
         .then(response => response.json())
         .then(data => {
             renderTable(data);

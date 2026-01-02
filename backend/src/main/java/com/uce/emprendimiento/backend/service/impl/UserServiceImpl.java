@@ -29,6 +29,8 @@ public class UserServiceImpl implements UserService {
 
         User user = new User();
         user.setCedula(request.getCedula());
+        user.setNombres(request.getNombres());
+        user.setApellidos(request.getApellidos());
         user.setCorreo(request.getCorreo());
         user.setContrasena(passwordEncoder.encode(request.getContrasena()));
 

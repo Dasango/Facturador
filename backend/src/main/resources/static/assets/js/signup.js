@@ -29,6 +29,11 @@ async function handleSignup(event) {
     const data = Object.fromEntries(formData.entries());
 
     // 2. Validate
+    if (!data.ruc || !data.nombres || !data.apellidos || !data.email || !data.password) {
+        alert("Por favor complete todos los campos");
+        return;
+    }
+
     if (data.password !== data.confirm_password) {
         alert("Las contraseñas no coinciden");
         return;
@@ -37,6 +42,8 @@ async function handleSignup(event) {
     // 3. Prepare Payload (Mapping fields to Backend DTO)
     const payload = {
         cedula: data.ruc,
+        nombres: data.nombres,
+        apellidos: data.apellidos,
         correo: data.email,
         contrasena: data.password
     };

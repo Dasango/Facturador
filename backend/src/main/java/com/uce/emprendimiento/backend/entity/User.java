@@ -21,6 +21,12 @@ public class User {
     @Column(nullable = false, unique = true, length = 20)
     private String cedula;
 
+    @Column(nullable = false, length = 100)
+    private String nombres;
+
+    @Column(nullable = false, length = 100)
+    private String apellidos;
+
     @Column(nullable = false, unique = true, length = 100)
     private String correo;
 

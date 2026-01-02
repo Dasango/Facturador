@@ -24,8 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // 1. Cargar Layout
-    loadPartial('sidebar-container', 'partials/sidebar.html');
-    loadPartial('header-container', 'partials/header.html');
+    loadPartial('sidebar-container', '/partials/sidebar.html');
+    loadPartial('header-container', '/partials/header.html');
 
     // Aquí iría la lógica para añadir filas dinámicamente a las tablas,
     // calcular totales, etc. Por ahora, solo estructura visual.

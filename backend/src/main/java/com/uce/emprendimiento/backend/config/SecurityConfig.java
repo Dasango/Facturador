@@ -57,11 +57,14 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login")
                         .successHandler((request, response, authentication) -> {
                             response.setStatus(200);
-                            response.getWriter().write("{\"status\":\"success\", \"message\":\"Login successful\"}");
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"success\": true, \"message\":\"Login successful\"}");
                         })
                         .failureHandler((request, response, exception) -> {
                             response.setStatus(401);
-                            response.getWriter().write("{\"status\":\"error\", \"message\":\"Login failed\"}");
+                            response.setContentType("application/json");
+                            response.getWriter()
+                                    .write("{\"success\": false, \"message\":\"Credenciales incorrectas\"}");
                         })
                         .permitAll());
 
