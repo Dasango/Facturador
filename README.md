@@ -12,7 +12,7 @@ Este proyecto es una solución de facturación diseñada para cumplir con los re
 
 * Pmaul
 * David Sango
-* Jon
+* Jhon Córdova
 * Jonatn
 
 ---
