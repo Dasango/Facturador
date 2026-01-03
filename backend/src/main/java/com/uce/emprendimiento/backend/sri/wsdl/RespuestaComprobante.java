@@ -16,7 +16,7 @@ public class RespuestaComprobante {
 
     private String claveAccesoConsultada;
     private String numeroComprobantes;
-    
+
     @XmlElementWrapper(name = "autorizaciones")
     @XmlElement(name = "autorizacion")
     private List<Autorizacion> autorizaciones;
@@ -29,15 +29,15 @@ public class RespuestaComprobante {
         private String fechaAutorizacion;
         private String ambiente;
         private String comprobante; // The XML itself
-        
+
         @XmlElementWrapper(name = "mensajes")
         @XmlElement(name = "mensaje")
-        private List<Mensaje> mensajes;
+        private List<MensajeComprobante> mensajes;
     }
-    
+
     @Data
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Mensaje {
+    public static class MensajeComprobante {
         private String identificador;
         private String mensaje;
         private String informacionAdicional;

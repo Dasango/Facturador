@@ -24,15 +24,15 @@ public class RespuestaSolicitud {
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Comprobante {
         private String claveAcceso;
-        
+
         @XmlElementWrapper(name = "mensajes")
         @XmlElement(name = "mensaje")
-        private List<Mensaje> mensajes;
+        private List<MensajeSolicitud> mensajes;
     }
 
     @Data
     @XmlAccessorType(XmlAccessType.FIELD)
-    public static class Mensaje {
+    public static class MensajeSolicitud {
         private String identificador;
         private String mensaje;
         private String informacionAdicional;

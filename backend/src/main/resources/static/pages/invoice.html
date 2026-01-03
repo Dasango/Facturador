@@ -31,52 +31,64 @@
 
                     <form id="invoiceForm" class="invoice-card" style="box-shadow: none; padding: 0;">
 
+                        <!-- Configuración de Firma (Temporal para Pruebas) -->
+                        <div class="invoice-section"
+                            style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px dashed #cbd5e1;">
+                            <h4 class="text-body" style="font-weight: 600; margin-bottom: 10px;">Configuración de
+                                Firma (Pruebas)</h4>
+                            <div class="invoice-top-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Ruta Archivo .p12:</label>
+                                    <input type="text" id="pathP12" class="input-control"
+                                        placeholder="C:\Firma\firma.p12" value="C:\Firma\firma_prueba.p12">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Contraseña .p12:</label>
+                                    <input type="password" id="claveP12" class="input-control" placeholder="****"
+                                        value="Clave123">
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="invoice-top-grid">
 
                             <div class="form-column">
                                 <div class="form-group">
                                     <label class="form-label">Establecimiento:</label>
-                                    <select class="input-control">
-                                        <option>Seleccione</option>
-                                        <option>001 - Matriz</option>
+                                    <select id="estab" class="input-control">
+                                        <option value="001">001 - Matriz</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="form-label">Nombre comercial:</label>
-                                    <input type="text" class="input-control" placeholder="">
+                                    <input type="text" id="nombreComercial" class="input-control" value="MI NEGOCIO">
                                 </div>
 
                                 <div class="form-group">
                                     <label class="form-label">Fecha de emisión:</label>
-                                    <input type="date" class="input-control" value="2025-12-22">
+                                    <input type="date" id="fechaEmision" class="input-control" value="2025-12-22">
                                 </div>
 
                                 <div class="form-group">
                                     <label class="form-label">Punto de emisión:</label>
-                                    <select class="input-control">
-                                        <option>Seleccione</option>
-                                        <option>001 - Caja 1</option>
+                                    <select id="ptoEmi" class="input-control">
+                                        <option value="001">001 - Caja 1</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="form-label">Guía de remisión:</label>
-                                    <input type="text" class="input-control">
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="form-label">Factura comercial negociable:</label>
-                                    <input type="text" class="input-control">
+                                    <input type="text" id="guiaRemision" class="input-control">
                                 </div>
                             </div>
 
                             <div class="form-column">
                                 <div class="form-group">
-                                    <label class="form-label">Adquirente</label>
-                                    <label class="form-label">Identificación:</label>
+                                    <label class="form-label">Adquirente Identificación:</label>
                                     <div class="input-group-wrapper">
-                                        <input type="text" class="input-control" placeholder="1999999999001">
+                                        <input type="text" id="identificacionComprador" class="input-control"
+                                            placeholder="179001..." value="0503023883">
                                         <button type="button" class="btn btn-primary"
                                             style="padding: 0 15px; background: black;">🔍</button>
                                     </div>
@@ -84,33 +96,35 @@
 
                                 <div class="form-group">
                                     <label class="form-label">Tipo identificación:</label>
-                                    <select class="input-control">
-                                        <option>Cédula</option>
-                                        <option>RUC</option>
-                                        <option>Pasaporte</option>
+                                    <select id="tipoIdentificacionComprador" class="input-control">
+                                        <option value="05">Cédula</option>
+                                        <option value="04">RUC</option>
+                                        <option value="06">Pasaporte</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="form-label">Razón social:</label>
-                                    <input type="text" class="input-control" placeholder="Cliente nombre">
+                                    <input type="text" id="razonSocialComprador" class="input-control"
+                                        placeholder="Cliente nombre" value="CONSUMIDOR FINAL">
                                 </div>
 
                                 <div class="form-group">
                                     <label class="form-label">Dirección:</label>
-                                    <input type="text" class="input-control">
+                                    <input type="text" id="direccionComprador" class="input-control"
+                                        value="Quito, Ecuador">
                                 </div>
 
                                 <div class="form-group">
                                     <label class="form-label">Teléfono:</label>
-                                    <input type="tel" class="input-control" placeholder="09999999">
+                                    <input type="tel" id="telefonoComprador" class="input-control"
+                                        placeholder="09999999">
                                 </div>
 
                                 <div class="form-group">
                                     <label class="form-label">Correo electrónico:</label>
-                                    <input type="email" class="input-control" placeholder="cliente@correo.com">
-                                    <p class="info-text">ℹ Recuerde revisar el correo electrónico para garantizar que el
-                                        comprobante sea entregado exitosamente</p>
+                                    <input type="email" id="emailComprador" class="input-control"
+                                        placeholder="cliente@correo.com">
                                 </div>
                             </div>
                         </div>
@@ -118,169 +132,58 @@
                         <div class="invoice-section">
                             <h3 class="text-body" style="font-weight: 600; margin-bottom: 10px;">Detalle</h3>
 
-                            <div class="form-group">
-                                <label class="form-label">Código / Descripción:</label>
-                                <input type="text" class="input-control"
-                                    placeholder="Escriba una letra o palabra, después seleccione el producto">
-                            </div>
-
-                            <button type="button" class="btn btn-secondary btn-full-width"
-                                style="margin-bottom: 20px; justify-content: center;">
-                                🔍 Buscar en listado de productos
-                            </button>
-
                             <div class="table-container">
-                                <table class="table invoice-table">
+                                <table class="table invoice-table" id="detallesTable">
                                     <thead>
                                         <tr>
-                                            <th>Código Principal</th>
-                                            <th>Código Auxiliar</th>
-                                            <th>Cantidad</th>
+                                            <th>Código</th>
                                             <th>Descripción</th>
-                                            <th>Precio unitario</th>
-                                            <th>Tarifa</th>
-                                            <th>Descuento</th>
-                                            <th>Valor total</th>
-                                            <th>Valor ICE</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio Unit.</th>
+                                            <th>Desc.</th>
+                                            <th>Total</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr class="empty-row">
-                                            <td colspan="10" style="text-align: center; color: #999; padding: 20px;">
-                                                No existen productos
+                                        <!-- Fila base -->
+                                        <tr class="detalle-row">
+                                            <td><input type="text" class="input-control sm-input codigo"
+                                                    value="PROD001"></td>
+                                            <td><input type="text" class="input-control sm-input descripcion"
+                                                    value="Servicio de Desarrollo"></td>
+                                            <td><input type="number" class="input-control sm-input cantidad" value="1"
+                                                    min="1"></td>
+                                            <td><input type="number" class="input-control sm-input precio"
+                                                    value="100.00" step="0.01"></td>
+                                            <td><input type="number" class="input-control sm-input descuento"
+                                                    value="0.00" step="0.01"></td>
+                                            <td class="total-linea">100.00</td>
+                                            <td><button type="button" class="btn-icon danger remove-row">🗑</button>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
+                            <button type="button" id="addRowBtn" class="btn btn-secondary btn-sm"
+                                style="margin-top: 10px;">+ Agregar Producto</button>
                         </div>
 
                         <div class="invoice-bottom-grid">
-
-                            <div class="left-bottom-col">
-
-                                <div class="sub-section">
-                                    <h4 class="text-body" style="font-weight: 600; margin-bottom: 10px;">Formas de pago
-                                    </h4>
-                                    <div class="table-container minimal-table">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Forma de Pago</th>
-                                                    <th>Valor</th>
-                                                    <th>Plazo</th>
-                                                    <th>Tiempo</th>
-                                                    <th>Acciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr class="empty-row">
-                                                    <td colspan="5" style="text-align: center; color: #999;">No existen
-                                                        formas de pago</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    <div class="payment-buttons">
-                                        <button type="button" class="btn-chip">💵 Efectivo</button>
-                                        <button type="button" class="btn-chip">💳 Tarjeta de débito</button>
-                                        <button type="button" class="btn-chip">💳 Tarjeta de crédito</button>
-                                    </div>
-
-                                    <button type="button" class="btn btn-primary btn-sm btn-black">
-                                        + Añadir forma de pago
-                                    </button>
-                                </div>
-
-                                <div class="sub-section" style="margin-top: 30px;">
-                                    <h4 class="text-body" style="font-weight: 600; margin-bottom: 10px;">Campos
-                                        adicionales
-                                    </h4>
-                                    <div class="table-container minimal-table">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Nombre</th>
-                                                    <th>Descripcion</th>
-                                                    <th>Acciones</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr class="empty-row">
-                                                    <td colspan="3" style="text-align: center; color: #999;">No existen
-                                                        campos adicionales</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <button type="button" class="btn btn-primary btn-sm btn-black">
-                                        + Añadir campo adicional
-                                    </button>
-                                </div>
-
-                            </div>
-
-                            <div class="right-bottom-col">
+                            <div class="right-bottom-col" style="margin-left: auto;">
                                 <h4 class="text-body" style="font-weight: 600; margin-bottom: 10px;">Totales</h4>
-
                                 <div class="totals-list">
                                     <div class="total-row">
-                                        <span>Subtotal sin impuestos:</span>
-                                        <span>0.00</span>
+                                        <span>Subtotal:</span>
+                                        <span id="subtotalDisplay">100.00</span>
                                     </div>
                                     <div class="total-row">
-                                        <span>Subtotal 15.00%:</span>
-                                        <span>0.00</span>
-                                    </div>
-                                    <div class="total-row">
-                                        <span>Subtotal 5%:</span>
-                                        <span>0.00</span>
-                                    </div>
-                                    <div class="total-row">
-                                        <span>Subtotal tarifa especial:</span>
-                                        <span>0.00</span>
-                                    </div>
-                                    <div class="total-row">
-                                        <span>Subtotal 0%:</span>
-                                        <span>0.00</span>
-                                    </div>
-                                    <div class="total-row">
-                                        <span>Subtotal no objeto de IVA:</span>
-                                        <span>0.00</span>
-                                    </div>
-                                    <div class="total-row">
-                                        <span>Subtotal exento de IVA:</span>
-                                        <span>0.00</span>
-                                    </div>
-                                    <div class="total-row">
-                                        <span>Total descuento:</span>
-                                        <span>0.00</span>
-                                    </div>
-                                    <div class="total-row">
-                                        <span>Valor ICE:</span>
-                                        <span>0.00</span>
-                                    </div>
-                                    <div class="total-row">
-                                        <span>IVA 15.00%:</span>
-                                        <span>0.00</span>
-                                    </div>
-                                    <div class="total-row">
-                                        <span>IVA 5%:</span>
-                                        <span>0.00</span>
-                                    </div>
-                                    <div class="total-row">
-                                        <span>IVA tarifa especial:</span>
-                                        <span>0.00</span>
-                                    </div>
-                                    <div class="total-row input-row">
-                                        <span>Propina 10%:</span>
-                                        <input type="text" class="input-control sm-input" placeholder="">
+                                        <span>IVA 15%:</span>
+                                        <span id="ivaDisplay">15.00</span>
                                     </div>
                                     <div class="total-row final-total">
-                                        <span>Valor a pagar:</span>
-                                        <span>0.00</span>
+                                        <span>Total:</span>
+                                        <span id="totalDisplay">115.00</span>
                                     </div>
                                 </div>
                             </div>
@@ -289,10 +192,6 @@
                         <div class="invoice-footer-actions">
                             <button type="submit" class="btn btn-primary btn-icon">
                                 <span>🚀</span> Firmar y Enviar
-                            </button>
-                            <button type="button" class="btn btn-secondary btn-icon"
-                                style="background: #e2e8f0; border: none; color: #475569;">
-                                <span>💾</span> Guardar sin firmar
                             </button>
                         </div>
 
