@@ -10,7 +10,7 @@ Este proyecto es una solución de facturación diseñada para cumplir con los re
 
 **⚠️ TAREA:** Poner bien sus nombres aquí abajo.
 
-* Pmaul
+* Cristian Baraja
 * David Sango
 * Jhon Córdova
 * Jonatn
