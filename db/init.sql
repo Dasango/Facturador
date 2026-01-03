@@ -57,6 +57,19 @@ CREATE TABLE facturas (
     CONSTRAINT fk_factura_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
 
+-- Crear tabla Detalles Factura
+CREATE TABLE detalles_factura (
+    id BIGSERIAL PRIMARY KEY,
+    cantidad INTEGER,
+    precio_unitario DOUBLE PRECISION,
+    descuento DOUBLE PRECISION,
+    subtotal DOUBLE PRECISION,
+    factura_id BIGINT NOT NULL,
+    producto_id BIGINT NOT NULL,
+    CONSTRAINT fk_detalle_factura FOREIGN KEY (factura_id) REFERENCES facturas(id),
+    CONSTRAINT fk_detalle_producto FOREIGN KEY (producto_id) REFERENCES productos(id)
+);
+
 -- INSERTS DE PRUEBA (Passwords en texto plano)
 
 -- Usuario 1: Admin (ID 1)
@@ -80,12 +93,28 @@ INSERT INTO productos (codigo_principal, nombre, valor_unitario, iva, usuario_id
 ('ITEM-A', 'Zapatos Deportivos', 85.00, '15%', 2),
 ('ITEM-B', 'Camiseta Polo', 25.00, '15%', 2);
 
--- FACTURAS - Usuario 1
+-- FACTURAS y DETALLES - Usuario 1
+-- Factura 1 (Autorizada)
 INSERT INTO facturas (numero_comprobante, fecha_emision, cliente_nombre, cliente_identificacion, total, estado, clave_acceso, usuario_id, fecha_autorizacion) VALUES
-('001-001-000000001', '2025-12-01', 'Cliente A', '1700000001', 115.00, 'AUTORIZADO', '1234567890123456789012345678901234567890123456789', 1, NOW()),
-('001-001-000000002', '2025-12-05', 'Cliente B', '1700000002', 57.50, 'ENVIADA', '9876543210123456789012345678901234567890123456789', 1, NULL),
-('001-001-000000003', '2025-12-10', 'Cliente C', '1700000003', 200.00, 'RECHAZADA', '1111111111111111111111111111111111111111111111111', 1, NULL);
+('001-001-000000001', '2025-12-01', 'Cliente A', '1700000001', 115.00, 'AUTORIZADO', '1234567890123456789012345678901234567890123456789', 1, NOW());
+INSERT INTO detalles_factura (cantidad, precio_unitario, descuento, subtotal, factura_id, producto_id) VALUES
+(1, 100.00, 0.00, 100.00, 1, 1); -- 1x Consultoria (ID 1)
 
--- FACTURAS - Usuario 2
+-- Factura 2 (Enviada)
+INSERT INTO facturas (numero_comprobante, fecha_emision, cliente_nombre, cliente_identificacion, total, estado, clave_acceso, usuario_id, fecha_autorizacion) VALUES
+('001-001-000000002', '2025-12-05', 'Cliente B', '1700000002', 57.50, 'ENVIADA', '9876543210123456789012345678901234567890123456789', 1, NULL);
+INSERT INTO detalles_factura (cantidad, precio_unitario, descuento, subtotal, factura_id, producto_id) VALUES
+(1, 50.00, 0.00, 50.00, 2, 2); -- 1x Mantenimiento (ID 2)
+
+-- Factura 3 (Rechazada / User 1)
+INSERT INTO facturas (numero_comprobante, fecha_emision, cliente_nombre, cliente_identificacion, total, estado, clave_acceso, usuario_id, fecha_autorizacion) VALUES
+('001-001-000000003', '2025-12-10', 'Cliente C', '1700000003', 200.00, 'RECHAZADA', '1111111111111111111111111111111111111111111111111', 1, NULL);
+INSERT INTO detalles_factura (cantidad, precio_unitario, descuento, subtotal, factura_id, producto_id) VALUES
+(2, 100.00, 0.00, 200.00, 3, 1); -- 2x Consultoria
+
+-- Factura 4 (Autorizada / User 2)
 INSERT INTO facturas (numero_comprobante, fecha_emision, cliente_nombre, cliente_identificacion, total, estado, clave_acceso, usuario_id, fecha_autorizacion) VALUES
 ('001-001-000000055', '2025-12-20', 'Comprador X', '1100000001', 97.75, 'AUTORIZADO', '2222222222222222222222222222222222222222222222222', 2, NOW());
+INSERT INTO detalles_factura (cantidad, precio_unitario, descuento, subtotal, factura_id, producto_id) VALUES
+(1, 85.00, 0.00, 85.00, 4, 4); -- 1x Zapatos (ID 4 - verify ID sequence!)
+-- Note: Product IDs are SERIAL. User 1 inserted 3 rows (ID 1,2,3). User 2 inserted 2 rows (ID 4,5).

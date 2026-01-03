@@ -1,181 +1,180 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil - Facto</title>
-    <!-- Main CSS -->
-    <link rel="stylesheet" href="/assets/css/main.css">
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Facto - Mi Perfil</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <!-- Assuming profile.css might not exist yet, keeping inline styles or existing styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Extracting styles implied by User's snippet classes if css file is missing */
+        .profile-card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 40px;
+        }
+        .profile-media-col {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .upload-box {
+            border: 2px dashed #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f8fafc;
+        }
+        .upload-box:hover {
+            border-color: #cbd5e1;
+            background: #f1f5f9;
+        }
+        .placeholder-icon {
+            font-size: 48px;
+            color: #cbd5e1;
+            margin-bottom: 10px;
+        }
+        .upload-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .btn-upload {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .form-grid {
+            display: grid;
+            gap: 20px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .form-actions-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .save-actions {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
 </head>
-
 <body class="dashboard-layout">
 
-    <!-- Sidebar Partial -->
     <div id="sidebar-container"></div>
 
     <div class="main-content">
-        <!-- Header Partial -->
         <div id="header-container"></div>
 
-        <div class="content-wrapper" style="padding: 20px; overflow-y: auto;">
+        <div class="page-container" style="padding: 20px;">
+            <div class="profile-card">
+                <form id="profileForm">
+                    <div class="profile-grid">
 
-            <div class="profile-container" style="max-width: 800px; margin: 0 auto; padding: 20px 0;">
+                        <div class="profile-media-col">
+                            <!-- Foto Perfil (User kept it in snippet) -->
+                            <div class="upload-box profile-upload">
+                                <div class="placeholder-icon">👤</div>
+                                <button type="button" class="btn-upload">📷 Cargar foto de perfil</button>
+                            </div>
 
-                <!-- Page Title -->
-                <div style="margin-bottom: 40px;">
-                    <h1 class="text-h1" style="margin-bottom: 10px; font-size: 28px;">Configuración de Perfil</h1>
-                    <p class="text-body" style="color: #64748b;">Administra tu cuenta y firma electrónica.</p>
-                </div>
-
-                <!-- Main Grid -->
-                <div class="profile-grid" style="display: grid; gap: 30px;">
-
-                    <!-- SECTION 1: LOGO & BASIC INFO -->
-                    <div class="card"
-                        style="padding: 30px; background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                        <h2 class="text-h2"
-                            style="margin-bottom: 20px; font-size: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
-                            Información Comercial</h2>
-
-                        <div style="display: flex; gap: 30px; align-items: start; flex-wrap: wrap;">
-                            <!-- Logo Upload -->
-                            <div style="text-align: center; min-width: 120px;">
-                                <div id="logoPreview" style="
-                                    width: 120px; 
-                                    height: 120px; 
-                                    border-radius: 12px; 
-                                    background: #f8fafc; 
-                                    display: flex; 
-                                    align-items: center; 
-                                    justify-content: center;
-                                    margin-bottom: 15px; 
-                                    border: 2px dashed #cbd5e1;
-                                    overflow: hidden;
-                                ">
-                                    <span style="font-size: 40px; color: #94a3b8;">🏢</span>
+                            <!-- Logo Upload (Functional) -->
+                            <div class="upload-box logo-upload" onclick="document.getElementById('logoInput').click()">
+                                <div id="logoPreviewWrapper">
+                                    <div class="upload-icon">⬆️</div>
+                                    <span class="text-body" style="font-size: 14px; font-weight: 500;">Cargar logo</span>
                                 </div>
-                                <button class="btn btn-secondary btn-sm"
-                                    onclick="document.getElementById('logoInput').click()" style="width: 100%;">
-                                    Cambiar Logo
-                                </button>
                                 <input type="file" id="logoInput" hidden accept="image/*">
                             </div>
+                        </div>
 
-                            <!-- Fields -->
-                            <div style="flex: 1; display: grid; gap: 20px; min-width: 250px;">
+                        <div class="profile-form-col form-grid">
+                            <div class="form-group">
+                                <label class="form-label">RAZÓN SOCIAL / NOMBRES:</label>
+                                <input type="text" id="razonSocial" class="input-control" value="Juan Perez">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">DESCRIPCIÓN (Nombre Comercial):</label>
+                                <input type="text" id="nombres" class="input-control" placeholder="Ej: Facto Store">
+                            </div>
+
+                            <div class="form-row">
                                 <div class="form-group">
-                                    <label class="form-label"
-                                        style="font-weight: 500; font-size: 14px; margin-bottom: 6px; display: block;">Razón
-                                        Social</label>
-                                    <input type="text" id="razonSocial" class="input-control"
-                                        placeholder="Ej: Mi Empresa S.A."
-                                        style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px;">
+                                    <label class="form-label">RUC:</label>
+                                    <input type="text" id="ruc" class="input-control">
                                 </div>
-
-                                <div style="display: flex; gap: 20px;">
-                                    <div class="form-group" style="flex: 1;">
-                                        <label class="form-label"
-                                            style="font-weight: 500; font-size: 14px; margin-bottom: 6px; display: block;">RUC</label>
-                                        <input type="text" id="ruc" class="input-control" placeholder="17900xxxxx001"
-                                            style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px;">
-                                    </div>
-                                    <div class="form-group" style="flex: 1;">
-                                        <label class="form-label"
-                                            style="font-weight: 500; font-size: 14px; margin-bottom: 6px; display: block;">Nombre
-                                            Comercial</label>
-                                        <input type="text" id="nombres" class="input-control"
-                                            placeholder="Ej: Facto Store"
-                                            style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px;">
-                                    </div>
+                                <div class="form-group">
+                                    <label class="form-label">CÉDULA:</label>
+                                    <input type="text" class="input-control" disabled placeholder="No editable">
                                 </div>
+                            </div>
 
-                                <button id="btnSaveInfo" class="btn btn-primary"
-                                    style="align-self: flex-start; justify-self: start; background: black; color: white; padding: 10px 24px; border-radius: 8px; border: none; cursor: pointer;">Guardar
-                                    Cambios</button>
+                            <div class="form-group">
+                                <label class="form-label">PLAN:</label>
+                                <input type="text" class="input-control" value="Básico" disabled style="background-color: #f9f9f9;">
                             </div>
                         </div>
                     </div>
 
-                    <!-- SECTION 2: ELECTRONIC SIGNATURE -->
-                    <div class="card"
-                        style="padding: 30px; background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                        <div
-                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
-                            <h2 class="text-h2" style="font-size: 18px; margin: 0;">Firma Electrónica (.p12)</h2>
-                            <span id="p12Status" class="status-badge warning" style="
-                                padding: 4px 12px; 
-                                border-radius: 20px; 
-                                font-size: 12px; 
-                                font-weight: 600;
-                                background: #fffbeb;
-                                color: #d97706;
-                            ">No configurada</span>
+                    <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+
+                    <div class="form-actions-wrapper">
+                        <!-- P12 Upload Trigger -->
+                        <button type="button" class="btn btn-primary" style="background-color: #2c3e50; display: flex; align-items: center; gap: 8px;" onclick="document.getElementById('p12Input').click()">
+                            <span>↑</span> Cargar firma electrónica <span>📄</span>
+                        </button>
+                        <input type="file" id="p12Input" hidden accept=".p12,.pfx">
+                        <!-- Helper for P12 Password (required by backend) - Making it visible if file selected via JS dialog or Modal? 
+                             User snippet didn't show password field. I'll add a hidden/modal trigger logic later or just a simple field next to button. 
+                             For now, adding a small input for password next to it as fallback. -->
+                        <div id="p12Extras" style="display:none; margin-left:10px;">
+                             <input type="password" id="p12PasswordHelper" placeholder="Contraseña Firma" class="input-control" style="width: 150px;">
+                             <button type="button" id="btnUploadP12" class="btn btn-sm btn-secondary">Subir</button>
+                             <span id="fileNameDisplay" style="font-size:12px; margin-left:5px;"></span>
                         </div>
 
-                        <p class="text-body"
-                            style="color: #64748b; margin-bottom: 20px; font-size: 14px; line-height: 1.5;">
-                            Carga tu archivo <b>.p12</b> o <b>.pfx</b> para habilitar la firma de facturas. Tu archivo
-                            se almacenará de forma segura.
-                        </p>
-
-                        <div
-                            style="display: flex; gap: 15px; align-items: center; background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px dashed #cbd5e1; margin-bottom: 20px;">
-                            <div style="flex: 1;">
-                                <div style="display: flex; align-items: center; gap: 15px;">
-                                    <span style="font-size: 28px;">🔐</span>
-                                    <div>
-                                        <span id="fileNameDisplay"
-                                            style="font-weight: 600; display: block; color: #334155; margin-bottom: 2px;">Seleccionar
-                                            archivo...</span>
-                                        <span style="font-size: 12px; color: #94a3b8;">Tamaño máx: 5MB</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <button class="btn btn-secondary" onclick="document.getElementById('p12Input').click()"
-                                style="padding: 8px 16px; border: 1px solid #cbd5e1; border-radius: 6px; background: white; cursor: pointer;">
-                                Explorar
-                            </button>
-                            <input type="file" id="p12Input" hidden accept=".p12,.pfx">
-                        </div>
-
-                        <div style="display: flex; gap: 15px; align-items: flex-end;">
-                            <div class="form-group" style="flex: 1;">
-                                <label class="form-label"
-                                    style="font-weight: 500; font-size: 14px; margin-bottom: 6px; display: block;">Contraseña
-                                    del archivo</label>
-                                <input type="password" id="p12PasswordHelper" class="input-control"
-                                    placeholder="••••••••"
-                                    style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px;">
-                            </div>
-                            <button id="btnUploadP12" class="btn btn-primary" disabled style="
-                                background: black; 
-                                color: white; 
-                                padding: 10px 24px; 
-                                border-radius: 8px; 
-                                border: none; 
-                                cursor: pointer; 
-                                height: 42px;
-                                opacity: 0.5;
-                            ">
-                                Subir Firma
-                            </button>
+                        <div class="save-actions">
+                            <button type="button" id="btnSaveInfo" class="btn btn-primary">GUARDAR</button>
+                            <button type="button" class="btn btn-secondary">CANCELAR</button>
                         </div>
                     </div>
-
-                </div>
+                </form>
             </div>
-
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="/assets/js/common.js"></script>
-    <script src="/assets/js/profile.js"></script>
+    <script src="../assets/js/common.js"></script>
+    <script src="../assets/js/profile.js"></script>
+    <script>
+        // Simple glue code for P12 visibility
+        document.getElementById('p12Input').addEventListener('change', function() {
+            if(this.files[0]) {
+                document.getElementById('p12Extras').style.display = 'inline-flex';
+                document.getElementById('p12Extras').style.alignItems = 'center';
+                document.getElementById('p12Extras').style.gap = '5px';
+                document.getElementById('fileNameDisplay').textContent = this.files[0].name;
+            }
+        });
+    </script>
 </body>
-
 </html>
