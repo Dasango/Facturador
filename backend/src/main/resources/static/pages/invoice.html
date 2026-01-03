@@ -31,24 +31,7 @@
 
                     <form id="invoiceForm" class="invoice-card" style="box-shadow: none; padding: 0;">
 
-                        <!-- Configuración de Firma (Temporal para Pruebas) -->
-                        <div class="invoice-section"
-                            style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px dashed #cbd5e1;">
-                            <h4 class="text-body" style="font-weight: 600; margin-bottom: 10px;">Configuración de
-                                Firma (Pruebas)</h4>
-                            <div class="invoice-top-grid">
-                                <div class="form-group">
-                                    <label class="form-label">Ruta Archivo .p12:</label>
-                                    <input type="text" id="pathP12" class="input-control"
-                                        placeholder="C:\Firma\firma.p12" value="C:\Firma\firma_prueba.p12">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Contraseña .p12:</label>
-                                    <input type="password" id="claveP12" class="input-control" placeholder="****"
-                                        value="Clave123">
-                                </div>
-                            </div>
-                        </div>
+                        <!-- Configuración de Firma eliminada de aquí (ahora en Perfil) -->
 
                         <div class="invoice-top-grid">
 
@@ -190,7 +173,7 @@
                         </div>
 
                         <div class="invoice-footer-actions">
-                            <button type="submit" class="btn btn-primary btn-icon">
+                            <button type="button" id="btnOpenSignModal" class="btn btn-primary btn-icon">
                                 <span>🚀</span> Firmar y Enviar
                             </button>
                         </div>
@@ -202,6 +185,27 @@
         </div>
     </div>
 
+    <!-- Signing Modal -->
+    <div id="signModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div
+            style="background: white; padding: 30px; border-radius: 12px; width: 400px; max-width: 90%; text-align: center;">
+            <h3 style="margin-bottom: 15px;">Confirmar Emisión</h3>
+            <p style="margin-bottom: 20px; color: #666;">Ingrese la contraseña de su firma electrónica para autorizar la
+                emisión.</p>
+
+            <input type="password" id="modalClaveP12" class="input-control" placeholder="Contraseña Firma Electrónica"
+                style="margin-bottom: 20px;">
+
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button type="button" class="btn btn-secondary"
+                    onclick="document.getElementById('signModal').style.display='none'">Cancelar</button>
+                <button type="button" id="btnConfirmSign" class="btn btn-primary">Confirmar y Emitir</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/common.js"></script>
     <script src="../assets/js/invoice.js"></script>
 </body>
 

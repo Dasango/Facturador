@@ -1,21 +1,18 @@
 services:
-  db_u:
-    # Nombre de tu servicio
-    image: mysql:8.0
-    container_name: mysql_universidad
+  db_postgres:
+    image: postgres:15
+    container_name: postgres_universidad
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: universidad_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: universidad_db
     ports:
-      - "3307:3306"
+      - "5433:5432"
     volumes:
-      # Mapeamos script de la carpeta local a la carpeta de auto-ejecución de Docker
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-      # Esto guarda los datos en PC para que no se borren al apagar Docker
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
-  mysql_data:
-    
-    # Ejecutar: docker-compose up -d
+  postgres_data:
+# para iniciar el docker-compose: docker-compose up -d

@@ -13,7 +13,8 @@ public class WebConfig implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {
         // Mapeamos las URLs bonitas a los archivos físicos
         registry.addViewController("/").setViewName("forward:/index.html");
-        registry.addViewController("/login").setViewName("redirect:/");
+        registry.addViewController("/login").setViewName("forward:/index.html");
+        registry.addViewController("/home").setViewName("forward:/pages/home.html");
         registry.addViewController("/signup").setViewName("forward:/pages/signup.html");
         registry.addViewController("/products").setViewName("forward:/pages/products.html");
         registry.addViewController("/profile").setViewName("forward:/pages/profile.html");

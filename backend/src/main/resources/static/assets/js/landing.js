@@ -76,7 +76,7 @@ async function handleLogin(e) {
             // Success: clear custom validity and redirect
             userInput.setCustomValidity('');
             passwordInput.setCustomValidity('');
-            window.location.href = '/profile'; // Clean URL
+            window.location.href = '/home'; // Clean URL
         } else {
             // Failure: Show native alert
             console.warn('Login failed:', data.message);

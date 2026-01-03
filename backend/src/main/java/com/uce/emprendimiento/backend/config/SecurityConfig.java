@@ -35,6 +35,7 @@ public class SecurityConfig {
                                 "/index.html",
                                 "/login",
                                 "/signup",
+                                "/pages/signup.html", // Permitir acceso al recurso estático forwarded
                                 "/assets/**", // Tus estilos e imágenes
                                 "/partials/**", // Tus fragmentos HTML
                                 "/api/auth/**", // Endpoints de autenticación
@@ -86,7 +87,8 @@ public class SecurityConfig {
     }
 
     @Bean
+    @SuppressWarnings("deprecation")
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return org.springframework.security.crypto.password.NoOpPasswordEncoder.getInstance();
     }
 }

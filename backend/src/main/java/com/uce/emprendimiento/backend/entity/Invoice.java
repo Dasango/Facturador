@@ -30,7 +30,20 @@ public class Invoice {
     private String clienteIdentificacion;
 
     private Double total;
-    private String estado;
+    private String estado; // GENERADA, FIRMADA, ENVIADA, AUTORIZADA, RECHAZADA
+
+    // --- Campos SRI ---
+    @Column(name = "clave_acceso", length = 49, unique = true)
+    private String claveAcceso;
+
+    @Column(name = "xml_content", columnDefinition = "TEXT")
+    private String xmlContent;
+
+    @Column(name = "mensaje_sri", columnDefinition = "TEXT")
+    private String mensajeSri; // Para guardar errores o confirmaciones
+
+    @Column(name = "fecha_autorizacion")
+    private java.time.LocalDateTime fechaAutorizacion;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)

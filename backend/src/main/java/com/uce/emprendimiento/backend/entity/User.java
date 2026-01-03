@@ -33,6 +33,22 @@ public class User {
     @Column(nullable = false)
     private String contrasena;
 
+    // --- Campos SRI ---
+    @Column(length = 13, unique = true)
+    private String ruc;
+
+    @Column(length = 255)
+    private String razonSocial;
+
+    @Column(name = "firma_path")
+    private String firmaPath; // Ruta absoluta al archivo .p12
+
+    @Column(name = "firma_password")
+    private String firmaPassword; // Contraseña de la firma (si el usuario la guarda)
+
+    @Column(name = "logo_path")
+    private String logoPath; // Ruta absoluta al archivo del logo
+
     @Column(name = "fecha_registro", updatable = false)
     private LocalDateTime fechaRegistro;
 
