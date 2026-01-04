@@ -1,5 +1,7 @@
 package com.uce.emprendimiento.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties; // <--- Importante
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,12 +25,14 @@ public class InvoiceDetail {
 
     private Double descuento;
 
-    private Double subtotal; // (cantidad * precio) - descuento
+    private Double subtotal;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "factura_id", nullable = false)
+    @JsonIgnore
     private Invoice factura;
 
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "producto_id", nullable = false)
     private Product producto;

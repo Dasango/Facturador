@@ -2,7 +2,11 @@ package com.uce.emprendimiento.backend.service;
 
 import com.uce.emprendimiento.backend.entity.Invoice;
 import java.util.List;
+import java.util.Optional;
 
 public interface InvoiceService {
-    List<Invoice> getInvoicesByUser(String username);
+    // Cambiamos String username -> Long userId
+    List<Invoice> getInvoicesByUserId(Long userId);
+
+    Optional<Invoice> getInvoiceByIdAndUserId(Long id, Long userId);
 }

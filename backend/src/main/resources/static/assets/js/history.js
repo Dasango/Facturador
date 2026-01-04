@@ -43,12 +43,18 @@ document.addEventListener('DOMContentLoaded', () => {
         tableBody.innerHTML = ''; // Limpiar loader
 
         data.forEach(item => {
-            // Definir clase del badge según estado
+            // 1. Definir clase del badge según estado
             let badgeClass = '';
-            if (item.estado === 'Autorizado') badgeClass = 'status-authorized';
-            else if (item.estado === 'Pendiente') badgeClass = 'status-pending';
+            if (item.estado === 'AUTORIZADO') badgeClass = 'status-authorized'; // Ojo: asegurate si viene en Mayusculas o Minusculas desde el back
+            else if (item.estado === 'PENDIENTE') badgeClass = 'status-pending';
             else badgeClass = 'status-rejected';
 
+            // 2. Crear la URL dinámica usando el ID del item actual
+            // Esto generará algo como: /api/invoices/15/ride
+            const rideUrl = `/api/invoices/${item.id}/ride`;
+
+            // 3. Crear el HTML
+            // Agregamos el onclick="window.open(...)" a los botones
             const row = `
                 <tr>
                     <td>${formatDate(item.fechaEmision)}</td>
@@ -59,8 +65,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td style="font-weight:600;">$${item.total.toFixed(2)}</td>
                     <td><span class="status-badge ${badgeClass}">${item.estado}</span></td>
                     <td>
-                        <button class="action-btn" title="Ver">👁️</button>
-                        <button class="action-btn" title="Descargar">⬇️</button>
+                        <button class="action-btn" title="Ver" onclick="window.open('${rideUrl}', '_blank')">
+                            👁️
+                        </button>
+
+                        <button class="action-btn" title="Descargar" onclick="window.open('${rideUrl}', '_blank')">
+                            ⬇️
+                        </button>
                     </td>
                 </tr>
             `;
@@ -73,9 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateStats(data) {
         // Calcular contadores simples
-        const authorized = data.filter(i => i.estado === 'Autorizado').length;
-        const pending = data.filter(i => i.estado === 'Pendiente').length;
-        const rejected = data.filter(i => i.estado === 'Rechazado').length;
+        const authorized = data.filter(i => i.estado === 'AUTORIZADO').length;
+        const pending = data.filter(i => i.estado === 'PENDIENTE').length;
+        const rejected = data.filter(i => i.estado === 'RECHAZADO').length;
 
         // Sumar total (reduce)
         const totalVal = data.reduce((sum, item) => sum + item.total, 0);
