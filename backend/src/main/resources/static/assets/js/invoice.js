@@ -1,66 +1,91 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     /* ==========================================================================
-       INITIALIZATION & HELPERS
+       INITIALIZATION & PARTIALS
        ========================================================================== */
     const loadPartial = (elementId, path) => {
         fetch(path)
-            .then(response => {
-                if (!response.ok) throw new Error('Error loading partial');
-                return response.text();
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to load partial ' + path);
+                return res.text();
             })
             .then(html => {
-                document.getElementById(elementId).innerHTML = html;
-                if (elementId === 'sidebar-container') {
-                    // Highlight logic if needed
-                }
+                const el = document.getElementById(elementId);
+                if (el) el.innerHTML = html;
             })
-            .catch(error => console.error('Error:', error));
+            .catch(err => console.error(err));
     };
 
     loadPartial('sidebar-container', '/partials/sidebar.html');
     loadPartial('header-container', '/partials/header.html');
 
+    // Load Company Info from LocalStorage or Backend (Mock for now)
+    const storedUser = JSON.parse(localStorage.getItem('facto_user'));
+    if (storedUser) {
+        document.getElementById('companyName').textContent = storedUser.razonSocial || storedUser.nombres + ' ' + storedUser.apellidos;
+        document.getElementById('companyRuc').textContent = 'RUC: ' + (storedUser.ruc || '9999999999999');
+        if (storedUser.logoPath && !storedUser.logoPath.includes('pngtree')) {
+             // If absolute path, might not load due to security. Using mock URL if recognized.
+             if(storedUser.logoPath.startsWith('http')) {
+                 document.getElementById('companyLogo').innerHTML = `<img src="${storedUser.logoPath}" style="width:100%; height:100%; object-fit:contain;">`;
+             }
+        }
+    }
+
     /* ==========================================================================
-       TABLE LOGIC & CALCULATIONS
+       DYNAMIC LINES: Details, Payments, Info
        ========================================================================== */
-    const tableBody = document.querySelector('#detallesTable tbody');
+    
+    // --- DETAILS ---
+    const detallesTableBody = document.querySelector('#detallesTable tbody');
     const addRowBtn = document.getElementById('addRowBtn');
 
-    // Add Row
     if (addRowBtn) {
         addRowBtn.addEventListener('click', () => {
             const row = document.createElement('tr');
             row.className = 'detalle-row';
             row.innerHTML = `
-                <td><input type="text" class="input-control sm-input codigo" value="NUEVO"></td>
-                <td><input type="text" class="input-control sm-input descripcion" value="Nuevo Producto"></td>
-                <td><input type="number" class="input-control sm-input cantidad" value="1" min="1"></td>
-                <td><input type="number" class="input-control sm-input precio" value="0.00" step="0.01"></td>
-                <td><input type="number" class="input-control sm-input descuento" value="0.00" step="0.01"></td>
-                <td class="total-linea">0.00</td>
-                <td><button type="button" class="btn-icon danger remove-row">🗑</button></td>
+                <td><input type="text" class="codigo" value="NEW"></td>
+                <td><input type="text" class="descripcion" value="Nuevo Item"></td>
+                <td><input type="number" class="cantidad" value="1" min="1"></td>
+                <td><input type="number" class="precio" value="0.00" step="0.01"></td>
+                <td><input type="number" class="descuento" value="0.00" step="0.01"></td>
+                <td class="total-linea" style="text-align: right; font-weight: 600;">0.00</td>
+                <td><button type="button" class="btn-icon danger remove-row">×</button></td>
             `;
-            tableBody.appendChild(row);
+            detallesTableBody.appendChild(row);
             attachRowEvents(row);
-            calculateTotals();
         });
     }
 
-    // Attach events to existing rows
-    document.querySelectorAll('.detalle-row').forEach(attachRowEvents);
+    // --- ADDITIONAL INFO ---
+    const infoContainer = document.getElementById('infoAdicionalContainer');
+    const addInfoBtn = document.getElementById('addInfoBtn');
 
+    if (addInfoBtn) {
+        addInfoBtn.addEventListener('click', () => {
+            const di = document.createElement('div');
+            di.className = 'form-grid-2 info-row';
+            di.style.marginBottom = '10px';
+            di.innerHTML = `
+                <input type="text" class="input-control info-nombre" placeholder="Nombre">
+                <input type="text" class="input-control info-valor" placeholder="Valor">
+            `;
+            infoContainer.appendChild(di);
+        });
+    }
+
+    /* ==========================================================================
+       CALCULATIONS
+       ========================================================================== */
     function attachRowEvents(row) {
-        // Remove button
         row.querySelector('.remove-row').addEventListener('click', () => {
             row.remove();
             calculateTotals();
         });
-
-        // Inputs change
         const inputs = row.querySelectorAll('input');
-        inputs.forEach(input => {
-            input.addEventListener('input', () => {
+        inputs.forEach(inp => {
+            inp.addEventListener('input', () => {
                 calculateLineTotal(row);
                 calculateTotals();
             });
@@ -71,171 +96,174 @@ document.addEventListener('DOMContentLoaded', () => {
         const qty = parseFloat(row.querySelector('.cantidad').value) || 0;
         const price = parseFloat(row.querySelector('.precio').value) || 0;
         const discount = parseFloat(row.querySelector('.descuento').value) || 0;
-
         let total = (qty * price) - discount;
-        if (total < 0) total = 0;
-
+        if(total < 0) total = 0;
         row.querySelector('.total-linea').textContent = total.toFixed(2);
     }
 
     function calculateTotals() {
         let subtotal = 0;
-        document.querySelectorAll('.detalle-row').forEach(row => {
-            const lineTotal = parseFloat(row.querySelector('.total-linea').textContent) || 0;
-            subtotal += lineTotal;
+        document.querySelectorAll('#detallesTable .detalle-row').forEach(row => {
+            subtotal += parseFloat(row.querySelector('.total-linea').textContent) || 0;
         });
 
-        const iva = subtotal * 0.15; // 15% fixed for now
+        // 15% IVA Mock Logic
+        // In real app, check product tax code.
+        const base12 = subtotal; 
+        const base0 = 0; 
+        const iva = base12 * 0.15;
         const total = subtotal + iva;
 
-        document.getElementById('subtotalDisplay').textContent = subtotal.toFixed(2);
-        document.getElementById('ivaDisplay').textContent = iva.toFixed(2);
-        document.getElementById('totalDisplay').textContent = total.toFixed(2);
+        if(document.getElementById('subtotal15Display')) document.getElementById('subtotal15Display').textContent = base12.toFixed(2);
+        if(document.getElementById('subtotal0Display')) document.getElementById('subtotal0Display').textContent = base0.toFixed(2);
+        if(document.getElementById('ivaDisplay')) document.getElementById('ivaDisplay').textContent = iva.toFixed(2);
+        if(document.getElementById('totalDisplay')) document.getElementById('totalDisplay').textContent = total.toFixed(2);
+
+        // Update Payment Total
+        const payRow = document.querySelector('#pagosTable .totalPago');
+        if(payRow) payRow.value = total.toFixed(2);
     }
 
+    // Attach to initial rows
+    document.querySelectorAll('#detallesTable .detalle-row').forEach(attachRowEvents);
+    calculateTotals();
+
+
     /* ==========================================================================
-       SUBMIT & API INTEGRATION (VIA POPUP)
+       SIGN & EMIT
        ========================================================================== */
     const signModal = document.getElementById('signModal');
     const btnOpenSignModal = document.getElementById('btnOpenSignModal');
     const btnConfirmSign = document.getElementById('btnConfirmSign');
     const modalClaveP12 = document.getElementById('modalClaveP12');
 
-    // Open Modal
-    if (btnOpenSignModal) {
+    if(btnOpenSignModal) {
         btnOpenSignModal.addEventListener('click', (e) => {
             e.preventDefault();
-            // Basic Validation before opening modal
-            if (document.querySelectorAll('.detalle-row').length === 0) {
-                alert('Debe agregar al menos un producto.');
-                return;
-            }
             signModal.style.display = 'flex';
         });
     }
 
-    // Confirm Sign
-    if (btnConfirmSign) {
+    if(btnConfirmSign) {
         btnConfirmSign.addEventListener('click', async () => {
-            const claveFirma = modalClaveP12.value;
-            if (!claveFirma) {
-                alert('Por favor ingrese la contraseña de su firma.');
-                return;
-            }
+             const clave = modalClaveP12.value;
+             // Validar clave
+             if(!clave) { alert('Ingrese contraseña'); return; }
 
-            // 1. Gather Data
-            const fechaEmisionRaw = document.getElementById('fechaEmision').value; // yyyy-mm-dd
-            // Format Date to dd/MM/yyyy
-            const [year, month, day] = fechaEmisionRaw.split('-');
-            const fechaEmisionFormatted = `${day}/${month}/${year}`;
+             const userId = storedUser ? storedUser.id : 1; 
 
-            // 2. Build JSON
-            const factura = {
-                id: "comprobante",
-                version: "1.0.0",
-                infoTributaria: {
-                    ambiente: "1", // Pruebas
-                    tipoEmision: "1", // Normal
-                    razonSocial: "EMPRESA DE PRUEBA",
-                    nombreComercial: document.getElementById('nombreComercial').value,
-                    ruc: "1790000000001", // Hardcoded issuer RUC for testing
-                    codDoc: "01", // Factura
-                    estab: document.getElementById('estab').value,
-                    ptoEmi: document.getElementById('ptoEmi').value,
-                    secuencial: "000000001", // TODO: Auto-increment or input
-                    dirMatriz: "Quito, Av. Amazonas"
-                },
-                infoFactura: {
-                    fechaEmision: fechaEmisionFormatted,
-                    dirEstablecimiento: "Quito, Av. Amazonas",
-                    obligadoContabilidad: "NO",
-                    tipoIdentificacionComprador: document.getElementById('tipoIdentificacionComprador').value,
-                    razonSocialComprador: document.getElementById('razonSocialComprador').value,
-                    identificacionComprador: document.getElementById('identificacionComprador').value,
-                    direccionComprador: document.getElementById('direccionComprador').value,
-                    totalSinImpuestos: parseFloat(document.getElementById('subtotalDisplay').textContent),
-                    totalDescuento: 0.00,
-                    propina: 0.00,
-                    importeTotal: parseFloat(document.getElementById('totalDisplay').textContent),
-                    moneda: "DOLAR",
-                    pagos: [{ formaPago: "01", total: parseFloat(document.getElementById('totalDisplay').textContent) }], // Efectivo default
-                    totalConImpuestos: [
-                        {
-                            codigo: "2", // IVA
-                            codigoPorcentaje: "4", // 15% (Adjust based on catalog)
-                            baseImponible: parseFloat(document.getElementById('subtotalDisplay').textContent),
-                            valor: parseFloat(document.getElementById('ivaDisplay').textContent)
-                        }
-                    ]
-                },
-                detalles: []
-            };
+             // Build JSON
+             const fechaRaw = document.getElementById('fechaEmision').value; // yyyy-mm-dd
+             const [y, m, d] = fechaRaw.split('-');
+             const fechaFmt = `${d}/${m}/${y}`;
 
-            // Gather Details
-            document.querySelectorAll('.detalle-row').forEach(row => {
-                const qty = parseFloat(row.querySelector('.cantidad').value);
-                const price = parseFloat(row.querySelector('.precio').value);
-                const discount = parseFloat(row.querySelector('.descuento').value);
-                const lineTotal = parseFloat(row.querySelector('.total-linea').textContent);
+             const totalSinImpuestos = parseFloat(document.getElementById('subtotal15Display').textContent) + parseFloat(document.getElementById('subtotal0Display').textContent);
+             const importeTotal = parseFloat(document.getElementById('totalDisplay').textContent);
+             
+             // Pagos
+             const pagosList = [];
+             document.querySelectorAll('#pagosTable tbody tr').forEach(tr => {
+                 pagosList.push({
+                     formaPago: tr.querySelector('.formaPago').value,
+                     total: parseFloat(tr.querySelector('.totalPago').value),
+                     plazo: parseFloat(tr.querySelector('.plazo').value) || 0,
+                     unidadTiempo: 'DIAS'
+                 });
+             });
 
-                factura.detalles.push({
-                    codigoPrincipal: row.querySelector('.codigo').value,
-                    descripcion: row.querySelector('.descripcion').value,
-                    cantidad: qty,
-                    precioUnitario: price,
-                    descuento: discount,
-                    precioTotalSinImpuesto: lineTotal,
-                    impuestos: [
-                        {
-                            codigo: "2", // IVA
-                            codigoPorcentaje: "4", // 15%
-                            tarifa: 15.00,
-                            baseImponible: lineTotal,
-                            valor: lineTotal * 0.15
-                        }
-                    ]
-                });
-            });
+             // Info Adicional
+             const infoAdicionalList = [];
+             document.querySelectorAll('.info-row').forEach(div => {
+                 const n = div.querySelector('.info-nombre').value;
+                 const v = div.querySelector('.info-valor').value;
+                 if(n && v) infoAdicionalList.push({ nombre: n, value: v });
+             });
 
-            // 3. Send API Request
+             // Detalles
+             const detallesList = [];
+             document.querySelectorAll('#detallesTable .detalle-row').forEach(row => {
+                 const lt = parseFloat(row.querySelector('.total-linea').textContent);
+                 detallesList.push({
+                     codigoPrincipal: row.querySelector('.codigo').value,
+                     descripcion: row.querySelector('.descripcion').value,
+                     cantidad: parseFloat(row.querySelector('.cantidad').value),
+                     precioUnitario: parseFloat(row.querySelector('.precio').value),
+                     descuento: parseFloat(row.querySelector('.descuento').value),
+                     precioTotalSinImpuesto: lt,
+                     impuestos: [{
+                         codigo: "2",
+                         codigoPorcentaje: "4", // 15%
+                         tarifa: 15,
+                         baseImponible: lt,
+                         valor: lt * 0.15
+                     }]
+                 });
+             });
+
+             const facturaPayload = {
+                 id: "comprobante",
+                 version: "1.0.0",
+                 infoTributaria: {
+                     ambiente: "1",
+                     tipoEmision: "1",
+                     razonSocial: document.getElementById('companyName').textContent,
+                     nombreComercial: document.getElementById('companyName').textContent, // Using same
+                     ruc: document.getElementById('companyRuc').textContent.replace('RUC: ','').trim(),
+                     codDoc: "01",
+                     estab: document.getElementById('estab').value,
+                     ptoEmi: document.getElementById('ptoEmi').value,
+                     secuencial: document.getElementById('secuencial').value || "000000001",
+                     dirMatriz: document.getElementById('companyAddress').textContent.replace('Dir: ','')
+                 },
+                 infoFactura: {
+                     fechaEmision: fechaFmt,
+                     dirEstablecimiento: document.getElementById('companyAddress').textContent.replace('Dir: ',''),
+                     obligadoContabilidad: "NO",
+                     tipoIdentificacionComprador: document.getElementById('tipoIdentificacionComprador').value,
+                     razonSocialComprador: document.getElementById('razonSocialComprador').value,
+                     identificacionComprador: document.getElementById('identificacionComprador').value,
+                     direccionComprador: document.getElementById('direccionComprador').value,
+                     totalSinImpuestos: totalSinImpuestos,
+                     totalDescuento: 0.00,
+                     propina: 0.00,
+                     importeTotal: importeTotal,
+                     moneda: "DOLAR",
+                     pagos: pagosList,
+                     totalConImpuestos: [{
+                         codigo: "2",
+                         codigoPorcentaje: "4",
+                         baseImponible: totalSinImpuestos,
+                         valor:  parseFloat(document.getElementById('ivaDisplay').textContent)
+                     }]
+                 },
+                 detalles: detallesList,
+                 infoAdicional: infoAdicionalList
+             };
+
+             // Send
             try {
+                btnConfirmSign.textContent = 'Enviando...';
                 btnConfirmSign.disabled = true;
-                btnConfirmSign.textContent = 'Procesando...';
 
-                // Usamos userId 1 hardcoded por ahora
-                const userId = 1;
-
-                const queryParams = new URLSearchParams({
-                    userId: userId,
-                    claveFirma: claveFirma
-                });
-
-                const response = await fetch(`/api/sri/emitir?${queryParams}`, {
+                const resp = await fetch(`/api/sri/emitir?userId=${userId}&claveFirma=${clave}`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(factura)
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(facturaPayload)
                 });
 
-                const result = await response.text();
-
-                if (response.ok) {
-                    alert('✅ Respuesta SRI: ' + result);
+                const txt = await resp.text();
+                if(resp.ok) {
+                    alert('✅ ' + txt);
                     signModal.style.display = 'none';
                 } else {
-                    throw new Error(result);
+                    alert('❌ ' + txt);
                 }
-
-            } catch (error) {
-                alert('❌ Error: ' + error.message);
+            } catch(e) {
+                alert('Connection Error');
             } finally {
+                btnConfirmSign.textContent = 'Confirmar Emisión';
                 btnConfirmSign.disabled = false;
-                btnConfirmSign.textContent = 'Confirmar y Emitir';
             }
         });
     }
-
-    // Initial calcs
-    calculateTotals();
 });

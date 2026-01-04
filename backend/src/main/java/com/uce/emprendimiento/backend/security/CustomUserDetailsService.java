@@ -18,19 +18,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Log setup
-        System.out.println("Attempting to load user: " + username);
-
-        // Try finding by correo first
-        // If not found, try by cedula
         User user = userRepository.findByCorreo(username)
                 .or(() -> userRepository.findByCedula(username))
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email or cedula: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getCorreo(), // Use unique identifier for session if needed, or keep correo
-                user.getContrasena(),
-                new ArrayList<>() // Authorities
-        );
+        return new CustomUserDetails(user);
     }
 }
