@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "usuarios")
 @Data
@@ -31,6 +33,7 @@ public class User {
     private String correo;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String contrasena;
 
     // --- Campos SRI ---
@@ -40,12 +43,15 @@ public class User {
     @Column(length = 255)
     private String razonSocial;
 
+    @JsonIgnore
     @Column(name = "firma_path")
     private String firmaPath; // Ruta absoluta al archivo .p12
 
+    @JsonIgnore
     @Column(name = "firma_password")
     private String firmaPassword; // Contraseña de la firma (si el usuario la guarda)
 
+    @JsonIgnore
     @Column(name = "logo_path")
     private String logoPath; // Ruta absoluta al archivo del logo
 

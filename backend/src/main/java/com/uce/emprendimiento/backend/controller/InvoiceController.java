@@ -49,6 +49,9 @@ public class InvoiceController {
             return ResponseEntity.status(401).build();
         }
 
+        // 2. Ocultamos la contraseña del usuario
+        userDetails.getUser().setContrasena(null);
+
         Long userId = userDetails.getUser().getId();
 
         // 2. Buscamos la factura ESPECÍFICA validando que pertenezca al usuario

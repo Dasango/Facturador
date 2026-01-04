@@ -60,12 +60,6 @@
     padding: 0 40px;
 }
 
-.menu-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
 .user-profile-widget {
     display: flex;
     align-items: center;

@@ -91,23 +91,7 @@
             </div>
         </div>
     </div>
-    <script src="../assets/js/common.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            loadCommonParts();
-
-            // Simular carga de usuario (replace with actual logic)
-            const user = JSON.parse(localStorage.getItem('user')) || { nombre: 'Usuario' };
-            document.getElementById('userNameHome').textContent = user.nombre || 'Usuario';
-        });
-
-        function loadCommonParts() {
-            // Reusing basic loader, should be centralized
-            const load = (id, path) => fetch(path).then(r => r.text()).then(h => document.getElementById(id).innerHTML = h);
-            load('sidebar-container', '/partials/sidebar.html');
-            load('header-container', '/partials/header.html');
-        }
-    </script>
+    <script src="../assets/js/modules/common.js"></script>
 </body>
 
 </html>

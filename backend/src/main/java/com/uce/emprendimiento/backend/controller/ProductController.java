@@ -1,14 +1,12 @@
 package com.uce.emprendimiento.backend.controller;
 
 import com.uce.emprendimiento.backend.entity.Product;
+import com.uce.emprendimiento.backend.security.CustomUserDetails;
 import com.uce.emprendimiento.backend.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,22 +18,66 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public ResponseEntity<List<Product>> getMyProducts() {
-        // En un entorno real con seguridad:
-        // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        // String username = auth.getName();
+    public ResponseEntity<List<Product>> getMyProducts(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null)
+            return ResponseEntity.status(401).build();
+        return ResponseEntity.ok(productService.getProductsByUserId(userDetails.getUser().getId()));
+    }
 
-        // Para este caso, usaremos 'root' por defecto si no hay auth o para simplificar
-        // la demo
-        // ya que el usuario mencionó "root user".
-        String username = "root";
+    // 1. Obtener uno solo
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getProduct(@PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null)
+            return ResponseEntity.status(401).build();
 
-        // Si hay autenticación real, usamos el nombre del usuario autenticado
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
-            username = auth.getName();
+        try {
+            Product product = productService.getProductByIdAndUser(id, userDetails.getUser().getId());
+            return ResponseEntity.ok(product);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
         }
+    }
 
-        return ResponseEntity.ok(productService.getProductsByUser(username));
+    // 2. Editar (PUT)
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id,
+            @RequestBody Product product,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null)
+            return ResponseEntity.status(401).build();
+
+        try {
+            Product updated = productService.updateProduct(id, product, userDetails.getUser().getId());
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            // Manejo básico de error (podría ser 403 Forbidden o 404 Not Found)
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    // 3. Eliminar (DELETE)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null)
+            return ResponseEntity.status(401).build();
+
+        try {
+            productService.deleteProduct(id, userDetails.getUser().getId());
+            return ResponseEntity.noContent().build(); // 204 No Content es el estándar para delete
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<Product> createProduct(@RequestBody Product product,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null)
+            return ResponseEntity.status(401).build();
+
+        Product newProduct = productService.createProduct(product, userDetails.getUser().getId());
+        return ResponseEntity.ok(newProduct);
     }
 }

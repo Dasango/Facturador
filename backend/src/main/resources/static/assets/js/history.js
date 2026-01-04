@@ -15,9 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
-    loadPartial('sidebar-container', '/partials/sidebar.html');
-    loadPartial('header-container', '/partials/header.html');
-
     // 2. FETCH Y RENDER DE DATOS
     const tableBody = document.getElementById('tableBody');
     const showingText = document.getElementById('showingText');

@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/pages/products.css">
+    <link rel="stylesheet" href="../assets/css/components/modals.css">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 </head>
@@ -29,18 +30,15 @@
 
                     <div class="search-card" style="margin-bottom: 40px; box-shadow: none; border: 1px solid #eee;">
                         <h5 class="card-subtitle">BUSCAR</h5>
-
                         <form class="search-form-grid">
                             <div class="form-group">
                                 <label class="form-label">CÓDIGO</label>
                                 <input type="text" class="input-control" placeholder="Ingrese código principal">
                             </div>
-
                             <div class="form-group">
                                 <label class="form-label">NOMBRE</label>
                                 <input type="text" class="input-control" placeholder="Ingrese nombre / descripción">
                             </div>
-
                             <div class="form-group button-container">
                                 <button type="button" class="btn btn-primary btn-black">
                                     🔍 Buscar
@@ -51,15 +49,13 @@
 
                     <div class="list-header">
                         <h3 class="text-body" style="font-weight: 800; text-transform: uppercase; font-size: 14px;">
-                            LISTA DE
-                            PRODUCTOS</h3>
+                            LISTA DE PRODUCTOS
+                        </h3>
                         <div class="list-actions">
-                            <button class="btn btn-primary btn-black btn-sm">
+                            <button class="btn btn-primary btn-black btn-sm" onclick="window.openCreateModal()">
                                 + Nuevo
                             </button>
-                            <button class="btn btn-secondary btn-sm btn-delete-all">
-                                🗑️ Eliminar todos
-                            </button>
+
                         </div>
                     </div>
 
@@ -96,7 +92,9 @@
         </div>
     </div>
 
-    <script src="../assets/js/common.js"></script>
+    <div id="modals-container"></div>
+
+    <script src="../assets/js/modules/common.js"></script>
     <script src="../assets/js/products.js"></script>
 </body>
 
