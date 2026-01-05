@@ -78,3 +78,27 @@ Deberían ver la siguiente pantalla:
 También pueden usar el script `start-app.sh` para levantar el entorno de desarrollo.
 
 Pero eso es muy épico asi que no lo usen.
+
+**Base de datos**
+
+Es necesario crear un archivo .env en la raiz de la carpeta backend y configurarla con: 
+
+DB_URL=url
+DB_USERNAME=usuario
+DB_PASSWORD=contraseña
+
+si les sale un error al correr puede ser por que spring no reconoce el .env, entonces hay
+agregar esta linea en launch.json 
+"envFile": "${workspaceFolder}/backend/.env"
+
+quedaría así: 
+{
+    "type": "java",
+    "name": "BackendApplication",
+    "request": "launch",
+    "mainClass": "com.uce.emprendimiento.backend.BackendApplication",
+    "projectName": "backend",
+    "envFile": "${workspaceFolder}/backend/.env"
+}
+
+
