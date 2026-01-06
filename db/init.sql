@@ -9,7 +9,6 @@ DROP TABLE IF EXISTS usuarios;
 -- 1. Tabla Usuarios
 CREATE TABLE usuarios (
     id BIGSERIAL PRIMARY KEY,
-    cedula VARCHAR(20) NOT NULL UNIQUE, -- Se asume mapeo aunque no este explicito en entity, es comun
     nombres VARCHAR(100) NOT NULL,
     apellidos VARCHAR(100) NOT NULL,
     correo VARCHAR(100) NOT NULL UNIQUE,
@@ -123,12 +122,12 @@ CREATE TABLE info_adicional_factura (
 
 -- USUARIOS
 -- User 1: Admin
-INSERT INTO usuarios (cedula, nombres, apellidos, correo, contrasena, ruc, razon_social, nombre_comercial, dir_matriz, codigo_establecimiento, codigo_punto_emision, obligado_contabilidad, fecha_registro, logo_path)
-VALUES ('1717171717', 'Juan', 'Perez', 'admin@facto.com', '1234', '1790000000001', 'JUAN PEREZ SA', 'COMERCIAL PEREZ', 'Av. Amazonas y Naciones Unidas', '001', '001', 'SI', NOW(), 'https://png.pngtree.com/png-vector/20221125/ourmid/pngtree-no-image-available-icon-flatvector-illustration-pic-design-profile-vector-png-image_40966566.jpg');
+INSERT INTO usuarios (nombres, apellidos, correo, contrasena, ruc, razon_social, nombre_comercial, dir_matriz, codigo_establecimiento, codigo_punto_emision, obligado_contabilidad, fecha_registro, logo_path)
+VALUES ('Juan', 'Perez', 'admin@facto.com', '1234', '1790000000001', 'JUAN PEREZ SA', 'COMERCIAL PEREZ', 'Av. Amazonas y Naciones Unidas', '001', '001', 'SI', NOW(), 'https://png.pngtree.com/png-vector/20221125/ourmid/pngtree-no-image-available-icon-flatvector-illustration-pic-design-profile-vector-png-image_40966566.jpg');
 
 -- User 2: Maria
-INSERT INTO usuarios (cedula, nombres, apellidos, correo, contrasena, ruc, razon_social, nombre_comercial, dir_matriz, codigo_establecimiento, codigo_punto_emision, obligado_contabilidad, fecha_registro, logo_path)
-VALUES ('1100110011', 'Maria', 'Gomez', 'maria@test.com', 'abcd', '1190000000001', 'MARIA GOMEZ LTDA', 'NOVEDADES MARIA', 'Calle Larga y Vistosa', '001', '002', 'NO', NOW(), 'https://png.pngtree.com/png-vector/20221125/ourmid/pngtree-no-image-available-icon-flatvector-illustration-pic-design-profile-vector-png-image_40966566.jpg');
+INSERT INTO usuarios (nombres, apellidos, correo, contrasena, ruc, razon_social, nombre_comercial, dir_matriz, codigo_establecimiento, codigo_punto_emision, obligado_contabilidad, fecha_registro, logo_path)
+VALUES ('Maria', 'Gomez', 'maria@test.com', 'abcd', '1190000000001', 'MARIA GOMEZ LTDA', 'NOVEDADES MARIA', 'Calle Larga y Vistosa', '001', '002', 'NO', NOW(), 'https://png.pngtree.com/png-vector/20221125/ourmid/pngtree-no-image-available-icon-flatvector-illustration-pic-design-profile-vector-png-image_40966566.jpg');
 
 -- PRODUCTOS (5 para cada usuario)
 -- User 1
