@@ -51,7 +51,6 @@ public class User {
     @Column(name = "firma_password")
     private String firmaPassword; // Contraseña de la firma (si el usuario la guarda)
 
-    @JsonIgnore
     @Column(name = "logo_path")
     private String logoPath; // Ruta absoluta al archivo del logo
 

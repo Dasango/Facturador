@@ -9,4 +9,6 @@ public interface InvoiceService {
     List<Invoice> getInvoicesByUserId(Long userId);
 
     Optional<Invoice> getInvoiceByIdAndUserId(Long id, Long userId);
+
+    Invoice crearFactura(Invoice factura, Long userId, String tipoEmision); // tipoEmision: "BORRADOR" o "ENVIAR"
 }

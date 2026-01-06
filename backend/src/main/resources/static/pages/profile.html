@@ -5,11 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facto - Mi Perfil</title>
-    <link rel="stylesheet" href="../assets/css/main.css">
-    <!-- Assuming profile.css might not exist yet, keeping inline styles or existing styles -->
+    <link rel="stylesheet" href="/assets/css/main.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
     <style>
-        /* Extracting styles implied by User's snippet classes if css file is missing */
         .profile-card {
             background: white;
             padding: 40px;
@@ -29,16 +28,23 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            align-items: center;
         }
 
         .upload-box {
             border: 2px dashed #e2e8f0;
             border-radius: 12px;
-            padding: 20px;
-            text-align: center;
+            width: 100%;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             cursor: pointer;
             transition: all 0.2s;
             background: #f8fafc;
+            overflow: hidden;
+            position: relative;
         }
 
         .upload-box:hover {
@@ -46,25 +52,11 @@
             background: #f1f5f9;
         }
 
-        .placeholder-icon {
-            font-size: 48px;
-            color: #cbd5e1;
-            margin-bottom: 10px;
-        }
-
-        .upload-icon {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .btn-upload {
-            background: white;
-            border: 1px solid #e2e8f0;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
+        .logo-preview-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 10px;
         }
 
         .form-grid {
@@ -78,15 +70,43 @@
             gap: 20px;
         }
 
-        .form-actions-wrapper {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .p12-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
         }
 
-        .save-actions {
+        .p12-container {
             display: flex;
-            gap: 10px;
+            gap: 15px;
+            align-items: center;
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.missing {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-badge.success {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .btn-upload-p12 {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
         }
     </style>
 </head>
@@ -104,96 +124,108 @@
                     <div class="profile-grid">
 
                         <div class="profile-media-col">
-                            <!-- Foto Perfil (User kept it in snippet) -->
-                            <div class="upload-box profile-upload">
-                                <div class="placeholder-icon">👤</div>
-                                <button type="button" class="btn-upload">📷 Cargar foto de perfil</button>
-                            </div>
+                            <label class="form-label" style="align-self: flex-start;">LOGO DE EMPRESA</label>
 
-                            <!-- Logo Upload (Functional) -->
-                            <div class="upload-box logo-upload" onclick="document.getElementById('logoInput').click()">
-                                <div id="logoPreviewWrapper">
-                                    <div class="upload-icon">⬆️</div>
-                                    <span class="text-body" style="font-size: 14px; font-weight: 500;">Cargar
-                                        logo</span>
+                            <div class="upload-box" id="logoUploadArea" title="Click para cambiar logo">
+                                <img id="logoPreview" src="" alt="Logo" class="logo-preview-img" style="display: none;">
+
+                                <div id="logoPlaceholder">
+                                    <div style="font-size: 40px; margin-bottom: 10px;">🏢</div>
+                                    <span class="text-body" style="font-size: 12px; color: #666;">Click para
+                                        subir</span>
                                 </div>
-                                <input type="file" id="logoInput" hidden accept="image/*">
                             </div>
+                            <input type="file" id="logoInput" hidden accept="image/*">
+                            <p class="text-body" style="font-size: 11px; color: #999; text-align: center;">Recomendado:
+                                PNG o JPG transparente</p>
                         </div>
 
                         <div class="profile-form-col form-grid">
-                            <div class="form-group">
-                                <label class="form-label">RAZÓN SOCIAL / NOMBRES:</label>
-                                <input type="text" id="razonSocial" class="input-control" value="Juan Perez">
-                            </div>
 
-                            <div class="form-group">
-                                <label class="form-label">DESCRIPCIÓN (Nombre Comercial):</label>
-                                <input type="text" id="nombres" class="input-control" placeholder="Ej: Facto Store">
+                            <h3 class="text-h2"
+                                style="font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Datos
+                                Personales</h3>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">CÉDULA</label>
+                                    <input type="text" id="cedula" class="input-control" disabled
+                                        style="background-color: #f1f5f9;">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">CORREO</label>
+                                    <input type="email" id="correo" class="input-control" disabled
+                                        style="background-color: #f1f5f9;">
+                                </div>
                             </div>
 
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label class="form-label">RUC:</label>
-                                    <input type="text" id="ruc" class="input-control">
+                                    <label class="form-label">NOMBRES</label>
+                                    <input type="text" id="nombres" class="input-control">
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">CÉDULA:</label>
-                                    <input type="text" class="input-control" disabled placeholder="No editable">
+                                    <label class="form-label">APELLIDOS</label>
+                                    <input type="text" id="apellidos" class="input-control">
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="form-label">PLAN:</label>
-                                <input type="text" class="input-control" value="Básico" disabled
-                                    style="background-color: #f9f9f9;">
+                            <h3 class="text-h2"
+                                style="font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-top: 10px;">
+                                Datos Fiscales (Facturación)</h3>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">RUC</label>
+                                    <input type="text" id="ruc" class="input-control" placeholder="17900...">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">RAZÓN SOCIAL</label>
+                                    <input type="text" id="razonSocial" class="input-control"
+                                        placeholder="Nombre Comercial">
+                                </div>
+                            </div>
+
+                            <div style="text-align: right; margin-top: 10px;">
+                                <button type="button" id="btnSaveInfo" class="btn btn-primary">GUARDAR DATOS</button>
                             </div>
                         </div>
                     </div>
 
-                    <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
-
-                    <div class="form-actions-wrapper">
-                        <!-- P12 Upload Trigger -->
-                        <button type="button" class="btn btn-primary"
-                            style="background-color: #2c3e50; display: flex; align-items: center; gap: 8px;"
-                            onclick="document.getElementById('p12Input').click()">
-                            <span>↑</span> Cargar firma electrónica <span>📄</span>
-                        </button>
-                        <input type="file" id="p12Input" hidden accept=".p12,.pfx">
-                        <!-- Helper for P12 Password (required by backend) - Making it visible if file selected via JS dialog or Modal? 
-                             User snippet didn't show password field. I'll add a hidden/modal trigger logic later or just a simple field next to button. 
-                             For now, adding a small input for password next to it as fallback. -->
-                        <div id="p12Extras" style="display:none; margin-left:10px;">
-                            <input type="password" id="p12PasswordHelper" placeholder="Contraseña Firma"
-                                class="input-control" style="width: 150px;">
-                            <button type="button" id="btnUploadP12" class="btn btn-sm btn-secondary">Subir</button>
-                            <span id="fileNameDisplay" style="font-size:12px; margin-left:5px;"></span>
+                    <div class="p12-section">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3 class="text-h2" style="font-size: 18px; margin: 0;">Firma Electrónica (.p12)</h3>
+                            <span id="p12Status" class="status-badge missing">No configurada</span>
                         </div>
 
-                        <div class="save-actions">
-                            <button type="button" id="btnSaveInfo" class="btn btn-primary">GUARDAR</button>
-                            <button type="button" class="btn btn-secondary">CANCELAR</button>
+                        <div class="p12-container">
+                            <button type="button" class="btn btn-primary btn-upload-p12"
+                                onclick="document.getElementById('p12Input').click()">
+                                📂 Seleccionar Archivo
+                            </button>
+                            <input type="file" id="p12Input" hidden accept=".p12,.pfx">
+
+                            <div style="flex: 1;">
+                                <span id="fileNameDisplay" class="text-body"
+                                    style="font-size: 13px; color: #666;">Ningún archivo seleccionado</span>
+                            </div>
+
+                            <input type="password" id="p12Password" class="input-control"
+                                placeholder="Contraseña de la firma" style="width: 200px;" disabled>
+
+                            <button type="button" id="btnUploadP12" class="btn btn-secondary" disabled>Subir
+                                Firma</button>
                         </div>
                     </div>
+
                 </form>
             </div>
         </div>
     </div>
 
-    <script src="../assets/js/modules/common.js"></script>
-    <script src="../assets/js/profile.js"></script>
-    <script>
-        // Simple glue code for P12 visibility
-        document.getElementById('p12Input').addEventListener('change', function () {
-            if (this.files[0]) {
-                document.getElementById('p12Extras').style.display = 'inline-flex';
-                document.getElementById('p12Extras').style.alignItems = 'center';
-                document.getElementById('p12Extras').style.gap = '5px';
-                document.getElementById('fileNameDisplay').textContent = this.files[0].name;
-            }
-        });
-    </script>
+    <script src="/assets/js/modules/common.js"></script>
+    <script src="/assets/js/profile.js"></script>
 </body>
 
 </html>

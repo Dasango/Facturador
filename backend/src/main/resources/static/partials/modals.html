@@ -64,3 +64,40 @@
         </div>
     </div>
 </div>
+
+<div id="modalSelectProduct" class="modal-overlay">
+    <div class="modal-container" style="max-width: 600px; height: 80vh; display: flex; flex-direction: column;">
+        <div class="modal-header">
+            <h2 class="text-h2">Seleccionar Producto</h2>
+            <button class="modal-close-btn"
+                onclick="document.getElementById('modalSelectProduct').classList.remove('open')">&times;</button>
+        </div>
+
+        <div class="modal-body" style="flex: 1; overflow: hidden; display: flex; flex-direction: column;">
+            <div style="margin-bottom: 15px;">
+                <input type="text" id="searchProductInput" class="input-control"
+                    placeholder="🔍 Buscar por nombre o código...">
+            </div>
+
+            <div style="flex: 1; overflow-y: auto; border: 1px solid #eee; border-radius: 8px;">
+                <table class="table" style="width: 100%;">
+                    <thead style="position: sticky; top: 0; background: white; z-index: 1;">
+                        <tr>
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th style="text-align: center;">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalProductsBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-secondary"
+                onclick="document.getElementById('modalSelectProduct').classList.remove('open')">Cerrar</button>
+        </div>
+    </div>
+</div>

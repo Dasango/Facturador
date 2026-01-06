@@ -8,7 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -75,5 +78,21 @@ public class InvoiceController {
         response.put("issuer", userDetails.getUser());
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> crearFactura(@RequestBody Invoice invoice,
+            @RequestParam(defaultValue = "BORRADOR") String accion, // "BORRADOR" o "ENVIAR"
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null)
+            return ResponseEntity.status(401).build();
+
+        try {
+            Invoice nuevaFactura = invoiceService.crearFactura(invoice, userDetails.getUser().getId(), accion);
+            return ResponseEntity.ok(nuevaFactura);
+        } catch (Exception e) {
+            e.printStackTrace(); // Para que veas el error en consola
+            return ResponseEntity.badRequest().body("Error creando factura: " + e.getMessage());
+        }
     }
 }
