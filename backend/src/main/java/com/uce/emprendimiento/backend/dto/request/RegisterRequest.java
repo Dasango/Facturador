@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class RegisterRequest {
-    private String cedula;
+    private String ruc;
     private String nombres;
     private String apellidos;
     private String correo;

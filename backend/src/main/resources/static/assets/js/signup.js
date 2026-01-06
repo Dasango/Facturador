@@ -41,7 +41,7 @@ async function handleSignup(event) {
 
     // 3. Prepare Payload (Mapping fields to Backend DTO)
     const payload = {
-        cedula: data.ruc,
+        ruc: data.ruc,
         nombres: data.nombres,
         apellidos: data.apellidos,
         correo: data.email,

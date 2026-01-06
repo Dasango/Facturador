@@ -30,12 +30,12 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByCorreo(request.getCorreo())) {
             throw new IllegalArgumentException("El correo ya está registrado");
         }
-        if (userRepository.existsByCedula(request.getCedula())) {
-            throw new IllegalArgumentException("La cédula ya está registrada");
+        if (userRepository.existsByRuc(request.getRuc())) {
+            throw new IllegalArgumentException("El RUC ya está registrado");
         }
 
         User user = new User();
-        user.setCedula(request.getCedula());
+        user.setRuc(request.getRuc());
         user.setNombres(request.getNombres());
         user.setApellidos(request.getApellidos());
         user.setCorreo(request.getCorreo());

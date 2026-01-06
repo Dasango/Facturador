@@ -11,9 +11,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByCorreo(String correo);
 
-    Optional<User> findByCedula(String cedula);
+    Optional<User> findByRuc(String ruc);
 
     boolean existsByCorreo(String correo);
 
-    boolean existsByCedula(String cedula);
+    boolean existsByRuc(String ruc);
 }

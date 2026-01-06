@@ -20,9 +20,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 20)
-    private String cedula;
-
     @Column(nullable = false, length = 100)
     private String nombres;
 
@@ -37,11 +34,29 @@ public class User {
     private String contrasena;
 
     // --- Campos SRI ---
-    @Column(length = 13, unique = true)
+    @Column(nullable = false, length = 13, unique = true)
     private String ruc;
 
-    @Column(length = 255)
+    @Column(length = 300)
     private String razonSocial;
+
+    @Column(name = "nombre_comercial", length = 300)
+    private String nombreComercial;
+
+    @Column(name = "dir_matriz", length = 300)
+    private String direccionMatriz;
+
+    @Column(name = "codigo_establecimiento", length = 3)
+    private String codigoEstablecimiento; // e.g. "001"
+
+    @Column(name = "codigo_punto_emision", length = 3)
+    private String codigoPuntoEmision; // e.g. "002"
+
+    @Column(name = "obligado_contabilidad", length = 2)
+    private String obligadoContabilidad; // "SI" / "NO"
+
+    @Column(name = "nro_contribuyente_especial", length = 13)
+    private String nroContribuyenteEspecial;
 
     @JsonIgnore
     @Column(name = "firma_path")
