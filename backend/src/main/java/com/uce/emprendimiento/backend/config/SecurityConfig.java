@@ -40,6 +40,10 @@ public class SecurityConfig {
                                 "/partials/**", // Tus fragmentos HTML
                                 "/api/auth/**", // Endpoints de autenticación
 
+                                // === QUE GRANDE QUE SOY (PARA PROBAR XD) ===
+                        "/api/xml/**",          // Para que puedas ver el XML en el navegador
+                        "/api/sri-prueba/**"    // Para que Thunder Client pueda hacer el POST
+                        ,
                                 // IMPORTANTE: Permitir archivos sueltos para que no bloquee y cause redirect
                                 "/*.ico", // favicon
                                 "/*.css", // css sueltos
