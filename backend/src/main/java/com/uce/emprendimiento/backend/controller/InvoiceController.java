@@ -88,6 +88,17 @@ public class InvoiceController {
             return ResponseEntity.status(401).build();
 
         try {
+            // Vinculación explícita de relaciones anidadas para asegurar integridad
+            if (invoice.getPagos() != null) {
+                invoice.getPagos().forEach(pago -> pago.setFactura(invoice));
+            }
+            if (invoice.getDetalles() != null) {
+                invoice.getDetalles().forEach(detalle -> detalle.setFactura(invoice));
+            }
+            if (invoice.getInfoAdicional() != null) {
+                invoice.getInfoAdicional().forEach(info -> info.setFactura(invoice));
+            }
+
             Invoice nuevaFactura = invoiceService.crearFactura(invoice, userDetails.getUser().getId(), accion);
             return ResponseEntity.ok(nuevaFactura);
         } catch (Exception e) {
