@@ -27,6 +27,9 @@ public class InvoiceDetail {
 
     private Double subtotal;
 
+    @Column(name = "valor_impuesto")
+    private Double valorImpuesto;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "factura_id", nullable = false)
     @JsonIgnore

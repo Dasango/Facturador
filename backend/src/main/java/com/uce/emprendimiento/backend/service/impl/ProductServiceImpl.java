@@ -55,8 +55,10 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setCodigoAuxiliar(productDetails.getCodigoAuxiliar());
         existingProduct.setNombre(productDetails.getNombre());
         existingProduct.setValorUnitario(productDetails.getValorUnitario());
-        existingProduct.setIva(productDetails.getIva());
-        existingProduct.setIce(productDetails.getIce());
+        existingProduct.setValorUnitario(productDetails.getValorUnitario());
+        existingProduct.setCodigoImpuesto(productDetails.getCodigoImpuesto());
+        existingProduct.setCodigoPorcentaje(productDetails.getCodigoPorcentaje());
+        existingProduct.setTarifa(productDetails.getTarifa());
 
         return productRepository.save(existingProduct);
     }

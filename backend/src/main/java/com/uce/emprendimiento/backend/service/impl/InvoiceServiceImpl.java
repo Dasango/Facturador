@@ -40,9 +40,12 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (factura.getDetalles() != null) {
             for (var detalle : factura.getDetalles()) {
                 detalle.setFactura(factura); // Importante para que JPA guarde la FK
+            }
+        }
 
-                // Calculos básicos de validación (opcional, pero recomendado)
-                // detalle.setSubtotal(detalle.getCantidad() * detalle.getPrecioUnitario());
+        if (factura.getPagos() != null) {
+            for (var pago : factura.getPagos()) {
+                pago.setFactura(factura);
             }
         }
 

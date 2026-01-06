@@ -29,8 +29,15 @@ public class Product {
     @Column(name = "valor_unitario", nullable = false)
     private Double valorUnitario;
 
-    private String iva;
-    private String ice;
+    // Impuestos SRI
+    @Column(name = "codigo_impuesto", nullable = false)
+    private String codigoImpuesto; // 2 (IVA), 3 (ICE), etc.
+
+    @Column(name = "codigo_porcentaje", nullable = false)
+    private String codigoPorcentaje; // 0, 2, 3, etc. (Tarifa 0%, 12%, 14%)
+
+    @Column(nullable = false)
+    private Double tarifa; // 0.0, 12.0, 15.0
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)

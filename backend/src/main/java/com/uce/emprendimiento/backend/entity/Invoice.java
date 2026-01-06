@@ -48,6 +48,32 @@ public class Invoice {
     @Column(name = "fecha_autorizacion")
     private java.time.LocalDateTime fechaAutorizacion;
 
+    // --- Campos Adicionales SRI ---
+    @Column(name = "dir_establecimiento")
+    private String direccionEstablecimiento; // Si es sucursal
+
+    @Column(name = "tipo_identificacion_comprador", length = 2)
+    private String tipoIdentificacionComprador; // Tabla 6
+
+    @Column(name = "direccion_comprador")
+    private String direccionComprador;
+
+    // Totales y Desgloses
+    @Column(name = "total_sin_impuestos")
+    private Double totalSinImpuestos;
+
+    @Column(name = "total_descuento")
+    private Double totalDescuento;
+
+    @Column(name = "propina")
+    private Double propina;
+
+    @Column(name = "moneda", length = 15)
+    private String moneda = "DOLAR"; // Default
+
+    @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<InvoicePayment> pagos = new java.util.ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     @JsonIgnore
