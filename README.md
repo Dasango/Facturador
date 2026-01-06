@@ -13,7 +13,7 @@ Este proyecto es una solución de facturación diseñada para cumplir con los re
 * Cristian Baraja
 * David Sango
 * Jhon Córdova
-* Jonatn
+* Jonathan Suarez
 
 ---
 
