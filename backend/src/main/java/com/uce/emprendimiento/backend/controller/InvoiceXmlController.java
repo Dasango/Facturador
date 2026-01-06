@@ -22,6 +22,7 @@ public class InvoiceXmlController {
     private final InvoiceService invoiceService;
     private final SriService sriService;
     private final UserService userService;
+    private final com.uce.emprendimiento.backend.sriCine.SriServiceCine sriServiceCine; // Inyección del nuevo servicio
 
     // 1. Generar XML (Sin firmar) a partir de un DTO
     @PostMapping(value = "/generate", produces = MediaType.APPLICATION_XML_VALUE)
@@ -92,9 +93,61 @@ public class InvoiceXmlController {
             return ResponseEntity.ok(signedXml);
 
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.badRequest()
                     .body("<error>Error generando factura firmada: " + e.getMessage() + "</error>");
+        }
+    }
+
+    // 4. Enviar XML firmado al SRI (Solo enviar)
+    @PostMapping(value = "/send", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> sendXmlToSri(@RequestBody Map<String, String> request) {
+        String xmlSigned = request.get("xml");
+        if (xmlSigned == null || xmlSigned.isEmpty()) {
+            return ResponseEntity.badRequest().body("Falta el campo 'xml' en el body");
+        }
+        try {
+            var response = sriServiceCine.enviarAlSri(xmlSigned);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error enviando al SRI: " + e.getMessage());
+        }
+    }
+
+    // 5. Flujo Completo: Crear -> Firmar -> Enviar al SRI
+    @PostMapping(value = "/authorize", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> authorizeInvoice(@RequestBody Map<String, Object> request,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null)
+            return ResponseEntity.status(401).build();
+
+        try {
+            Long invoiceId = Long.valueOf(request.get("invoiceId").toString());
+            String password = request.get("password").toString();
+
+            // 1. Obtener Datos y generar DTO
+            FacturaDTO facturaDTO = invoiceService.getFacturaDTO(invoiceId, userDetails.getUser().getId());
+
+            // 2. Generar XML
+            String xml = sriService.objectToXml(facturaDTO);
+
+            // 3. Firmar
+            User user = userService.getUserById(userDetails.getUser().getId());
+            if (user.getFirmaPath() == null) {
+                return ResponseEntity.badRequest().body("Usuario no tiene firma configurada");
+            }
+            String signedXml = sriService.signXml(xml, user.getFirmaPath(), password);
+
+            // 4. Enviar al SRI
+            var sriResponse = sriServiceCine.enviarAlSri(signedXml);
+
+            // Opcional: Podrías guardar el estado en la base de datos aquí si
+            // 'sriResponse.getEstado()' es AUTORIZADO
+
+            return ResponseEntity.ok(sriResponse);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Error en proceso de autorización: " + e.getMessage());
         }
     }
 

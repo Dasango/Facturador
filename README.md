@@ -72,7 +72,8 @@ A continuación se detallan los controladores disponibles y sus funcionalidades 
 | :--- | :--- | :--- |
 | **POST** | `/generate` | **[NUEVO]** Acepta un `FacturaDTO` JSON y retorna el XML sin firmar (String). |
 | **POST** | `/sign` | **[NUEVO]** Acepta JSON `{ "xml": "...", "password": "..." }`. Retorna el XML firmado digitalmente (XAdES-BES) usando la firma subida por el usuario. |
-| **POST** | `/create-signed` | **[NUEVO]** Flujo completo seguro. Acepta `{ "invoiceId": 123, "password": "..." }`. <br> 1. Busca los datos. <br> 2. Genera el XML. <br> 3. Lo firma con la clave. <br> 4. Retorna el XML final firmado. |
+| **POST** | `/send` | **[NUEVO]** Acepta JSON `{ "xml": "..." }` (ya firmado). Lo envía al SRI (`SriServiceCine`) y retorna la respuesta (Autorizado/Rechazado). |
+| **POST** | `/authorize` | **[NUEVO]** Flujo completo seguro. Acepta `{ "invoiceId": 123, "password": "..." }`. <br> 1. Busca los datos. <br> 2. Genera el XML. <br> 3. Lo firma con la clave. <br> 4. Lo envía al SRI. <br> 5. Retorna respuesta del SRI. |
 | **GET** | `/factura` | Endpoint de prueba (Mock deprecado). |
 
 ### 3. ProductController
