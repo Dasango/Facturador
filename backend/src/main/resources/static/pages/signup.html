@@ -1,88 +1,155 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facto - Regístrate</title>
-    <!-- Main CSS (Design System) -->
     <link rel="stylesheet" href="../assets/css/main.css">
-    <!-- Signup Page Specific CSS -->
     <link rel="stylesheet" href="../assets/css/pages/signup.css">
-    <!-- Fonts (Inter) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Estilos rápidos para el wizard */
+        .form-step {
+            display: none; /* Ocultos por defecto */
+            animation: fadeIn 0.5s;
+        }
+        .form-step.active {
+            display: block; /* Solo el activo se muestra */
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            margin-top: 10px;
+        }
+        .step-indicator {
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            font-weight: 600;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Header/Nav -->
-    <header
-        style="position: sticky; top: 0; z-index: 1000; background-color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; margin: 0 auto;">
-
+    <header style="position: sticky; top: 0; z-index: 1000; background-color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; margin: 0 auto;">
         <a href="/" class="logo" style="text-decoration: none; color: inherit; display: block;">
             <h1 style="font-size: 32px; font-weight: 900; margin: 0;">Facto</h1>
         </a>
-
-        <nav class="nav-menu" id="navMenu">
+        <nav class="nav-menu">
             <a href="/" style="text-decoration: none; color: black; font-weight: 500;">Regresar</a>
         </nav>
     </header>
 
     <div class="signup-container">
-        <!-- LEFT SIDE -->
         <div class="signup-content">
-
             <main class="signup-main">
-                <h2 class="signup-title">Hola!</h2>
-                <p class="signup-subtitle">Completa los datos para comenzar</p>
+                <h2 class="signup-title">Registro</h2>
+                <p class="signup-subtitle" id="stepIndicator">Paso 1 de 3: Datos de Cuenta</p>
 
                 <form class="signup-form" id="signupForm">
-                    <div class="form-group">
-                        <label class="form-label">RUC</label>
-                        <input type="text" name="ruc" class="input-control" placeholder="">
+                    
+                    <div class="form-step active" id="step1">
+                        <div class="form-group">
+                            <label class="form-label">RUC *</label>
+                            <input type="text" name="ruc" id="ruc" class="input-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nombres (Dos) *</label>
+                            <input type="text" name="nombres" id="nombres" class="input-control" placeholder="Ej. Juan Andres" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Apellidos (Dos) *</label>
+                            <input type="text" name="apellidos" id="apellidos" class="input-control" placeholder="Ej. Perez Lopez" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Correo *</label>
+                            <input type="email" name="email" class="input-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Contraseña *</label>
+                            <input type="password" name="password" id="password" class="input-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirmar Contraseña *</label>
+                            <input type="password" name="confirm_password" id="confirm_password" class="input-control" required>
+                        </div>
+                        
+                        <button type="button" class="btn btn-primary btn-block" onclick="nextStep(2)">Siguiente</button>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Nombres (Dos)</label>
-                        <input type="text" name="nombres" class="input-control" placeholder="Ej. Juan Andres">
+                    <div class="form-step" id="step2">
+                        <div class="form-group">
+                            <label class="form-label">Razón Social</label>
+                            <input type="text" name="razon_social" id="razon_social" class="input-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nombre Comercial</label>
+                            <input type="text" name="nombre_comercial" id="nombre_comercial" class="input-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Dirección Matriz *</label>
+                            <input type="text" name="dir_matriz" class="input-control" required>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Cod. Est.</label>
+                                <input type="text" name="codigo_establecimiento" class="input-control" value="001">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Pto. Emisión</label>
+                                <input type="text" name="codigo_punto_emision" class="input-control" value="001">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Obligado a Contabilidad</label>
+                            <select name="obligado_contabilidad" class="input-control">
+                                <option value="SI">SI</option>
+                                <option value="NO">NO</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Nro. Contribuyente Especial</label>
+                            <input type="text" name="nro_contribuyente_especial" class="input-control" value="11111111111">
+                        </div>
+
+                        <button type="button" class="btn btn-primary btn-block" onclick="nextStep(3)">Siguiente</button>
+                        <button type="button" class="btn btn-secondary btn-block" onclick="prevStep(1)">Atrás</button>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Apellidos (Dos)</label>
-                        <input type="text" name="apellidos" class="input-control" placeholder="Ej. Perez Lopez">
+                    <div class="form-step" id="step3">
+                        <div class="form-group">
+                            <label class="form-label">Firma Electrónica (.p12)</label>
+                            <input type="file" name="firma_archivo" id="firma_archivo" class="input-control" accept=".p12">
+                            <small>Nota: La contraseña de la firma no se guardará en la base de datos.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Logo (Imagen)</label>
+                            <input type="file" name="logo_archivo" id="logo_archivo" class="input-control" accept="image/*">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block" style="margin-top: 20px;">Finalizar Registro</button>
+                        <button type="button" class="btn btn-secondary btn-block" onclick="prevStep(2)">Atrás</button>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Correo</label>
-                        <input type="email" name="email" class="input-control" placeholder="">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Contraseña</label>
-                        <input type="password" name="password" class="input-control" placeholder="">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Confirmar Contraseña</label>
-                        <input type="password" name="confirm_password" class="input-control" placeholder="">
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-block" style="margin-top: 20px;">Ingresar</button>
                 </form>
             </main>
-
         </div>
 
-        <!-- RIGHT SIDE -->
         <div class="signup-image">
             <img src="../assets/images/FactoCuaderno.png" alt="Signup Art">
         </div>
     </div>
 
     <div id="footer-container"></div>
-
     <script src="../assets/js/signup.js"></script>
 </body>
-
 </html>
