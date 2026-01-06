@@ -1,7 +1,6 @@
 package com.uce.emprendimiento.backend.service.impl;
 
-import com.uce.emprendimiento.backend.dto.xml.FacturaDTO;
-import com.uce.emprendimiento.backend.dto.xml.InfoTributariaDTO;
+import com.uce.emprendimiento.backend.dto.xml.*;
 import com.uce.emprendimiento.backend.entity.Invoice;
 import com.uce.emprendimiento.backend.entity.User;
 import com.uce.emprendimiento.backend.repository.InvoiceRepository;
@@ -105,7 +104,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         dto.setInfoTributaria(infoTrib);
 
         // --- Info Factura ---
-        var infoFact = new com.uce.emprendimiento.backend.dto.xml.InfoFacturaDTO();
+        var infoFact = new InfoFacturaDTO();
         // Formato fecha dd/MM/yyyy
         java.time.format.DateTimeFormatter dtf = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
         infoFact.setFechaEmision(invoice.getFechaEmision() != null ? invoice.getFechaEmision().format(dtf)
@@ -137,7 +136,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         // TotalImpuestos (Agrupado) - Por simplicidad asumo todo IVA 12/15 o 0
         // En una app real hay que agrupar por codigo de impuesto. Aquí crearé uno solo
         // basado en totales.
-        var totalImp = new com.uce.emprendimiento.backend.dto.xml.TotalImpuestoDTO();
+        var totalImp = new TotalImpuestoDTO();
         totalImp.setCodigo("2"); // IVA
         totalImp.setCodigoPorcentaje("2"); // 12% (ejemplo, debería venir dinámico)
         totalImp.setBaseImponible(infoFact.getTotalSinImpuestos());
@@ -150,7 +149,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         // Pagos
         if (invoice.getPagos() != null && !invoice.getPagos().isEmpty()) {
             infoFact.setPagos(invoice.getPagos().stream().map(p -> {
-                var pDto = new com.uce.emprendimiento.backend.dto.xml.PagoDTO();
+                var pDto = new PagoDTO();
                 pDto.setFormaPago(p.getFormaPago());
                 pDto.setTotal(String.format("%.2f", p.getTotal()).replace(",", "."));
                 pDto.setPlazo(p.getPlazo() != null ? p.getPlazo().toString() : "0");
@@ -164,7 +163,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         // --- Detalles ---
         if (invoice.getDetalles() != null) {
             dto.setDetalles(invoice.getDetalles().stream().map(d -> {
-                var dDto = new com.uce.emprendimiento.backend.dto.xml.DetalleDTO();
+                var dDto = new DetalleDTO();
                 dDto.setCodigoPrincipal(d.getProducto().getCodigoPrincipal());
                 dDto.setCodigoAuxiliar(d.getProducto().getCodigoAuxiliar());
                 dDto.setDescripcion(d.getProducto().getNombre());
@@ -174,7 +173,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 dDto.setPrecioTotalSinImpuesto(String.format("%.2f", d.getSubtotal()).replace(",", "."));
 
                 // Impuesto Detalle
-                var impDto = new com.uce.emprendimiento.backend.dto.xml.ImpuestoDTO();
+                var impDto = new ImpuestoDTO();
                 impDto.setCodigo(d.getProducto().getCodigoImpuesto()); // "2"
                 impDto.setCodigoPorcentaje(d.getProducto().getCodigoPorcentaje()); // "2"
                 impDto.setTarifa(String.format("%.2f", d.getProducto().getTarifa()).replace(",", "."));
@@ -189,7 +188,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         // --- Info Adicional ---
         if (invoice.getInfoAdicional() != null) {
             dto.setInfoAdicional(invoice.getInfoAdicional().stream()
-                    .map(info -> new com.uce.emprendimiento.backend.dto.xml.CampoAdicionalDTO(info.getNombre(),
+                    .map(info -> new CampoAdicionalDTO(info.getNombre(),
                             info.getValor()))
                     .collect(java.util.stream.Collectors.toList()));
         }

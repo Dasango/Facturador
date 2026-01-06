@@ -71,6 +71,7 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
+    }
 
     // GET: Obtener path de la firma (Método de utilidad interna o verificado)
     @GetMapping("/signature-path")
