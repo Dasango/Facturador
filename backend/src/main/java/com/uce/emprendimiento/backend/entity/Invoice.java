@@ -81,4 +81,8 @@ public class Invoice {
 
     @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<InvoiceDetail> detalles = new java.util.ArrayList<>();
+
+    // Info Adicional (Email, Telefono, etc.)
+    @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<InvoiceAdditionalInfo> infoAdicional = new java.util.ArrayList<>();
 }
