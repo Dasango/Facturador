@@ -80,6 +80,21 @@ public class InvoiceController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{id}/xml-data")
+    public ResponseEntity<?> getInvoiceXmlData(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(401).build();
+        }
+        try {
+            var dto = invoiceService.getFacturaDTO(id, userDetails.getUser().getId());
+            return ResponseEntity.ok(dto);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @PostMapping
     public ResponseEntity<?> crearFactura(@RequestBody Invoice invoice,
             @RequestParam(defaultValue = "BORRADOR") String accion, // "BORRADOR" o "ENVIAR"

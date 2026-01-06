@@ -71,5 +71,17 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
+
+    // GET: Obtener path de la firma (Método de utilidad interna o verificado)
+    @GetMapping("/signature-path")
+    public ResponseEntity<String> getSignaturePath(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null)
+            return ResponseEntity.status(401).build();
+
+        User user = userService.getUserById(userDetails.getUser().getId());
+        if (user.getFirmaPath() == null || user.getFirmaPath().isEmpty()) {
+            return ResponseEntity.badRequest().body("No signature uploaded");
+        }
+        return ResponseEntity.ok(user.getFirmaPath());
     }
 }

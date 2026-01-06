@@ -1,15 +1,104 @@
 package com.uce.emprendimiento.backend.controller;
 
+import com.uce.emprendimiento.backend.dto.xml.FacturaDTO;
+import com.uce.emprendimiento.backend.entity.User;
+import com.uce.emprendimiento.backend.security.CustomUserDetails;
+import com.uce.emprendimiento.backend.service.InvoiceService;
+import com.uce.emprendimiento.backend.service.SriService;
+import com.uce.emprendimiento.backend.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity; // Es mejor devolver ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/xml")
+@RequiredArgsConstructor
 public class InvoiceXmlController {
 
+    private final InvoiceService invoiceService;
+    private final SriService sriService;
+    private final UserService userService;
+
+    // 1. Generar XML (Sin firmar) a partir de un DTO
+    @PostMapping(value = "/generate", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> generateXml(@RequestBody FacturaDTO facturaDTO) {
+        try {
+            String xml = sriService.objectToXml(facturaDTO);
+            return ResponseEntity.ok(xml);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("<error>" + e.getMessage() + "</error>");
+        }
+    }
+
+    // 2. Firmar XML existente
+    @PostMapping(value = "/sign", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> signXml(@RequestBody Map<String, String> request,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null)
+            return ResponseEntity.status(401).build();
+
+        String xml = request.get("xml");
+        String password = request.get("password"); // Contraseña del certificado .p12
+
+        try {
+            // Obtener path de la firma del usuario
+            User user = userService.getUserById(userDetails.getUser().getId());
+            if (user.getFirmaPath() == null) {
+                return ResponseEntity.badRequest().body("<error>Usuario no tiene firma configurada</error>");
+            }
+
+            String signedXml = sriService.signXml(xml, user.getFirmaPath(), password);
+            return ResponseEntity.ok(signedXml);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("<error>Error firmando: " + e.getMessage() + "</error>");
+        }
+    }
+
+    // 3. Crear XML + Firmar (Método completo)
+    @PostMapping(value = "/create-signed", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> createSignedInvoice(@RequestBody Map<String, Object> request,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null)
+            return ResponseEntity.status(401).build();
+
+        try {
+            // a. Obtener datos. Puede venir el ID de la factura O el objeto factura
+            // completo.
+            // Por simplicidad, asumiremos que viene el ID de la factura ya creada en
+            // borrador.
+            Long invoiceId = Long.valueOf(request.get("invoiceId").toString());
+            String password = request.get("password").toString();
+
+            // b. Convertir a DTO
+            FacturaDTO facturaDTO = invoiceService.getFacturaDTO(invoiceId, userDetails.getUser().getId());
+
+            // c. Generar XML
+            String xml = sriService.objectToXml(facturaDTO);
+
+            // d. Obtener Path Firma
+            User user = userService.getUserById(userDetails.getUser().getId());
+            if (user.getFirmaPath() == null) {
+                return ResponseEntity.badRequest().body("<error>Usuario no tiene firma configurada</error>");
+            }
+
+            // e. Firmar
+            String signedXml = sriService.signXml(xml, user.getFirmaPath(), password);
+
+            return ResponseEntity.ok(signedXml);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest()
+                    .body("<error>Error generando factura firmada: " + e.getMessage() + "</error>");
+        }
+    }
+
+    // Endpoint Mock original (para referencia o tests simples)
     @GetMapping(value = "/factura", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> getFacturaXml() {
 
