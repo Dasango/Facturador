@@ -17,8 +17,10 @@ public class PdfController {
     @PostMapping("/generate")
     public ResponseEntity<byte[]> generatePdf(@RequestBody String jsonContent) {
         try {
+            System.out.println("PdfController: Generating PDF...");
             JSONObject data = new JSONObject(jsonContent);
             byte[] pdfBytes = GeneradorFactura.generarPdfBytes(data);
+            System.out.println("PdfController: PDF Generated. Size: " + pdfBytes.length);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
@@ -27,8 +29,9 @@ public class PdfController {
 
             return new ResponseEntity<>(pdfBytes, headers, org.springframework.http.HttpStatus.OK);
         } catch (Exception e) {
+            System.err.println("PdfController Error: " + e.getMessage());
             e.printStackTrace();
-            return new ResponseEntity<>(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

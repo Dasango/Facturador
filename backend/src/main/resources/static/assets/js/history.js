@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Expose function to window so the inline onclick works
     window.generateAndDownloadPdf = (id) => {
-        const jsonUrl = `/api/invoices/${id}/xml-data`; // Endpoint that returns the JSON for the invoice
+        const jsonUrl = `/api/invoices/${id}/xml-data-injsonformat`; // Endpoint correctly targeting JSON
         console.log("Fetching JSON from:", jsonUrl);
 
         fetch(jsonUrl)
@@ -97,8 +97,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify(invoiceJson)
                 });
             })
-            .then(res => {
-                if (!res.ok) throw new Error("Error generating PDF");
+            .then(async res => {
+                if (!res.ok) {
+                    const text = await res.text(); // Get error details if any
+                    throw new Error("Server Error: " + res.status + " " + text);
+                }
                 return res.blob();
             })
             .then(blob => {
@@ -114,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(err => {
                 console.error("Error in PDF flow:", err);
-                alert("Error generando el PDF. Ver consola.");
+                alert("Error: " + err.message);
             });
     };
 
