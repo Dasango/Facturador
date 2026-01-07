@@ -100,12 +100,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function calculateTotals() {
         let subtotal = 0;
+        let totalDescuento = 0;
         document.querySelectorAll('#detallesTable .detalle-row').forEach(row => {
             subtotal += parseFloat(row.querySelector('.total-linea').textContent) || 0;
+            totalDescuento += parseFloat(row.querySelector('.descuento').value) || 0;
         });
 
         // 15% IVA Mock Logic
-        // In real app, check product tax code.
         const base12 = subtotal;
         const base0 = 0;
         const iva = base12 * 0.15;
@@ -115,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.getElementById('subtotal0Display')) document.getElementById('subtotal0Display').textContent = base0.toFixed(2);
         if (document.getElementById('ivaDisplay')) document.getElementById('ivaDisplay').textContent = iva.toFixed(2);
         if (document.getElementById('totalDisplay')) document.getElementById('totalDisplay').textContent = total.toFixed(2);
+        if (document.getElementById('descuentoDisplay')) document.getElementById('descuentoDisplay').textContent = totalDescuento.toFixed(2);
 
         // Update Payment Total
         const payRow = document.querySelector('#pagosTable .totalPago');
@@ -127,12 +129,124 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     /* ==========================================================================
-       SIGN & EMIT
+       PAYLOAD BUILDER (Entity Structure)
+       ========================================================================== */
+    function buildInvoicePayload() {
+        const fechaRaw = document.getElementById('fechaEmision').value; // yyyy-mm-dd
+
+        const totalSinImpuestos = parseFloat(document.getElementById('subtotal15Display').textContent) +
+            parseFloat(document.getElementById('subtotal0Display').textContent);
+        const importeTotal = parseFloat(document.getElementById('totalDisplay').textContent);
+        const totalDescuento = parseFloat(document.getElementById('descuentoDisplay').textContent);
+
+        // Pagos
+        const pagosList = [];
+        document.querySelectorAll('#pagosTable tbody tr').forEach(tr => {
+            pagosList.push({
+                formaPago: tr.querySelector('.formaPago').value,
+                total: parseFloat(tr.querySelector('.totalPago').value),
+                plazo: parseFloat(tr.querySelector('.plazo').value) || 0,
+                unidadTiempo: 'DIAS'
+            });
+        });
+
+        // Info Adicional
+        const infoAdicionalList = [];
+        document.querySelectorAll('.info-row').forEach(div => {
+            const n = div.querySelector('.info-nombre').value;
+            const v = div.querySelector('.info-valor').value;
+            if (n && v) infoAdicionalList.push({ nombre: n, valor: v });
+        });
+
+        // Detalles
+        const detallesList = [];
+        document.querySelectorAll('#detallesTable .detalle-row').forEach(row => {
+            const qty = parseFloat(row.querySelector('.cantidad').value);
+            const price = parseFloat(row.querySelector('.precio').value);
+            const desc = parseFloat(row.querySelector('.descuento').value);
+            const subtotal = (qty * price) - desc;
+
+            const prodCode = row.querySelector('.codigo').value;
+            const prodName = row.querySelector('.descripcion').value;
+
+            detallesList.push({
+                cantidad: qty,
+                precioUnitario: price,
+                descuento: desc,
+                subtotal: subtotal,
+                producto: {
+                    codigoPrincipal: prodCode,
+                    nombre: prodName,
+                    precioUnitario: price,
+                    // Default taxes (backend defaults if missing, but sending here helps clarity)
+                    codigoImpuesto: "2",
+                    codigoPorcentaje: "4", // 15%
+                    tarifa: 15.0
+                }
+            });
+        });
+
+        // Construct Invoice Entity JSON
+        return {
+            fechaEmision: fechaRaw, // Backend expects ISO LocalDate yyyy-MM-dd
+            clienteNombre: document.getElementById('razonSocialComprador').value,
+            clienteIdentificacion: document.getElementById('identificacionComprador').value,
+            tipoIdentificacionComprador: document.getElementById('tipoIdentificacionComprador').value,
+            direccionComprador: document.getElementById('direccionComprador').value,
+            // guiaRemision: document.getElementById('guiaRemision').value, // Not in Entity yet?
+
+            total: importeTotal,
+            totalSinImpuestos: totalSinImpuestos,
+            totalDescuento: totalDescuento,
+            propina: 0.0,
+            moneda: "DOLAR",
+
+            detalles: detallesList,
+            pagos: pagosList,
+            infoAdicional: infoAdicionalList
+        };
+    }
+
+
+    /* ==========================================================================
+       ACTIONS: Draft & Sign
        ========================================================================== */
     const signModal = document.getElementById('signModal');
     const btnOpenSignModal = document.getElementById('btnOpenSignModal');
     const btnConfirmSign = document.getElementById('btnConfirmSign');
     const modalClaveP12 = document.getElementById('modalClaveP12');
+
+    // Draft Button - Assuming class btn-fab first child or added ID
+    // Let's rely on text or add ID. The user HTML has '💾 Guardar Borrador' as first button in .action-bar
+    const btnSaveDraft = document.querySelector('.action-bar button:first-child');
+
+    if (btnSaveDraft) {
+        btnSaveDraft.addEventListener('click', async () => {
+            const payload = buildInvoicePayload();
+            // Action "BORRADOR" is default
+            try {
+                btnSaveDraft.textContent = 'Guardando...';
+                const resp = await fetch('/api/invoices?accion=BORRADOR', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (resp.ok) {
+                    alert('✅ Borrador guardado correctamente');
+                    window.location.href = '../pages/history.html';
+                } else {
+                    const txt = await resp.text();
+                    alert('Error guardando borrador: ' + txt);
+                }
+            } catch (e) {
+                alert('Error de conexión');
+                console.error(e);
+            } finally {
+                btnSaveDraft.innerHTML = '💾 Guardar Borrador';
+            }
+        });
+    }
 
     if (btnOpenSignModal) {
         btnOpenSignModal.addEventListener('click', (e) => {
@@ -144,122 +258,49 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnConfirmSign) {
         btnConfirmSign.addEventListener('click', async () => {
             const clave = modalClaveP12.value;
-            // Validar clave
             if (!clave) { alert('Ingrese contraseña'); return; }
 
-            const userId = storedUser ? storedUser.id : 1;
+            const payload = buildInvoicePayload();
 
-            // Build JSON
-            const fechaRaw = document.getElementById('fechaEmision').value; // yyyy-mm-dd
-            const [y, m, d] = fechaRaw.split('-');
-            const fechaFmt = `${d}/${m}/${y}`;
-
-            const totalSinImpuestos = parseFloat(document.getElementById('subtotal15Display').textContent) + parseFloat(document.getElementById('subtotal0Display').textContent);
-            const importeTotal = parseFloat(document.getElementById('totalDisplay').textContent);
-
-            // Pagos
-            const pagosList = [];
-            document.querySelectorAll('#pagosTable tbody tr').forEach(tr => {
-                pagosList.push({
-                    formaPago: tr.querySelector('.formaPago').value,
-                    total: parseFloat(tr.querySelector('.totalPago').value),
-                    plazo: parseFloat(tr.querySelector('.plazo').value) || 0,
-                    unidadTiempo: 'DIAS'
-                });
-            });
-
-            // Info Adicional
-            const infoAdicionalList = [];
-            document.querySelectorAll('.info-row').forEach(div => {
-                const n = div.querySelector('.info-nombre').value;
-                const v = div.querySelector('.info-valor').value;
-                if (n && v) infoAdicionalList.push({ nombre: n, value: v });
-            });
-
-            // Detalles
-            const detallesList = [];
-            document.querySelectorAll('#detallesTable .detalle-row').forEach(row => {
-                const lt = parseFloat(row.querySelector('.total-linea').textContent);
-                detallesList.push({
-                    codigoPrincipal: row.querySelector('.codigo').value,
-                    descripcion: row.querySelector('.descripcion').value,
-                    cantidad: parseFloat(row.querySelector('.cantidad').value),
-                    precioUnitario: parseFloat(row.querySelector('.precio').value),
-                    descuento: parseFloat(row.querySelector('.descuento').value),
-                    precioTotalSinImpuesto: lt,
-                    impuestos: [{
-                        codigo: "2",
-                        codigoPorcentaje: "4", // 15%
-                        tarifa: 15,
-                        baseImponible: lt,
-                        valor: lt * 0.15
-                    }]
-                });
-            });
-
-            const facturaPayload = {
-                id: "comprobante",
-                version: "1.0.0",
-                infoTributaria: {
-                    ambiente: "1",
-                    tipoEmision: "1",
-                    razonSocial: document.getElementById('companyName').textContent,
-                    nombreComercial: document.getElementById('companyName').textContent, // Using same
-                    ruc: document.getElementById('companyRuc').textContent.replace('RUC: ', '').trim(),
-                    codDoc: "01",
-                    estab: document.getElementById('estab').value,
-                    ptoEmi: document.getElementById('ptoEmi').value,
-                    secuencial: document.getElementById('secuencial').value || "000000001",
-                    dirMatriz: document.getElementById('companyAddress').textContent.replace('Dir: ', '')
-                },
-                infoFactura: {
-                    fechaEmision: fechaFmt,
-                    dirEstablecimiento: document.getElementById('companyAddress').textContent.replace('Dir: ', ''),
-                    obligadoContabilidad: "NO",
-                    tipoIdentificacionComprador: document.getElementById('tipoIdentificacionComprador').value,
-                    razonSocialComprador: document.getElementById('razonSocialComprador').value,
-                    identificacionComprador: document.getElementById('identificacionComprador').value,
-                    direccionComprador: document.getElementById('direccionComprador').value,
-                    totalSinImpuestos: totalSinImpuestos,
-                    totalDescuento: 0.00,
-                    propina: 0.00,
-                    importeTotal: importeTotal,
-                    moneda: "DOLAR",
-                    pagos: pagosList,
-                    totalConImpuestos: [{
-                        codigo: "2",
-                        codigoPorcentaje: "4",
-                        baseImponible: totalSinImpuestos,
-                        valor: parseFloat(document.getElementById('ivaDisplay').textContent)
-                    }]
-                },
-                detalles: detallesList,
-                infoAdicional: infoAdicionalList
-            };
-
-            // Send
+            // Send with accion=ENVIAR and claveFirma
             try {
-                btnConfirmSign.textContent = 'Enviando...';
+                btnConfirmSign.textContent = 'Enviando al SRI...';
                 btnConfirmSign.disabled = true;
 
-                const resp = await fetch(`/api/sri/emitir?userId=${userId}&claveFirma=${clave}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(facturaPayload)
+                // Params
+                const params = new URLSearchParams({
+                    accion: 'ENVIAR',
+                    claveFirma: clave
                 });
 
-                const txt = await resp.text();
+                const resp = await fetch(`/api/invoices?${params.toString()}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload) // Invoice Entity
+                });
+
+                const jsonResp = await resp.json(); // Expecting the updated Invoice object
+
                 if (resp.ok) {
-                    alert('✅ ' + txt);
-                    signModal.style.display = 'none';
+                    // Check status in response
+                    if (jsonResp.estado === 'AUTORIZADO') {
+                        alert('✅ FACTURA AUTORIZADA POR EL SRI\nClave: ' + (jsonResp.claveAcceso || ''));
+                        window.location.href = '../pages/history.html';
+                    } else if (jsonResp.estado === 'RECHAZADO') {
+                        alert('❌ RECHAZADO POR SRI:\n' + (jsonResp.mensajeSri || 'Verifique errores'));
+                    } else {
+                        alert('⚠️ Estado SRI: ' + jsonResp.estado);
+                    }
                 } else {
-                    alert('❌ ' + txt);
+                    alert('Error del Servidor: ' + (jsonResp.message || JSON.stringify(jsonResp)));
                 }
             } catch (e) {
-                alert('Connection Error');
+                console.error(e);
+                alert('Error de conexión o proceso: ' + e.message);
             } finally {
                 btnConfirmSign.textContent = 'Confirmar Emisión';
                 btnConfirmSign.disabled = false;
+                signModal.style.display = 'none';
             }
         });
     }

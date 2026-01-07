@@ -17,6 +17,9 @@ import java.util.Optional;
 public class InvoiceServiceImpl implements InvoiceService {
 
         private final InvoiceRepository invoiceRepository;
+        private final com.uce.emprendimiento.backend.repository.ProductRepository productRepository;
+        private final com.uce.emprendimiento.backend.service.SriService sriService;
+        private final com.uce.emprendimiento.backend.sriCine.SriServiceCine sriServiceCine;
 
         @Override
         @Transactional(readOnly = true)
@@ -27,7 +30,10 @@ public class InvoiceServiceImpl implements InvoiceService {
                 facturas.forEach(invoice -> {
                         if (invoice != null) {
                                 invoice.getPagos().size();
-                                invoice.getDetalles().forEach(d -> d.getProducto().getNombre());
+                                invoice.getDetalles().forEach(d -> {
+                                        if (d.getProducto() != null)
+                                                d.getProducto().getNombre();
+                                });
                                 invoice.getInfoAdicional().size();
                         }
                 });
@@ -38,12 +44,14 @@ public class InvoiceServiceImpl implements InvoiceService {
         @Transactional(readOnly = true)
         public Optional<Invoice> getInvoiceByIdAndUserId(Long id, Long userId) {
                 Optional<Invoice> opt = invoiceRepository.findByIdAndUsuarioId(id, userId);
-                // Inicializamos las colecciones Lazy para que no fallen al serializar en el
-                // Controller
                 opt.ifPresent(invoice -> {
                         invoice.getPagos().size();
-                        invoice.getDetalles().forEach(d -> d.getProducto().getNombre()); // Accedemos tb a producto por
-                                                                                         // si acaso
+                        if (invoice.getDetalles() != null) {
+                                invoice.getDetalles().forEach(d -> {
+                                        if (d.getProducto() != null)
+                                                d.getProducto().getNombre();
+                                });
+                        }
                         invoice.getInfoAdicional().size();
                 });
                 return opt;
@@ -51,16 +59,47 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         @Override
         @Transactional
-        public Invoice crearFactura(Invoice factura, Long userId, String tipoEmision) {
+        public Invoice crearFactura(Invoice factura, Long userId, String accion) {
+                return crearFactura(factura, userId, accion, null);
+        }
+
+        // Overloaded internal method to handle signature
+        @Transactional
+        public Invoice crearFactura(Invoice factura, Long userId, String accion, String claveFirma) {
                 // 1. Vincular usuario
                 User user = new User();
                 user.setId(userId);
                 factura.setUsuario(user);
 
-                // 2. Vincular los detalles con la factura (relación bidireccional)
+                // 2. Procesar Detalles y Productos
+                // La UI manda productos transitorios (con nombre/codigo). Debemos buscarlos o
+                // crearlos.
                 if (factura.getDetalles() != null) {
                         for (var detalle : factura.getDetalles()) {
-                                detalle.setFactura(factura); // Importante para que JPA guarde la FK
+                                detalle.setFactura(factura);
+
+                                com.uce.emprendimiento.backend.entity.Product inputProd = detalle.getProducto();
+                                if (inputProd != null) {
+                                        // Buscar producto existente por código y usuario
+                                        Optional<com.uce.emprendimiento.backend.entity.Product> existingProd = productRepository
+                                                        .findByCodigoPrincipalAndUsuarioId(
+                                                                        inputProd.getCodigoPrincipal(), userId);
+
+                                        if (existingProd.isPresent()) {
+                                                detalle.setProducto(existingProd.get());
+                                        } else {
+                                                // Crear nuevo producto automáticamente
+                                                inputProd.setUsuario(user);
+                                                if (inputProd.getCodigoImpuesto() == null)
+                                                        inputProd.setCodigoImpuesto("2"); // IVA Default
+                                                if (inputProd.getCodigoPorcentaje() == null)
+                                                        inputProd.setCodigoPorcentaje("2"); // 12% Default (adjustable)
+                                                if (inputProd.getTarifa() == null)
+                                                        inputProd.setTarifa(12.0); // 12%
+                                                inputProd = productRepository.save(inputProd);
+                                                detalle.setProducto(inputProd);
+                                        }
+                                }
                         }
                 }
 
@@ -76,18 +115,65 @@ public class InvoiceServiceImpl implements InvoiceService {
                         }
                 }
 
+                // Primero guardamos como borrador para tener ID y persistencia básica
+                factura.setEstado("PENDIENTE");
+                factura = invoiceRepository.save(factura);
+
                 // 3. Lógica según tipo
-                if ("ENVIAR".equals(tipoEmision)) {
-                        // AQUÍ IRÍA LA LÓGICA DEL SRI (Firma, envío, etc.)
-                        System.out.println(">>> SIMULANDO ENVÍO AL SRI: Autorizando factura...");
-                        factura.setEstado("AUTORIZADO");
-                        factura.setClaveAcceso("1234567890123456789012345678901234567890123456789"); // Mock
-                        factura.setFechaAutorizacion(java.time.LocalDateTime.now());
-                } else {
-                        factura.setEstado("PENDIENTE"); // Borrador
+                if ("ENVIAR".equals(accion)) {
+                        if (claveFirma == null || claveFirma.isEmpty()) {
+                                throw new RuntimeException("Se requiere clave de firma para enviar al SRI");
+                        }
+
+                        try {
+                                // Recuperar usuario completo para obtener paths con seguridad
+                                User fullUser = invoiceRepository.findById(factura.getId()).get().getUsuario();
+                                // Nota: invoiceRepository.findById...getUser puede ser Proxy. Mejor:
+                                // Pero 'userId' ya lo tenemos.
+
+                                // Generar XML
+                                FacturaDTO dto = getFacturaDTO(factura.getId(), userId);
+                                String xmlContent = sriService.objectToXml(dto);
+
+                                // Firmar XML
+                                if (fullUser.getFirmaPath() == null)
+                                        throw new RuntimeException(
+                                                        "El usuario no tiene configurada firma electrónica (.p12)");
+                                String signedXml = sriService.signXml(xmlContent, fullUser.getFirmaPath(), claveFirma);
+
+                                // Enviar al SRI
+                                var sriResponse = sriServiceCine.enviarAlSri(signedXml);
+
+                                // Actualizar Factura
+                                factura.setXmlContent(signedXml); // Guardamos el XML firmado
+                                factura.setEstado(sriResponse.getEstado());
+                                factura.setMensajeSri(sriService.toString()); // Guardar logs o mensajes estructurados
+                                                                              // si fuera posible
+                                if (sriResponse.getMensajes() != null && !sriResponse.getMensajes().isEmpty()) {
+                                        factura.setMensajeSri(sriResponse.getMensajes().toString());
+                                }
+
+                                if ("AUTORIZADO".equals(sriResponse.getEstado())) {
+                                        factura.setFechaAutorizacion(java.time.LocalDateTime.now());
+                                        // Clave de acceso viene en el XML firmado o respuesta, idealmente parsear
+                                        // Por ahora confiamos en la generada o la recibida
+                                        if (sriResponse.getClaveAcceso() != null)
+                                                factura.setClaveAcceso(sriResponse.getClaveAcceso());
+                                }
+
+                                // Guardar cambios finales
+                                factura = invoiceRepository.save(factura);
+
+                        } catch (Exception e) {
+                                e.printStackTrace();
+                                // Si falla firma o envío, queda como borrador/error pero guardamos el error
+                                factura.setMensajeSri("Error envío: " + e.getMessage());
+                                invoiceRepository.save(factura);
+                                throw new RuntimeException("Error en proceso SRI: " + e.getMessage(), e);
+                        }
                 }
 
-                return invoiceRepository.save(factura);
+                return factura;
         }
 
         @Override

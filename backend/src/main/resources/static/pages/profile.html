@@ -144,50 +144,87 @@
 
                             <h3 class="text-h2"
                                 style="font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Datos
-                                Personales</h3>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">CÉDULA</label>
-                                    <input type="text" id="cedula" class="input-control" disabled
-                                        style="background-color: #f1f5f9;">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">CORREO</label>
-                                    <input type="email" id="correo" class="input-control" disabled
-                                        style="background-color: #f1f5f9;">
-                                </div>
-                            </div>
+                                Personales (Fijos)</h3>
 
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">NOMBRES</label>
-                                    <input type="text" id="nombres" class="input-control">
+                                    <input type="text" id="nombres" class="input-control" disabled
+                                        style="background-color: #f1f5f9;">
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">APELLIDOS</label>
-                                    <input type="text" id="apellidos" class="input-control">
+                                    <input type="text" id="apellidos" class="input-control" disabled
+                                        style="background-color: #f1f5f9;">
                                 </div>
                             </div>
 
                             <h3 class="text-h2"
                                 style="font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-top: 10px;">
-                                Datos Fiscales (Facturación)</h3>
+                                Datos de Contacto (Editables)</h3>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">CORREO ELECTRÓNICO</label>
+                                    <input type="email" id="correo" class="input-control">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">DIRECCIÓN MATRIZ</label>
+                                    <input type="text" id="direccionMatriz" class="input-control">
+                                </div>
+                            </div>
+
+                            <h3 class="text-h2"
+                                style="font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-top: 10px;">
+                                Datos Fiscales (Fijos)</h3>
 
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">RUC</label>
-                                    <input type="text" id="ruc" class="input-control" placeholder="17900...">
+                                    <input type="text" id="ruc" class="input-control" disabled
+                                        style="background-color: #f1f5f9;">
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">RAZÓN SOCIAL</label>
-                                    <input type="text" id="razonSocial" class="input-control"
-                                        placeholder="Nombre Comercial">
+                                    <input type="text" id="razonSocial" class="input-control" disabled
+                                        style="background-color: #f1f5f9;">
                                 </div>
                             </div>
 
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">NOMBRE COMERCIAL</label>
+                                    <input type="text" id="nombreComercial" class="input-control" disabled
+                                        style="background-color: #f1f5f9;">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">NRO CONTRIBUYENTE ESP.</label>
+                                    <input type="text" id="nroContribuyenteEspecial" class="input-control" disabled
+                                        style="background-color: #f1f5f9;">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">COD. ESTABLECIMIENTO</label>
+                                    <input type="text" id="codigoEstablecimiento" class="input-control" disabled
+                                        style="background-color: #f1f5f9;" placeholder="001">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">COD. PTO EMISIÓN</label>
+                                    <input type="text" id="codigoPuntoEmision" class="input-control" disabled
+                                        style="background-color: #f1f5f9;" placeholder="001">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">OBLIGADO CONTABILIDAD</label>
+                                <input type="text" id="obligadoContabilidad" class="input-control" disabled
+                                    style="background-color: #f1f5f9;">
+                            </div>
+
                             <div style="text-align: right; margin-top: 10px;">
-                                <button type="button" id="btnSaveInfo" class="btn btn-primary">GUARDAR DATOS</button>
+                                <button type="button" id="btnSaveInfo" class="btn btn-primary">GUARDAR CAMBIOS</button>
                             </div>
                         </div>
                     </div>

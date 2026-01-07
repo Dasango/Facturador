@@ -113,11 +113,17 @@ public class UserServiceImpl implements UserService {
     public User updateUser(Long userId, User updatedUser) {
         User user = getUserById(userId);
 
-        // Actualizamos datos fiscales y personales
-        user.setNombres(updatedUser.getNombres());
-        user.setApellidos(updatedUser.getApellidos());
-        user.setRuc(updatedUser.getRuc());
-        user.setRazonSocial(updatedUser.getRazonSocial());
+        // Actualizamos SOLAMENTE datos permitidos (Correo y Dirección Matriz)
+        // Los demás datos (RUC, Razón Social, Nombres, etc.) son fijos.
+        if (updatedUser.getCorreo() != null && !updatedUser.getCorreo().isEmpty()) {
+            user.setCorreo(updatedUser.getCorreo());
+        }
+        if (updatedUser.getDireccionMatriz() != null && !updatedUser.getDireccionMatriz().isEmpty()) {
+            user.setDireccionMatriz(updatedUser.getDireccionMatriz());
+        }
+
+        // NO actualizamos Nombres, Apellidos, RUC, Razón Social aquí.
+        // Se mantienen los originales de la base de datos.
 
         return userRepository.save(user);
     }

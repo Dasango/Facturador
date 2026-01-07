@@ -33,12 +33,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 const user = await resp.json();
 
                 // Llenar inputs con datos del JSON
-                document.getElementById('cedula').value = user.cedula || '';
-                document.getElementById('correo').value = user.correo || '';
                 document.getElementById('nombres').value = user.nombres || '';
                 document.getElementById('apellidos').value = user.apellidos || '';
+                document.getElementById('correo').value = user.correo || '';
+                document.getElementById('direccionMatriz').value = user.direccionMatriz || '';
+
                 document.getElementById('ruc').value = user.ruc || '';
                 document.getElementById('razonSocial').value = user.razonSocial || '';
+                document.getElementById('nombreComercial').value = user.nombreComercial || '';
+                document.getElementById('nroContribuyenteEspecial').value = user.nroContribuyenteEspecial || '';
+                document.getElementById('codigoEstablecimiento').value = user.codigoEstablecimiento || '';
+                document.getElementById('codigoPuntoEmision').value = user.codigoPuntoEmision || '';
+                document.getElementById('obligadoContabilidad').value = user.obligadoContabilidad || '';
+
 
                 // Mostrar Logo si existe
                 if (user.logoPath && user.logoPath.startsWith('http')) {
@@ -47,10 +54,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     logoPlaceholder.style.display = 'none';
                 }
 
-                // Estado de la firma (Si firmaPath existe en el JSON, asumimos que está configurada)
-                // NOTA: Como el backend no devuelve firmaPath por seguridad, 
-                // podríamos necesitar un campo booleano extra en el backend "hasSignature".
-                // Por ahora, asumiremos "No configurada" a menos que guardes una nueva.
+                // Estado de la firma
+                if (user.tieneFirma) {
+                    p12Status.textContent = 'Configurada';
+                    p12Status.className = 'status-badge success';
+                } else {
+                    p12Status.textContent = 'No configurada';
+                    p12Status.className = 'status-badge missing';
+                }
             }
         } catch (error) {
             console.error('Error cargando perfil:', error);
@@ -60,10 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. GUARDAR DATOS TEXTO (PUT)
     btnSaveInfo.addEventListener('click', async () => {
         const data = {
-            nombres: document.getElementById('nombres').value,
-            apellidos: document.getElementById('apellidos').value,
-            ruc: document.getElementById('ruc').value,
-            razonSocial: document.getElementById('razonSocial').value
+            correo: document.getElementById('correo').value,
+            direccionMatriz: document.getElementById('direccionMatriz').value
         };
 
         try {
@@ -75,9 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (resp.ok) {
                 alert('Datos actualizados correctamente');
-                // Actualizar nombre en el header sin recargar
-                const headerName = document.getElementById('headerUserName');
-                if (headerName) headerName.textContent = `${data.nombres} ${data.apellidos}`;
             } else {
                 alert('Error al guardar');
             }

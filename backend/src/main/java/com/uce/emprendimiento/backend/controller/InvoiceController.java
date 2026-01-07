@@ -80,6 +80,7 @@ public class InvoiceController {
     @PostMapping
     public ResponseEntity<?> crearFactura(@RequestBody Invoice invoice,
             @RequestParam(defaultValue = "BORRADOR") String accion, // "BORRADOR" o "ENVIAR"
+            @RequestParam(required = false) String claveFirma,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null)
             return ResponseEntity.status(401).build();
@@ -96,7 +97,8 @@ public class InvoiceController {
                 invoice.getInfoAdicional().forEach(info -> info.setFactura(invoice));
             }
 
-            Invoice nuevaFactura = invoiceService.crearFactura(invoice, userDetails.getUser().getId(), accion);
+            Invoice nuevaFactura = invoiceService.crearFactura(invoice, userDetails.getUser().getId(), accion,
+                    claveFirma);
             return ResponseEntity.ok(nuevaFactura);
         } catch (Exception e) {
             e.printStackTrace(); // Para que veas el error en consola

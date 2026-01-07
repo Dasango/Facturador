@@ -76,4 +76,8 @@ public class User {
     protected void onCreate() {
         fechaRegistro = LocalDateTime.now();
     }
+
+    public boolean getTieneFirma() {
+        return firmaPath != null && !firmaPath.isEmpty();
+    }
 }

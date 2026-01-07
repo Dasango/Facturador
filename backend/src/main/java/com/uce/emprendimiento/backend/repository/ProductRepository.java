@@ -10,4 +10,6 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     // Busca productos donde el campo 'usuario' tenga el 'id' especificado
     List<Product> findByUsuario_Id(Long usuarioId);
+
+    java.util.Optional<Product> findByCodigoPrincipalAndUsuarioId(String codigoPrincipal, Long id);
 }
