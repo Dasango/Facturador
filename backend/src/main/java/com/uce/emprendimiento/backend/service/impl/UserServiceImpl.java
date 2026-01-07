@@ -7,9 +7,13 @@ import com.uce.emprendimiento.backend.repository.UserRepository;
 import com.uce.emprendimiento.backend.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpEntity;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +29,32 @@ public class UserServiceImpl implements UserService {
 
     private static final String UPLOAD_DIR = "user_signatures/";
 
+    @Value("${supabase.url}")
+    private String supabaseUrl;
+
+    @Value("${supabase.key}")
+    private String supabaseKey;
+
+    private static final String BUCKET_NAME = "facto-uploads";
+
+    private String uploadToSupabase(MultipartFile file, String folder) throws IOException {
+        String fileName = folder + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        String uploadUrl = supabaseUrl + "/storage/v1/object/" + BUCKET_NAME + "/" + fileName;
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + supabaseKey);
+        headers.set("Content-Type", file.getContentType());
+
+        HttpEntity<byte[]> entity = new HttpEntity<>(file.getBytes(), headers);
+
+        // Supabase devuelve el objeto creado. Enviamos POST.
+        restTemplate.postForEntity(uploadUrl, entity, String.class);
+
+        // Retornamos la URL pública construida
+        return supabaseUrl + "/storage/v1/object/public/" + BUCKET_NAME + "/" + fileName;
+    }
+
     @Override
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByCorreo(request.getCorreo())) {
@@ -34,16 +64,44 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("El RUC ya está registrado");
         }
 
-        User user = new User();
-        user.setRuc(request.getRuc());
-        user.setNombres(request.getNombres());
-        user.setApellidos(request.getApellidos());
-        user.setCorreo(request.getCorreo());
-        user.setContrasena(passwordEncoder.encode(request.getContrasena()));
+        try {
+            User user = new User();
+            // Datos Personales
+            user.setNombres(request.getNombres());
+            user.setApellidos(request.getApellidos());
+            user.setCorreo(request.getCorreo());
+            user.setContrasena(passwordEncoder.encode(request.getContrasena()));
 
-        userRepository.save(user);
+            // Datos SRI
+            user.setRuc(request.getRuc());
+            user.setRazonSocial(request.getRazonSocial());
+            user.setNombreComercial(request.getNombreComercial());
+            user.setDireccionMatriz(request.getDireccionMatriz());
+            user.setCodigoEstablecimiento(request.getCodigoEstablecimiento());
+            user.setCodigoPuntoEmision(request.getCodigoPuntoEmision());
+            user.setObligadoContabilidad(request.getObligadoContabilidad());
+            user.setNroContribuyenteEspecial(request.getNroContribuyenteEspecial());
 
-        return new AuthResponse("Usuario registrado exitosamente", true);
+            // Archivos (Subida a Supabase desde Backend)
+            if (request.getFirma() != null && !request.getFirma().isEmpty()) {
+                String firmaUrl = uploadToSupabase(request.getFirma(), "firmas");
+                user.setFirmaPath(firmaUrl);
+            }
+
+            if (request.getLogo() != null && !request.getLogo().isEmpty()) {
+                String logoUrl = uploadToSupabase(request.getLogo(), "logos");
+                user.setLogoPath(logoUrl);
+            }
+
+            user.setFirmaPassword(request.getFirmaPassword());
+
+            userRepository.save(user);
+
+            return new AuthResponse("Usuario registrado exitosamente", true);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error en el registro: " + e.getMessage(), e);
+        }
     }
 
     @Override

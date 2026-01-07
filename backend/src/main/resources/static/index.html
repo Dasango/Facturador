@@ -4,12 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facto - Facturación electrónica simplificada</title>
-    <!-- Main CSS (Design System) -->
+    <title>Facto - Especialistas en Servicios Profesionales</title>
     <link rel="stylesheet" href="assets/css/main.css">
-    <!-- Landing Page Specific CSS -->
     <link rel="stylesheet" href="assets/css/pages/landing.css">
-    <!-- Fonts (Inter) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -17,28 +14,33 @@
 
 <body>
 
-    <!-- HEADER -->
     <header
-        style="position: sticky; top: 0; z-index: 1000; background-color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; margin: 0 auto;">
+        style="position: sticky; top: 0; z-index: 1000; background-color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; margin: 0 auto; border-bottom: 1px solid #eee;">
 
         <a href="#login" class="logo" style="text-decoration: none; color: inherit; display: block;">
-            <h1 style="font-size: 32px; font-weight: 900; margin: 0;">Facto</h1>
+            <h1 style="font-size: 32px; font-weight: 900; margin: 0;">Facto<span
+                    style="color: #666; font-size: 14px; margin-left: 10px; font-weight: 500;">Servicios &
+                    Arriendo</span></h1>
         </a>
 
         <nav class="nav-menu" id="navMenu">
+            <a href="#compatibility" style="text-decoration: none; color: black; font-weight: 500;">Directorio</a>
             <a href="#about" style="text-decoration: none; color: black; font-weight: 500;">Sobre Nosotros</a>
-            <a href="/signup" style="text-decoration: none; color: black; font-weight: 500;">Registrate Hoy
-            </a>
+            <a href="/signup"
+                style="text-decoration: none; color: black; font-weight: 500; border: 2px solid #000; padding: 8px 16px; border-radius: 6px;">Registrate
+                Hoy</a>
         </nav>
     </header>
 
-    <!-- HERO SECTION -->
     <section class="hero" id="login">
         <div class="hero-content">
-            <h1 class="hero-title">Bienvenido a Facto</h1>
-            <span class="hero-subtitle">Únete ahora</span>
+            <h1 class="hero-title">Tu facturación, enfocada en Servicios.</h1>
+            <span class="hero-subtitle" style="display: block; margin-top: 10px; line-height: 1.5;">
+                Olvídate de sistemas genéricos. Facto está diseñado exclusivamente para <strong>Personas
+                    Naturales</strong> que facturan honorarios profesionales o arriendos.
+            </span>
 
-            <form class="hero-login-form" action="/login" method="POST">
+            <form class="hero-login-form" action="/login" method="POST" style="margin-top: 25px;">
                 <div class="form-group">
                     <label class="form-label" style="font-weight: 700;">Correo o RUC</label>
                     <input type="text" name="username" class="input-control" placeholder="Ingresa tu correo o RUC"
@@ -69,16 +71,100 @@
         </div>
     </section>
 
-    <!-- FEATURES SECTION -->
+    <section class="section" style="background-color: #fff; padding: 60px 20px; border-bottom: 1px solid #eee;">
+        <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+            <h2 class="section-title" style="margin-bottom: 20px;">¿Qué es una "Persona Natural"?</h2>
+            <p style="color: #666; font-size: 18px; line-height: 1.6;">
+                Eres tú, trabajando por tu cuenta. <br>
+                Si usas tu <strong>número de cédula o RUC personal</strong> para facturar tus servicios, sin haber
+                constituido una compañía o sociedad anónima, <strong>¡tú eres nuestro cliente ideal!</strong>
+            </p>
+        </div>
+    </section>
+
+    <section class="section" id="compatibility" style="background-color: #f8f9fa; padding: 60px 20px;">
+        <div style="text-align: center; max-width: 800px; margin: 0 auto 40px auto;">
+            <h2 class="section-title">¿Para quién está construido Facto?</h2>
+            <p style="color: #666;">
+                Hemos decidido especializarnos al 100% en <strong>Servicios Intelectuales y Arrendamiento</strong> para
+                garantizar la máxima velocidad y cero errores.
+                <br>Únete si te identificas con alguno de estos grupos:
+            </p>
+        </div>
+
+        <div class="features-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+
+            <div class="feature-card"
+                style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #e0e0e0;">
+                <h3 class="text-h2" style="font-size: 18px; margin-bottom: 15px; color: #2c3e50;">🩺 Salud y Bienestar
+                </h3>
+                <ul style="list-style: none; padding: 0; margin: 0; color: #666; font-size: 14px; line-height: 2;">
+                    <li>✓ Médicos Generales y Especialistas</li>
+                    <li>✓ Odontólogos y Ortodoncistas</li>
+                    <li>✓ Psicólogos y Psiquiatras</li>
+                    <li>✓ Nutricionistas y Terapeutas</li>
+                    <li>✓ Veterinarios (Servicios)</li>
+                </ul>
+            </div>
+
+            <div class="feature-card"
+                style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #e0e0e0;">
+                <h3 class="text-h2" style="font-size: 18px; margin-bottom: 15px; color: #2c3e50;">⚖️ Legal y
+                    Administrativo</h3>
+                <ul style="list-style: none; padding: 0; margin: 0; color: #666; font-size: 14px; line-height: 2;">
+                    <li>✓ Abogados y Notarios</li>
+                    <li>✓ Contadores (Personas Naturales)</li>
+                    <li>✓ Asesores Tributarios</li>
+                    <li>✓ Consultores de Negocios</li>
+                    <li>✓ Traductores</li>
+                </ul>
+            </div>
+
+            <div class="feature-card"
+                style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #e0e0e0;">
+                <h3 class="text-h2" style="font-size: 18px; margin-bottom: 15px; color: #2c3e50;">💻 Tech y Creativos
+                </h3>
+                <ul style="list-style: none; padding: 0; margin: 0; color: #666; font-size: 14px; line-height: 2;">
+                    <li>✓ Programadores y Desarrolladores</li>
+                    <li>✓ Diseñadores Gráficos / Web</li>
+                    <li>✓ Arquitectos e Ingenieros</li>
+                    <li>✓ Community Managers / Marketing</li>
+                    <li>✓ YouTubers / Influencers (Publicidad)</li>
+                </ul>
+            </div>
+
+            <div class="feature-card"
+                style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #e0e0e0;">
+                <h3 class="text-h2" style="font-size: 18px; margin-bottom: 15px; color: #2c3e50;">🏠 Rentas y Educación
+                </h3>
+                <ul style="list-style: none; padding: 0; margin: 0; color: #666; font-size: 14px; line-height: 2;">
+                    <li>✓ Arrendadores de Vivienda</li>
+                    <li>✓ Arrendadores de Locales Comerciales</li>
+                    <li>✓ Profesores Particulares / Tutores</li>
+                    <li>✓ Entrenadores Personales (Coach)</li>
+                    <li>✓ Conferencistas</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div
+            style="max-width: 800px; margin: 40px auto 0; background-color: #f1f3f5; color: #495057; padding: 20px; border-radius: 8px; text-align: center; font-size: 14px;">
+            <p style="margin: 0;">
+                <strong>Nota de Enfoque:</strong> Para mantener la plataforma ágil, <strong>no incluimos</strong>
+                herramientas para venta de productos físicos (inventarios), transporte pesado o artesanos. Nos dedicamos
+                exclusivamente a potenciar tus servicios profesionales.
+            </p>
+        </div>
+    </section>
+
     <section class="section">
         <div class="features-grid">
-
-            <!-- Feature 1 -->
             <div class="feature-card" style="border: none; box-shadow: none; background: transparent;">
                 <div class="feature-card__content" style="padding: 0 0 20px 0;">
-                    <h3 class="text-h2" style="font-size: 20px;">Facturación electrónica válida</h3>
+                    <h3 class="text-h2" style="font-size: 20px;">Facturación Válida SRI</h3>
                     <p class="text-body" style="font-size: 14px; color: #666; line-height: 1.5;">
-                        Emite facturas electrónicas cumpliendo con los requisitos legales y tributarios vigentes.
+                        Generamos el XML estándar para servicios profesionales sin complicaciones.
                     </p>
                 </div>
                 <div style="width: 100%; height: 250px; border-radius: 20px; overflow: hidden;">
@@ -87,12 +173,11 @@
                 </div>
             </div>
 
-            <!-- Feature 2 -->
             <div class="feature-card" style="border: none; box-shadow: none; background: transparent;">
                 <div class="feature-card__content" style="padding: 0 0 20px 0;">
                     <h3 class="text-h2" style="font-size: 20px;">Fácil de usar</h3>
                     <p class="text-body" style="font-size: 14px; color: #666; line-height: 1.5;">
-                        Interfaz intuitiva diseñada para agilizar el proceso de facturación sin complicaciones.
+                        Cargas tu firma (.p12), configuras tu logo y empiezas a facturar en minutos.
                     </p>
                 </div>
                 <div style="width: 100%; height: 250px; border-radius: 20px; overflow: hidden;">
@@ -101,12 +186,11 @@
                 </div>
             </div>
 
-            <!-- Feature 3 -->
             <div class="feature-card" style="border: none; box-shadow: none; background: transparent;">
                 <div class="feature-card__content" style="padding: 0 0 20px 0;">
-                    <h3 class="text-h2" style="font-size: 20px;">Seguridad y control</h3>
+                    <h3 class="text-h2" style="font-size: 20px;">Seguridad Total</h3>
                     <p class="text-body" style="font-size: 14px; color: #666; line-height: 1.5;">
-                        Protección de datos, respaldo de información y control total de tus documentos.
+                        Tus claves y documentos están encriptados y respaldados en la nube.
                     </p>
                 </div>
                 <div style="width: 100%; height: 250px; border-radius: 20px; overflow: hidden;">
@@ -120,20 +204,19 @@
     <section class="section">
         <div class="pricing-grid">
 
-            <!-- Plan 1 -->
             <div class="pricing-card" style="width: 300px;">
                 <div>
                     <span class="text-subtitle" style="color: #000; font-weight: 700; font-size: 18px;">
-                        Plan Básico
+                        Plan Freelance
                     </span>
                     <p style="margin: 4px 0 0 0; color: #666; font-size: 14px;">
-                        Ideal para personas naturales
+                        Ideal para quienes facturan poco
                     </p>
                 </div>
                 <h3 class="pricing-price">$0 <span>/ mes</span></h3>
                 <ul class="pricing-features text-body" style="font-size: 14px;">
                     <li>Hasta 10 facturas mensuales</li>
-                    <li>Acceso al sistema</li>
+                    <li>Emisión Normal (Offline)</li>
                     <li>Soporte básico</li>
                 </ul>
                 <a href="#" class="btn btn-secondary" style="width: 100%; border: 1px solid #ddd;">
@@ -141,20 +224,19 @@
                 </a>
             </div>
 
-            <!-- Plan 2 -->
             <div class="pricing-card pricing-card--featured" style="width: 300px;">
                 <div>
                     <span class="text-subtitle" style="color: #fff; font-weight: 700; font-size: 18px;">
                         Plan Profesional
                     </span>
                     <p style="margin: 4px 0 0 0; color: #ccc; font-size: 14px;">
-                        Para pequeños negocios
+                        Para consultores activos
                     </p>
                 </div>
                 <h3 class="pricing-price" style="color: #fff;">$1 <span>/ mes</span></h3>
                 <ul class="pricing-features text-body" style="font-size: 14px; color: #fff;">
                     <li>Hasta 100 facturas mensuales</li>
-                    <li>Gestión de clientes</li>
+                    <li>Gestión de clientes frecuente</li>
                     <li>Soporte prioritario</li>
                 </ul>
                 <a href="#" class="btn btn-primary"
@@ -163,21 +245,20 @@
                 </a>
             </div>
 
-            <!-- Plan 3 -->
             <div class="pricing-card" style="width: 300px;">
                 <div>
                     <span class="text-subtitle" style="color: #000; font-weight: 700; font-size: 18px;">
-                        Plan Empresarial
+                        Plan Estudio
                     </span>
                     <p style="margin: 4px 0 0 0; color: #666; font-size: 14px;">
-                        Para empresas y equipos grandes
+                        Para alto volumen de emisión
                     </p>
                 </div>
                 <h3 class="pricing-price">$1.99 <span>/ mes</span></h3>
                 <ul class="pricing-features text-body" style="font-size: 14px;">
                     <li>Hasta 500 facturas mensuales</li>
                     <li>Múltiples usuarios</li>
-                    <li>Soporte especializado</li>
+                    <li>Atención Personalizada</li>
                 </ul>
                 <a href="#" class="btn btn-secondary" style="width: 100%; border: 1px solid #ddd;">
                     Contratar
@@ -186,19 +267,17 @@
         </div>
     </section>
 
-
-    <!-- ABOUT US SECTION -->
     <section class="section" id="about">
         <h2 class="section-title" style="margin-bottom: 10px;">Sobre nosotros</h2>
         <p style="color: #666; margin-bottom: 60px;">
-            Somos un equipo enfocado en simplificar la facturación electrónica.
+            Somos un equipo enfocado en simplificar la facturación para el profesional moderno.
         </p>
 
         <div class="testimonials-grid">
 
             <div class="testimonial-card" style="min-height: 250px;">
                 <p class="testimonial-quote">
-                    “Nuestro objetivo es facilitar el cumplimiento tributario.”
+                    “Nuestro objetivo es facilitar el cumplimiento tributario personal.”
                 </p>
                 <div class="testimonial-profile">
                     <div class="testimonial-avatar"><span>👨‍💼</span></div>
@@ -211,7 +290,7 @@
 
             <div class="testimonial-card" style="min-height: 250px;">
                 <p class="testimonial-quote">
-                    “Diseñamos una plataforma confiable y escalable.”
+                    “Diseñamos una plataforma confiable y directa al grano.”
                 </p>
                 <div class="testimonial-profile">
                     <div class="testimonial-avatar"><span>👨‍💻</span></div>
@@ -224,7 +303,7 @@
 
             <div class="testimonial-card" style="min-height: 250px;">
                 <p class="testimonial-quote">
-                    “Cumplir con la normativa es nuestra prioridad.”
+                    “Cumplir con la normativa nunca fue tan sencillo.”
                 </p>
                 <div class="testimonial-profile">
                     <div class="testimonial-avatar"><span>⚖️</span></div>
@@ -250,10 +329,8 @@
         </div>
     </section>
 
-    <!-- FOOTER -->
     <div id="footer-container"></div>
 
-    <!-- Scripts -->
     <script src="assets/js/landing.js"></script>
 </body>
 
