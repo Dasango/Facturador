@@ -52,20 +52,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 3. Crear el HTML
             // Agregamos el onclick="window.open(...)" a los botones
+            // Safe accessors
+            const dateStr = formatDate(item.fechaEmision);
+            const numComp = item.numeroComprobante || '---';
+            const clientName = item.clienteNombre || 'Consumidor Final';
+            const clientId = item.clienteIdentificacion || '9999999999999';
+            const totalVal = (item.total || 0).toFixed(2);
+
             const row = `
                 <tr>
-                    <td>${formatDate(item.fechaEmision)}</td>
+                    <td>${dateStr}</td>
                     <td>Factura</td> 
-                    <td>${item.numeroComprobante}</td>
-                    <td>${item.clienteIdentificacion}</td>
-                    <td>${item.clienteNombre}</td>
-                    <td style="font-weight:600;">$${item.total.toFixed(2)}</td>
-                    <td><span class="status-badge ${badgeClass}">${item.estado}</span></td>
+                    <td>${numComp}</td>
+                    <td>${clientId}</td>
+                    <td>${clientName}</td>
+                    <td style="font-weight:600;">$${totalVal}</td>
+                    <td><span class="status-badge ${badgeClass}">${item.estado || 'PENDIENTE'}</span></td>
                     <td>
                         <button class="action-btn" title="Ver RIDE" onclick="generateAndDownloadPdf(${item.id})">
                             👁️
                         </button>
-
                         <button class="action-btn" title="Ver XML" onclick="window.open('${rideUrl}', '_blank')">
                             ⬇️
                         </button>
@@ -128,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const rejected = data.filter(i => i.estado === 'RECHAZADO').length;
 
         // Sumar total (reduce)
-        const totalVal = data.reduce((sum, item) => sum + item.total, 0);
+        const totalVal = data.reduce((sum, item) => sum + (item.total || 0), 0);
 
         // Actualizar DOM
         statAuth.textContent = `${authorized} Comprobantes`;
@@ -139,7 +145,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Helper simple para formatear fecha (YYYY-MM-DD a DD/MM/YYYY)
     function formatDate(dateString) {
-        const [year, month, day] = dateString.split('-');
-        return `${day}/${month}/${year}`;
+        if (!dateString) return '--/--/----';
+        // Handle array format [yyyy, mm, dd] which Jackson might produce for LocalDate sometimes
+        if (Array.isArray(dateString)) {
+            const [year, month, day] = dateString;
+            // Pad with 0
+            const d = day.toString().padStart(2, '0');
+            const m = month.toString().padStart(2, '0');
+            return `${d}/${m}/${year}`;
+        }
+        // Handle string
+        try {
+            const [year, month, day] = dateString.split('-');
+            return `${day}/${month}/${year}`;
+        } catch (e) {
+            return dateString;
+        }
     }
 });

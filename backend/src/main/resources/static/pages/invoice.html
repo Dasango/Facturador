@@ -25,9 +25,9 @@
                             <div id="companyLogo"
                                 style="width: 60px; height: 60px; background: #e2e8f0; border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; font-size: 24px;">
                                 🏢</div>
-                            <h2 id="companyName">Mi Empresa S.A.</h2>
-                            <span class="info-value" id="companyRuc">RUC: 1790000000001</span>
-                            <span class="info-value" id="companyAddress">Dir: Quito, Ecuador</span>
+                            <h2 id="companyName">Cargando...</h2>
+                            <span class="info-value" id="companyRuc">RUC: ...</span>
+                            <span class="info-value" id="companyAddress">Dir: ...</span>
 
                             <div style="margin-top: 20px;">
                                 <label class="info-label">Ambiente:</label>
@@ -41,23 +41,9 @@
 
                             <div class="form-grid-2">
                                 <div>
-                                    <label class="info-label">No. Comprobante</label>
-                                    <div style="display: flex; gap: 5px;">
-                                        <input type="text" id="estab" class="input-control" value="001"
-                                            style="width: 50px;" readonly>
-                                        <input type="text" id="ptoEmi" class="input-control" value="001"
-                                            style="width: 50px;" readonly>
-                                        <input type="text" id="secuencial" class="input-control" placeholder="000000001"
-                                            readonly style="flex: 1;">
-                                    </div>
-                                </div>
-                                <div>
                                     <label class="info-label">Fecha Emisión</label>
-                                    <input type="date" id="fechaEmision" class="input-control" value="2025-01-03">
+                                    <input type="date" id="fechaEmision" class="input-control">
                                 </div>
-                            </div>
-
-                            <div class="form-grid-2" style="margin-top: 15px;">
                                 <div>
                                     <label class="info-label">Guía Remisión</label>
                                     <input type="text" id="guiaRemision" class="input-control" placeholder="Opional">
@@ -78,18 +64,18 @@
                                         <option value="06">Pas</option>
                                     </select>
                                     <input type="text" id="identificacionComprador" class="input-control"
-                                        placeholder="Número de ID" value="0503023883">
+                                        placeholder="Número de ID" value="9999999999999">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Razón Social / Nombres</label>
                                 <input type="text" id="razonSocialComprador" class="input-control"
-                                    placeholder="Nombre completo" value="Alex Smith">
+                                    placeholder="Nombre completo" value="CONSUMIDOR FINAL">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Dirección</label>
                                 <input type="text" id="direccionComprador" class="input-control"
-                                    placeholder="Dirección domiciliaria" value="Quito, Av. Amazonas">
+                                    placeholder="Dirección domiciliaria" value="Ecuador">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Correo Electrónico</label>
@@ -112,7 +98,7 @@
                             <table class="premium-table" id="detallesTable">
                                 <thead>
                                     <tr>
-                                        <th style="width: 100px;">Código</th>
+                                        <th style="width: 130px;">Código</th>
                                         <th>Descripción</th>
                                         <th style="width: 80px;">Cant.</th>
                                         <th style="width: 120px;">Precio U.</th>
@@ -122,18 +108,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="detalle-row">
-                                        <td><input type="text" class="codigo" value="S001"></td>
-                                        <td><input type="text" class="descripcion" value="Servicio Profesional"></td>
-                                        <td><input type="number" class="cantidad" value="1" min="1"></td>
-                                        <td><input type="number" class="precio" value="50.00" step="0.01"></td>
-                                        <td><input type="number" class="descuento" value="0.00" step="0.01"></td>
-                                        <td class="total-linea" style="text-align: right; font-weight: 600;">50.00</td>
-                                        <td><button type="button" class="btn-icon danger remove-row">×</button></td>
-                                    </tr>
+                                    <!-- Rows added dynamically via 'Agregar Producto' -->
                                 </tbody>
                             </table>
-                            <button type="button" id="addRowBtn" class="btn-add">+ Agregar Línea</button>
+                            <button type="button" id="addRowBtn" class="btn-add">+ Agregar Producto</button>
                         </div>
                     </div>
 
@@ -155,9 +133,16 @@
                                         <tr>
                                             <td>
                                                 <select class="input-control formaPago">
-                                                    <option value="01">01 - Sin Utilización Sistema Financiero</option>
-                                                    <option value="19">19 - Tarjeta de Crédito</option>
-                                                    <option value="20">20 - Otros con Utilización del SF</option>
+                                                    <option value="01">01 - SIN UTILIZACION DEL SISTEMA FINANCIERO
+                                                    </option>
+                                                    <option value="15">15 - COMPENSACIÓN DE DEUDAS</option>
+                                                    <option value="16">16 - TARJETA DE DÉBITO</option>
+                                                    <option value="17">17 - DINERO ELECTRÓNICO</option>
+                                                    <option value="18">18 - TARJETA PREPAGO</option>
+                                                    <option value="19">19 - TARJETA DE CRÉDITO</option>
+                                                    <option value="20">20 - OTROS CON UTILIZACIÓN DEL SISTEMA FINANCIERO
+                                                    </option>
+                                                    <option value="21">21 - ENDOSO DE TÍTULOS</option>
                                                 </select>
                                             </td>
                                             <td><input type="number" class="input-control totalPago" step="0.01"
@@ -218,9 +203,36 @@
         <button type="button" class="btn-fab" style="background: white; color: #0f172a; border: 1px solid #cbd5e1;">
             💾 Guardar Borrador
         </button>
+        <!-- For debugging/sleepy user: Both actions will trigger save & open XML -->
         <button type="button" id="btnOpenSignModal" class="btn-fab">
             🚀 Firmar y Enviar
         </button>
+    </div>
+
+    <!-- Product Selection Modal -->
+    <div id="productModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center;">
+        <div
+            style="background: white; padding: 20px; border-radius: 12px; width: 600px; max-width: 95%; max-height: 80vh; overflow-y: auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 style="margin:0;">Seleccionar Producto</h3>
+                <button type="button" onclick="document.getElementById('productModal').style.display='none'"
+                    style="border:none; cursor:pointer; font-size:20px;">&times;</button>
+            </div>
+            <table class="premium-table">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="productModalBody">
+                    <!-- Loaded dynamically -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div id="signModal"

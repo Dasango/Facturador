@@ -23,6 +23,7 @@ import java.util.List;
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
+    private final com.uce.emprendimiento.backend.service.SriService sriService;
 
     @GetMapping
     public ResponseEntity<List<InvoiceSummaryDTO>> getMyInvoices(
@@ -74,6 +75,66 @@ public class InvoiceController {
             e.printStackTrace();
             return ResponseEntity.badRequest()
                     .body("Error generando JSON data: " + (e.getMessage() != null ? e.getMessage() : e.toString()));
+        }
+    }
+
+    @GetMapping(value = "/{id}/sri-mock-response", produces = org.springframework.http.MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<?> getSriMockResponse(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(401).build();
+        }
+        try {
+            // 1. Generar XML Real
+            var dto = invoiceService.getFacturaDTO(id, userDetails.getUser().getId());
+            String realXml = sriService.objectToXml(dto);
+
+            // 2. Construir Fake Response
+            String soapResponse = """
+                    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                     <soap:Body>
+                     <ns2:autorizacionComprobanteResponse
+                    xmlns:ns2="http://ec.gob.sri.ws.autorizacion">
+                     <RespuestaAutorizacionComprobante>
+                     <claveAccesoConsultada>
+                     1302201201176001321000120010030000050431234567814
+                     </claveAccesoConsultada>
+                     <numeroComprobantes>1</numeroComprobantes>
+                     <autorizaciones>
+                     <autorizacion>
+                     <estado>RECHAZADO</estado>
+                     <fechaAutorizacion>2012-02-13T16:34:48.997-05:00</fechaAutorizacion>
+                     <ambiente>PRUEBAS</ambiente>
+                     <comprobante><![CDATA[
+                     %s
+                     ]]></comprobante>
+                     <mensajes>
+                     <mensaje>
+                     <identificador>46</identificador>
+                     <mensaje> RUC no existe </mensaje>
+                     <tipo>ERROR</tipo>
+                     </mensaje>
+                     </mensajes>
+                     </autorizacion>
+                     </autorizaciones>
+                     </RespuestaAutorizacionComprobante>
+                     </ns2:autorizacionComprobanteResponse>
+                     </soap:Body>
+                    </soap:Envelope>
+                                """.formatted(realXml);
+
+            // 3. Concatenar (Usuario pidió: "el xml que ya está dando Y ABAJO este dato
+            // quemado")
+            // Interpretación literal: Archivo con XML + SOAP
+            String finalOutput = realXml + "\n\n" + "<!-- RESULTADO SRI -->" + "\n" + soapResponse;
+
+            return ResponseEntity.ok(finalOutput);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest()
+                    .body("Error simulando SRI: " + (e.getMessage() != null ? e.getMessage() : e.toString()));
         }
     }
 

@@ -16,18 +16,84 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(err => console.error(err));
     };
 
-    // Load Company Info from LocalStorage or Backend (Mock for now)
-    const storedUser = JSON.parse(localStorage.getItem('facto_user'));
-    if (storedUser) {
-        document.getElementById('companyName').textContent = storedUser.razonSocial || storedUser.nombres + ' ' + storedUser.apellidos;
-        document.getElementById('companyRuc').textContent = 'RUC: ' + (storedUser.ruc || '9999999999999');
-        if (storedUser.logoPath && !storedUser.logoPath.includes('pngtree')) {
-            // If absolute path, might not load due to security. Using mock URL if recognized.
-            if (storedUser.logoPath.startsWith('http')) {
-                document.getElementById('companyLogo').innerHTML = `<img src="${storedUser.logoPath}" style="width:100%; height:100%; object-fit:contain;">`;
+    // Load Company Info from Backend
+    fetch('/api/user/profile')
+        .then(res => res.json())
+        .then(user => {
+            document.getElementById('companyName').textContent = user.razonSocial || user.nombres + ' ' + user.apellidos;
+            document.getElementById('companyRuc').textContent = 'RUC: ' + (user.ruc || '...');
+            document.getElementById('companyAddress').textContent = 'Dir: ' + (user.direccionMatriz || '...');
+
+            if (user.logoPath) {
+                // Check if it's a supabase URL or needs handling
+                const logoUrl = user.logoPath.startsWith('http') ? user.logoPath : user.logoPath;
+                // Simple check, real implementation might need signed URLs if private
+                document.getElementById('companyLogo').innerHTML = `<img src="${logoUrl}" style="width:100%; height:100%; object-fit:contain;">`;
             }
-        }
-    }
+        })
+        .catch(err => console.error('Error loading profile:', err));
+
+    // Load Products
+    let availableProducts = [];
+    const loadProducts = () => {
+        fetch('/api/products')
+            .then(res => res.json())
+            .then(products => {
+                availableProducts = products;
+                renderProductModal();
+            })
+            .catch(err => console.error('Error loading products:', err));
+    };
+    loadProducts();
+
+    const renderProductModal = () => {
+        const tbody = document.getElementById('productModalBody');
+        tbody.innerHTML = '';
+        availableProducts.forEach(p => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${p.codigoPrincipal}</td>
+                <td>${p.nombre}</td>
+                <td>$${(p.valorUnitario || 0).toFixed(2)}</td>
+                <td><button type="button" class="btn-link select-prod-btn" data-id="${p.id}">Seleccionar</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // Attach events
+        tbody.querySelectorAll('.select-prod-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const prodId = e.target.getAttribute('data-id');
+                const product = availableProducts.find(p => p.id == prodId);
+
+                if (product) {
+                    if (currentRowToFill) {
+                        // Edit existing
+                        fillRowWithProduct(currentRowToFill, product);
+                    } else {
+                        // Create New
+                        createRow(product);
+                    }
+                    document.getElementById('productModal').style.display = 'none';
+                    currentRowToFill = null;
+                }
+            });
+        });
+    };
+
+    let currentRowToFill = null;
+    const openProductModal = (row) => {
+        currentRowToFill = row;
+        document.getElementById('productModal').style.display = 'flex';
+    };
+
+    const fillRowWithProduct = (row, product) => {
+        row.querySelector('.codigo').value = product.codigoPrincipal;
+        row.querySelector('.descripcion').value = product.nombre;
+        row.querySelector('.precio').value = (product.valorUnitario || 0).toFixed(2);
+        // Trigger calc
+        row.querySelector('.precio').dispatchEvent(new Event('input'));
+    };
 
     /* ==========================================================================
        DYNAMIC LINES: Details, Payments, Info
@@ -37,21 +103,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const detallesTableBody = document.querySelector('#detallesTable tbody');
     const addRowBtn = document.getElementById('addRowBtn');
 
+    // Helper to create and append arrow (Used by Modal and potentially manual actions if needed)
+    function createRow(productData = null) {
+        const row = document.createElement('tr');
+        row.className = 'detalle-row';
+
+        const code = productData ? productData.codigoPrincipal : '';
+        const name = productData ? productData.nombre : '';
+        const price = productData ? (productData.valorUnitario || 0).toFixed(2) : '0.00';
+
+        row.innerHTML = `
+            <td>
+                <div style="display: flex; gap: 2px;">
+                    <input type="text" class="codigo" placeholder="Cod" value="${code}">
+                    <button type="button" class="btn-icon open-products" title="Buscar Producto">🔍</button>
+                </div>
+            </td>
+            <td><input type="text" class="descripcion" placeholder="Descripción" value="${name}"></td>
+            <td><input type="number" class="cantidad" value="1" min="1"></td>
+            <td><input type="number" class="precio" value="${price}" step="0.01"></td>
+            <td><input type="number" class="descuento" value="0.00" step="0.01"></td>
+            <td class="total-linea" style="text-align: right; font-weight: 600;">0.00</td>
+            <td><button type="button" class="btn-icon danger remove-row">×</button></td>
+        `;
+
+        detallesTableBody.appendChild(row);
+        attachRowEvents(row);
+        if (productData) {
+            // Calculate initial total
+            row.querySelector('.precio').dispatchEvent(new Event('input'));
+        }
+        return row;
+    }
+
     if (addRowBtn) {
+        // Open Modal to Add New Product
         addRowBtn.addEventListener('click', () => {
-            const row = document.createElement('tr');
-            row.className = 'detalle-row';
-            row.innerHTML = `
-                <td><input type="text" class="codigo" value="NEW"></td>
-                <td><input type="text" class="descripcion" value="Nuevo Item"></td>
-                <td><input type="number" class="cantidad" value="1" min="1"></td>
-                <td><input type="number" class="precio" value="0.00" step="0.01"></td>
-                <td><input type="number" class="descuento" value="0.00" step="0.01"></td>
-                <td class="total-linea" style="text-align: right; font-weight: 600;">0.00</td>
-                <td><button type="button" class="btn-icon danger remove-row">×</button></td>
-            `;
-            detallesTableBody.appendChild(row);
-            attachRowEvents(row);
+            currentRowToFill = null; // Null means "Create New Row"
+            document.getElementById('productModal').style.display = 'flex';
         });
     }
 
@@ -80,6 +169,12 @@ document.addEventListener('DOMContentLoaded', () => {
             row.remove();
             calculateTotals();
         });
+
+        // Attach Modal Event
+        const searchBtn = row.querySelector('.open-products');
+        if (searchBtn) {
+            searchBtn.addEventListener('click', () => openProductModal(row));
+        }
         const inputs = row.querySelectorAll('input');
         inputs.forEach(inp => {
             inp.addEventListener('input', () => {
@@ -177,7 +272,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 producto: {
                     codigoPrincipal: prodCode,
                     nombre: prodName,
-                    precioUnitario: price,
+                    precioUnitario: price, // This one is constructing the InvoiceDetail DTO, verify if DTO expects precioUnitario or valorUnitario. 
+                    // InvoiceDetail.java -> precioUnitario (Double). This is correct for the Payload.
+                    // The 'product' inside 'detallesList' is for the entity. InvoiceDetail has a Product relation.
+                    // But in the payload builder, we are building DTO-like structure?
+                    // Let's check Invoice.java / Service createFactura.
+                    // Service uses: inputProd.getCodigoPrincipal() etc.
+                    // Step 57 InvoiceServiceImpl:100 -> detalle.setProducto(inputProd);
+                    // The 'producto' object in the details array should match Product structure if we want to update it properly?
+                    // Actually, if we send { producto: { codigoPrincipal... } }, Jackson maps this to Product entity.
+                    // Product entity uses 'valorUnitario'.
+                    valorUnitario: price,
                     // Default taxes (backend defaults if missing, but sending here helps clarity)
                     codigoImpuesto: "2",
                     codigoPorcentaje: "4", // 15%
@@ -192,6 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
             clienteNombre: document.getElementById('razonSocialComprador').value,
             clienteIdentificacion: document.getElementById('identificacionComprador').value,
             tipoIdentificacionComprador: document.getElementById('tipoIdentificacionComprador').value,
+            numeroComprobante: `001-001-0000000${Math.floor(Math.random() * 100).toString().padStart(2, '0')}`,
             direccionComprador: document.getElementById('direccionComprador').value,
             // guiaRemision: document.getElementById('guiaRemision').value, // Not in Entity yet?
 
@@ -220,32 +326,58 @@ document.addEventListener('DOMContentLoaded', () => {
     // Let's rely on text or add ID. The user HTML has '💾 Guardar Borrador' as first button in .action-bar
     const btnSaveDraft = document.querySelector('.action-bar button:first-child');
 
-    if (btnSaveDraft) {
-        btnSaveDraft.addEventListener('click', async () => {
-            const payload = buildInvoicePayload();
-            // Action "BORRADOR" is default
-            try {
-                btnSaveDraft.textContent = 'Guardando...';
-                const resp = await fetch('/api/invoices?accion=BORRADOR', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+    // Updated function to allow forced simulation display
+    const handleSaveAndOpen = async (accion, simulateSri = false) => {
+        const payload = buildInvoicePayload();
+        // Always save first
+        try {
+            const btn = accion === 'BORRADOR' && !simulateSri ? btnSaveDraft : btnConfirmSign;
+            const originalText = btn.textContent;
+            btn.textContent = 'Procesando...';
+            btn.disabled = true;
 
-                if (resp.ok) {
-                    alert('✅ Borrador guardado correctamente');
-                    window.location.href = '../pages/history.html';
-                } else {
-                    const txt = await resp.text();
-                    alert('Error guardando borrador: ' + txt);
+            // We always send to backend. If simulateSri is true, we might still send BORRADOR to backend 
+            // to avoid signature errors, but we want to SHOW the mock response.
+            const resp = await fetch(`/api/invoices?accion=${accion}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const jsonResp = await resp.json();
+
+            if (resp.ok) {
+                // Success - Open XML or Mock
+                const invoiceId = jsonResp.id;
+
+                let targetUrl = `/api/invoices/${invoiceId}/xml-data`;
+
+                // If action was ENVIAR or we explicitly requested simulation validation
+                if (accion === 'ENVIAR' || simulateSri) {
+                    targetUrl = `/api/invoices/${invoiceId}/sri-mock-response`;
                 }
-            } catch (e) {
-                alert('Error de conexión');
-                console.error(e);
-            } finally {
-                btnSaveDraft.innerHTML = '💾 Guardar Borrador';
+
+                alert('✅ Factura Procesada. Abriendo Resultados...');
+                window.open(targetUrl, '_blank');
+
+                if (simulateSri || accion === 'ENVIAR') {
+                    document.getElementById('signModal').style.display = 'none';
+                }
+            } else {
+                alert('Error: ' + (jsonResp.message || 'Error desconocido'));
             }
-        });
+
+            btn.textContent = originalText;
+            btn.disabled = false;
+
+        } catch (e) {
+            console.error(e);
+            alert('Error de conexión');
+        }
+    };
+
+    if (btnSaveDraft) {
+        btnSaveDraft.addEventListener('click', () => handleSaveAndOpen('BORRADOR', false));
     }
 
     if (btnOpenSignModal) {
@@ -256,52 +388,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (btnConfirmSign) {
-        btnConfirmSign.addEventListener('click', async () => {
-            const clave = modalClaveP12.value;
-            if (!clave) { alert('Ingrese contraseña'); return; }
-
-            const payload = buildInvoicePayload();
-
-            // Send with accion=ENVIAR and claveFirma
-            try {
-                btnConfirmSign.textContent = 'Enviando al SRI...';
-                btnConfirmSign.disabled = true;
-
-                // Params
-                const params = new URLSearchParams({
-                    accion: 'ENVIAR',
-                    claveFirma: clave
-                });
-
-                const resp = await fetch(`/api/invoices?${params.toString()}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload) // Invoice Entity
-                });
-
-                const jsonResp = await resp.json(); // Expecting the updated Invoice object
-
-                if (resp.ok) {
-                    // Check status in response
-                    if (jsonResp.estado === 'AUTORIZADO') {
-                        alert('✅ FACTURA AUTORIZADA POR EL SRI\nClave: ' + (jsonResp.claveAcceso || ''));
-                        window.location.href = '../pages/history.html';
-                    } else if (jsonResp.estado === 'RECHAZADO') {
-                        alert('❌ RECHAZADO POR SRI:\n' + (jsonResp.mensajeSri || 'Verifique errores'));
-                    } else {
-                        alert('⚠️ Estado SRI: ' + jsonResp.estado);
-                    }
-                } else {
-                    alert('Error del Servidor: ' + (jsonResp.message || JSON.stringify(jsonResp)));
-                }
-            } catch (e) {
-                console.error(e);
-                alert('Error de conexión o proceso: ' + e.message);
-            } finally {
-                btnConfirmSign.textContent = 'Confirmar Emisión';
-                btnConfirmSign.disabled = false;
-                signModal.style.display = 'none';
-            }
+        // User requested "generate xml without signature for now" but show the FAKE SRI RESPONSE.
+        // We save as BORRADOR to bypass backend signature requirement, but pass true to open the mock URL.
+        btnConfirmSign.addEventListener('click', () => {
+            // Close modal first
+            document.getElementById('signModal').style.display = 'none';
+            handleSaveAndOpen('BORRADOR', true);
         });
     }
 });
