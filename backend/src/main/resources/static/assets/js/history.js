@@ -62,11 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td style="font-weight:600;">$${item.total.toFixed(2)}</td>
                     <td><span class="status-badge ${badgeClass}">${item.estado}</span></td>
                     <td>
-                        <button class="action-btn" title="Ver" onclick="window.open('${rideUrl}', '_blank')">
+                        <button class="action-btn" title="Ver RIDE" onclick="generateAndDownloadPdf(${item.id})">
                             👁️
                         </button>
 
-                        <button class="action-btn" title="Descargar" onclick="window.open('${rideUrl}', '_blank')">
+                        <button class="action-btn" title="Ver XML" onclick="window.open('${rideUrl}', '_blank')">
                             ⬇️
                         </button>
                     </td>
@@ -78,6 +78,45 @@ document.addEventListener('DOMContentLoaded', () => {
         // Actualizar texto footer
         showingText.textContent = `Mostrando ${data.length} de ${data.length} comprobantes.`;
     }
+
+    // Expose function to window so the inline onclick works
+    window.generateAndDownloadPdf = (id) => {
+        const jsonUrl = `/api/invoices/${id}/xml-data`; // Endpoint that returns the JSON for the invoice
+        console.log("Fetching JSON from:", jsonUrl);
+
+        fetch(jsonUrl)
+            .then(res => {
+                if (!res.ok) throw new Error("Error fetching Invoice JSON");
+                return res.json();
+            })
+            .then(invoiceJson => {
+                console.log("JSON received, sending to PDF generator...");
+                return fetch('/api/pdf/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(invoiceJson)
+                });
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("Error generating PDF");
+                return res.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                // Try to get filename from content-disposition if exposed, or default
+                a.download = `factura_${id}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(err => {
+                console.error("Error in PDF flow:", err);
+                alert("Error generando el PDF. Ver consola.");
+            });
+    };
 
     function updateStats(data) {
         // Calcular contadores simples
