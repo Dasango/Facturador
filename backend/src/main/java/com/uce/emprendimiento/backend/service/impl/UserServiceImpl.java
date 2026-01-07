@@ -15,7 +15,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpEntity;
 
-import java.io.File;
 import java.io.IOException;
 
 @Service
@@ -26,8 +25,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    private static final String UPLOAD_DIR = "user_signatures/";
 
     @Value("${supabase.url}")
     private String supabaseUrl;
@@ -132,34 +129,37 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("El archivo está vacío");
 
         try {
-            File dir = new File(UPLOAD_DIR);
-            if (!dir.exists())
-                dir.mkdirs();
-
-            String fileName = "user_" + userId + "_" + System.currentTimeMillis() + ".p12";
-            File dest = new File(dir, fileName);
-            file.transferTo(dest);
+            // Reutilizamos la lógica de Supabase (guardar en carpeta "firmas")
+            String signatureUrl = uploadToSupabase(file, "firmas");
 
             User user = getUserById(userId);
-            user.setFirmaPath(dest.getAbsolutePath());
+            user.setFirmaPath(signatureUrl);
             user.setFirmaPassword(password);
             userRepository.save(user);
 
         } catch (IOException e) {
-            throw new RuntimeException("Error al guardar la firma P12", e);
+            throw new RuntimeException("Error al guardar la firma P12 en Supabase", e);
         }
     }
 
     @Override
     @Transactional
     public String uploadLogo(Long userId, MultipartFile file) {
-        // Mantenemos tu Mock URL por ahora
-        String mockUrl = "https://www.informador.mx/__export/1767450339821/sites/elinformador/img/2026/01/03/web_canva_-1-_version1767450310580.png_914869537.png";
+        if (file.isEmpty())
+            throw new RuntimeException("El archivo está vacío");
 
-        User user = getUserById(userId);
-        user.setLogoPath(mockUrl);
-        userRepository.save(user);
+        try {
+            // Reutilizamos la lógica de Supabase (guardar en carpeta "logos")
+            String logoUrl = uploadToSupabase(file, "logos");
 
-        return mockUrl;
+            User user = getUserById(userId);
+            user.setLogoPath(logoUrl);
+            userRepository.save(user);
+
+            return logoUrl;
+
+        } catch (IOException e) {
+            throw new RuntimeException("Error al subir el logo a Supabase", e);
+        }
     }
 }
