@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 2. Crear la URL dinámica usando el ID del item actual
             // Esto generará algo como: /api/invoices/15/ride
-            const rideUrl = `/api/invoices/${item.id}/ride`;
+            const rideUrl = `/api/invoices/${item.id}/xml-data`;
 
             // 3. Crear el HTML
             // Agregamos el onclick="window.open(...)" a los botones

@@ -15,4 +15,10 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     List<Invoice> findByUsuario_Id(Long usuarioId);
 
     Optional<Invoice> findByIdAndUsuarioId(Long id, Long usuarioId);
+
+    // Consulta optimizada usando Constructor Expression para devolver DTOs
+    @org.springframework.data.jpa.repository.Query("SELECT new com.uce.emprendimiento.backend.dto.InvoiceSummaryDTO(" +
+            "i.id, i.numeroComprobante, i.fechaEmision, i.clienteNombre, i.clienteIdentificacion, i.total, i.estado) " +
+            "FROM Invoice i WHERE i.usuario.id = :usuarioId ORDER BY i.fechaEmision DESC")
+    List<com.uce.emprendimiento.backend.dto.InvoiceSummaryDTO> findInvoiceSummariesByUserId(Long usuarioId);
 }

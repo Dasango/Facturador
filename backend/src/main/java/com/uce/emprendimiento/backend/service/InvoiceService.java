@@ -14,4 +14,6 @@ public interface InvoiceService {
     Invoice crearFactura(Invoice factura, Long userId, String tipoEmision); // tipoEmision: "BORRADOR" o "ENVIAR"
 
     FacturaDTO getFacturaDTO(Long invoiceId, Long userId);
+
+    List<com.uce.emprendimiento.backend.dto.InvoiceSummaryDTO> getInvoiceSummariesByUserId(Long userId);
 }
