@@ -46,11 +46,10 @@ public class InvoiceController {
         return ResponseEntity.ok(facturas);
     }
 
-    @GetMapping("/{id}/xml-data")
+    @GetMapping(value = "/{id}/xml-data", produces = org.springframework.http.MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<?> getInvoiceXmlData(
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
-        System.out.println("SE GENERA FORMATO XML XXDXD OJALA");
         if (userDetails == null) {
             return ResponseEntity.status(401).build();
         }
@@ -61,6 +60,23 @@ public class InvoiceController {
             e.printStackTrace(); // Log del error en consola
             return ResponseEntity.badRequest()
                     .body("Error generando XML data: " + (e.getMessage() != null ? e.getMessage() : e.toString()));
+        }
+    }
+
+    @GetMapping(value = "/{id}/xml-data-injsonformat", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getInvoiceJsonData(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(401).build();
+        }
+        try {
+            var dto = invoiceService.getFacturaDTO(id, userDetails.getUser().getId());
+            return ResponseEntity.ok(dto);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest()
+                    .body("Error generando JSON data: " + (e.getMessage() != null ? e.getMessage() : e.toString()));
         }
     }
 
