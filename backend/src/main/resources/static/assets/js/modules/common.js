@@ -55,6 +55,12 @@ async function loadUserProfile() {
                 // Pintamos Nombres y Apellidos reales de la BD
                 headerNameSpan.textContent = `${user.nombres} ${user.apellidos}`;
             }
+
+            // También buscamos el nombre en la Home (si existe)
+            const homeNameSpan = document.getElementById('userNameHome');
+            if (homeNameSpan) {
+                homeNameSpan.textContent = `${user.nombres} ${user.apellidos}`;
+            }
         }
     } catch (error) {
         console.error('Error cargando perfil:', error);
