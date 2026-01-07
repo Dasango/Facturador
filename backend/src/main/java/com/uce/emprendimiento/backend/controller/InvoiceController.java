@@ -84,6 +84,7 @@ public class InvoiceController {
     public ResponseEntity<?> getInvoiceXmlData(
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
+        System.out.println("SE GENERA FORMATO XML XXDXD OJALA");
         if (userDetails == null) {
             return ResponseEntity.status(401).build();
         }
@@ -91,7 +92,9 @@ public class InvoiceController {
             var dto = invoiceService.getFacturaDTO(id, userDetails.getUser().getId());
             return ResponseEntity.ok(dto);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            e.printStackTrace(); // Log del error en consola
+            return ResponseEntity.badRequest()
+                    .body("Error generando XML data: " + (e.getMessage() != null ? e.getMessage() : e.toString()));
         }
     }
 
@@ -101,7 +104,7 @@ public class InvoiceController {
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null)
             return ResponseEntity.status(401).build();
-
+        System.out.println("SE CREA FACTURA XXDXD OJALA");
         try {
             // Vinculación explícita de relaciones anidadas para asegurar integridad
             if (invoice.getPagos() != null) {

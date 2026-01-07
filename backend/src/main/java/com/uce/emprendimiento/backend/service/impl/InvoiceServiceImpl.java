@@ -22,11 +22,30 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Transactional(readOnly = true)
     public List<Invoice> getInvoicesByUserId(Long userId) {
         // Llamamos al método optimizado del repositorio
-        return invoiceRepository.findByUsuario_Id(userId);
+        List<Invoice> facturas = invoiceRepository.findByUsuario_Id(userId);
+        // Inicializamos colecciones lazy para serialización
+        facturas.forEach(invoice -> {
+            if (invoice != null) {
+                invoice.getPagos().size();
+                invoice.getDetalles().forEach(d -> d.getProducto().getNombre());
+                invoice.getInfoAdicional().size();
+            }
+        });
+        return facturas;
     }
 
+    @Override
+    @Transactional(readOnly = true)
     public Optional<Invoice> getInvoiceByIdAndUserId(Long id, Long userId) {
-        return invoiceRepository.findByIdAndUsuarioId(id, userId);
+        Optional<Invoice> opt = invoiceRepository.findByIdAndUsuarioId(id, userId);
+        // Inicializamos las colecciones Lazy para que no fallen al serializar en el
+        // Controller
+        opt.ifPresent(invoice -> {
+            invoice.getPagos().size();
+            invoice.getDetalles().forEach(d -> d.getProducto().getNombre()); // Accedemos tb a producto por si acaso
+            invoice.getInfoAdicional().size();
+        });
+        return opt;
     }
 
     @Override
@@ -75,6 +94,14 @@ public class InvoiceServiceImpl implements InvoiceService {
     public FacturaDTO getFacturaDTO(Long invoiceId, Long userId) {
         Invoice invoice = invoiceRepository.findByIdAndUsuarioId(invoiceId, userId)
                 .orElseThrow(() -> new RuntimeException("Factura no encontrada o no pertenece al usuario"));
+
+        // Init lazy para evitar sorpresas durante el mapeo
+        invoice.getPagos().size();
+        invoice.getDetalles().forEach(d -> {
+            if (d.getProducto() != null)
+                d.getProducto().getNombre();
+        });
+        invoice.getInfoAdicional().size();
 
         User emisor = invoice.getUsuario();
 
@@ -151,7 +178,8 @@ public class InvoiceServiceImpl implements InvoiceService {
             infoFact.setPagos(invoice.getPagos().stream().map(p -> {
                 var pDto = new PagoDTO();
                 pDto.setFormaPago(p.getFormaPago());
-                pDto.setTotal(String.format("%.2f", p.getTotal()).replace(",", "."));
+                pDto.setTotal(String.format("%.2f", p.getTotal() != null ? p.getTotal() : java.math.BigDecimal.ZERO)
+                        .replace(",", "."));
                 pDto.setPlazo(p.getPlazo() != null ? p.getPlazo().toString() : "0");
                 pDto.setUnidadTiempo(p.getUnidadTiempo());
                 return pDto;
@@ -164,23 +192,42 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoice.getDetalles() != null) {
             dto.setDetalles(invoice.getDetalles().stream().map(d -> {
                 var dDto = new DetalleDTO();
-                dDto.setCodigoPrincipal(d.getProducto().getCodigoPrincipal());
-                dDto.setCodigoAuxiliar(d.getProducto().getCodigoAuxiliar());
-                dDto.setDescripcion(d.getProducto().getNombre());
-                dDto.setCantidad(String.format("%.2f", Double.valueOf(d.getCantidad())).replace(",", "."));
-                dDto.setPrecioUnitario(String.format("%.2f", d.getPrecioUnitario()).replace(",", "."));
-                dDto.setDescuento(String.format("%.2f", d.getDescuento()).replace(",", "."));
-                dDto.setPrecioTotalSinImpuesto(String.format("%.2f", d.getSubtotal()).replace(",", "."));
+                // Null-safe access to Product
+                if (d.getProducto() != null) {
+                    dDto.setCodigoPrincipal(d.getProducto().getCodigoPrincipal());
+                    dDto.setCodigoAuxiliar(d.getProducto().getCodigoAuxiliar());
+                    dDto.setDescripcion(d.getProducto().getNombre());
 
-                // Impuesto Detalle
-                var impDto = new ImpuestoDTO();
-                impDto.setCodigo(d.getProducto().getCodigoImpuesto()); // "2"
-                impDto.setCodigoPorcentaje(d.getProducto().getCodigoPorcentaje()); // "2"
-                impDto.setTarifa(String.format("%.2f", d.getProducto().getTarifa()).replace(",", "."));
-                impDto.setBaseImponible(dDto.getPrecioTotalSinImpuesto());
-                impDto.setValor(String.format("%.2f", d.getValorImpuesto()).replace(",", "."));
+                    // Safe Double/Integer handling
+                    Double tarifa = d.getProducto().getTarifa() != null ? d.getProducto().getTarifa() : 0.0;
 
-                dDto.setImpuestos(java.util.Collections.singletonList(impDto));
+                    // Impuesto Detalle
+                    var impDto = new ImpuestoDTO();
+                    impDto.setCodigo(
+                            d.getProducto().getCodigoImpuesto() != null ? d.getProducto().getCodigoImpuesto() : "2");
+                    impDto.setCodigoPorcentaje(
+                            d.getProducto().getCodigoPorcentaje() != null ? d.getProducto().getCodigoPorcentaje()
+                                    : "0");
+                    impDto.setTarifa(String.format("%.2f", tarifa).replace(",", "."));
+                    impDto.setBaseImponible(
+                            String.format("%.2f", d.getSubtotal() != null ? d.getSubtotal() : 0.0).replace(",", "."));
+                    impDto.setValor(String.format("%.2f", d.getValorImpuesto() != null ? d.getValorImpuesto() : 0.0)
+                            .replace(",", "."));
+
+                    dDto.setImpuestos(java.util.Collections.singletonList(impDto));
+                } else {
+                    dDto.setDescripcion("PRODUCTO ELIMINADO");
+                }
+
+                dDto.setCantidad(String.format("%.2f", d.getCantidad() != null ? d.getCantidad().doubleValue() : 0.0)
+                        .replace(",", "."));
+                dDto.setPrecioUnitario(String
+                        .format("%.2f", d.getPrecioUnitario() != null ? d.getPrecioUnitario() : 0.0).replace(",", "."));
+                dDto.setDescuento(
+                        String.format("%.2f", d.getDescuento() != null ? d.getDescuento() : 0.0).replace(",", "."));
+                dDto.setPrecioTotalSinImpuesto(
+                        String.format("%.2f", d.getSubtotal() != null ? d.getSubtotal() : 0.0).replace(",", "."));
+
                 return dDto;
             }).collect(java.util.stream.Collectors.toList()));
         }
