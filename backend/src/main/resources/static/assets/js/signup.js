@@ -123,7 +123,7 @@ async function handleSignup(event) {
     // firmaPassword se asume null si no se pide
 
     try {
-        const response = await fetch('http://localhost:8080/api/auth/register', {
+        const response = await fetch('/api/auth/register', {
             method: 'POST',
             // NO establecemos Content-Type a mano. fetch lo hace automáticamente para FormData incluyendo el boundary.
             body: payload
