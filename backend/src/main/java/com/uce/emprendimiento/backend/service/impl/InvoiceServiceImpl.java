@@ -18,8 +18,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         private final InvoiceRepository invoiceRepository;
         private final com.uce.emprendimiento.backend.repository.ProductRepository productRepository;
-        private final com.uce.emprendimiento.backend.service.SriService sriService;
-        private final com.uce.emprendimiento.backend.sriCine.SriServiceCine sriServiceCine;
+        private final com.uce.emprendimiento.backend.service.impl.XmlServiceImpl sriService;
+        private final com.uce.emprendimiento.backend.sri.SriService sriServiceCine;
 
         @Override
         @Transactional(readOnly = true)

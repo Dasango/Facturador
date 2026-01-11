@@ -4,8 +4,9 @@ import com.uce.emprendimiento.backend.dto.xml.FacturaDTO;
 import com.uce.emprendimiento.backend.entity.User;
 import com.uce.emprendimiento.backend.security.CustomUserDetails;
 import com.uce.emprendimiento.backend.service.InvoiceService;
-import com.uce.emprendimiento.backend.service.SriService;
 import com.uce.emprendimiento.backend.service.UserService;
+import com.uce.emprendimiento.backend.service.impl.XmlServiceImpl;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +21,9 @@ import java.util.Map;
 public class InvoiceXmlController {
 
     private final InvoiceService invoiceService;
-    private final SriService sriService;
+    private final XmlServiceImpl sriService;
     private final UserService userService;
-    private final com.uce.emprendimiento.backend.sriCine.SriServiceCine sriServiceCine; // Inyección del nuevo servicio
+    private final com.uce.emprendimiento.backend.sri.SriService sriServiceCine; // Inyección del nuevo servicio
 
     // 1. Generar XML (Sin firmar) a partir de un DTO
     @PostMapping(value = "/generate", produces = MediaType.APPLICATION_XML_VALUE)

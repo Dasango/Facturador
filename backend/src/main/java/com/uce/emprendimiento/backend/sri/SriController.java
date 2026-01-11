@@ -1,4 +1,4 @@
-package com.uce.emprendimiento.backend.sriCine;
+package com.uce.emprendimiento.backend.sri;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -6,14 +6,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/sri-prueba")
-public class SriControllerCine {
+public class SriController {
 
     @Autowired
-    private SriServiceCine sriService;
+    private SriService sriService;
 
     @PostMapping(value = "/enviar", consumes = "application/xml", produces = "application/json")
-    public ResponseEntity<SriResponseCine> procesarFactura(@RequestBody String xmlFirmado) {
-        SriResponseCine resultado = sriService.enviarAlSri(xmlFirmado);
+    public ResponseEntity<SriResponse> procesarFactura(@RequestBody String xmlFirmado) {
+        SriResponse resultado = sriService.enviarAlSri(xmlFirmado);
         return ResponseEntity.ok(resultado);
     }
 }

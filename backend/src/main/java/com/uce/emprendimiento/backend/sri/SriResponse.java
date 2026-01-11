@@ -1,4 +1,4 @@
-package com.uce.emprendimiento.backend.sriCine;
+package com.uce.emprendimiento.backend.sri;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,11 +10,11 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SriResponseCine {
+public class SriResponse {
     private String estado;
     private String claveAcceso;
     private String fechaAutorizacion;
-    private List<SriMensajeCine> mensajes;
+    private List<SriMensaje> mensajes;
     // Nuevo campo para que veas el XML real en Thunder Client
-    private String xmlRespuestaSriCrudo; 
+    private String xmlRespuestaSriCrudo;
 }

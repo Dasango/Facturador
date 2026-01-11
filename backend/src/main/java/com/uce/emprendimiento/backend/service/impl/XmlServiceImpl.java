@@ -1,6 +1,8 @@
-package com.uce.emprendimiento.backend.service;
+package com.uce.emprendimiento.backend.service.impl;
 
 import com.uce.emprendimiento.backend.dto.xml.FacturaDTO;
+import com.uce.emprendimiento.backend.service.XmlService;
+
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
 import org.springframework.stereotype.Service;
@@ -23,12 +25,11 @@ import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
 
-// Bouncy Castle Imports (Simplificado para el ejemplo, en un entorno real usaríamos una libreta XAdES completa como xades4j o esig-dss)
 import java.security.MessageDigest;
 import java.util.UUID;
 
 @Service
-public class SriService {
+public class XmlServiceImpl implements XmlService {
 
     public String objectToXml(FacturaDTO facturaDTO) throws Exception {
         JAXBContext context = JAXBContext.newInstance(FacturaDTO.class);

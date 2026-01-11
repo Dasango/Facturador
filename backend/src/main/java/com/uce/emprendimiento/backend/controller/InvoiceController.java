@@ -23,7 +23,7 @@ import java.util.List;
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
-    private final com.uce.emprendimiento.backend.service.SriService sriService;
+    private final com.uce.emprendimiento.backend.service.impl.XmlServiceImpl sriService;
 
     @GetMapping
     public ResponseEntity<List<InvoiceSummaryDTO>> getMyInvoices(
