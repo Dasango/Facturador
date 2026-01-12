@@ -56,7 +56,7 @@ public class SriService {
         // --- LÓGICA DE PROCESAMIENTO (Comentada pero funcional para tu prueba) ---
 
         if (soapResponse != null && soapResponse.contains("RECIBIDA")) {
-            dto.setEstado("AUTORIZADO");
+            dto.setEstado("RECIBIDA");
             dto.setClaveAcceso("CLAVE_RECIBIDA_OK");
             dto.setFechaAutorizacion("2025-12-27T10:30:00");
             dto.setMensajes(new ArrayList<>());

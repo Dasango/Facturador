@@ -3,6 +3,7 @@ package com.uce.emprendimiento.backend.controller;
 import com.uce.emprendimiento.backend.dto.InvoiceSummaryDTO;
 import com.uce.emprendimiento.backend.entity.Invoice;
 import com.uce.emprendimiento.backend.service.InvoiceService;
+import com.uce.emprendimiento.backend.service.XmlService;
 import com.uce.emprendimiento.backend.security.CustomUserDetails; // Importante
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ import java.util.List;
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
-    private final com.uce.emprendimiento.backend.service.impl.XmlServiceImpl sriService;
+    private final XmlService xmlService;
 
     @GetMapping
     public ResponseEntity<List<InvoiceSummaryDTO>> getMyInvoices(
@@ -61,7 +62,7 @@ public class InvoiceController {
         }
     }
 
-    @GetMapping(value = "/{id}/xml-data-injsonformat", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id}", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getInvoiceJsonData(
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -88,7 +89,7 @@ public class InvoiceController {
         try {
             // 1. Generar XML Real
             var dto = invoiceService.getFacturaDTO(id, userDetails.getUser().getId());
-            String realXml = sriService.objectToXml(dto);
+            String realXml = xmlService.objectToXml(dto);
 
             // 2. Construir Fake Response
             String soapResponse = """

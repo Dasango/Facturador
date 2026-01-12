@@ -219,8 +219,37 @@ public class InvoiceServiceImpl implements InvoiceService {
                 infoTrib.setEstab(
                                 emisor.getCodigoEstablecimiento() != null ? emisor.getCodigoEstablecimiento() : "001");
                 infoTrib.setPtoEmi(emisor.getCodigoPuntoEmision() != null ? emisor.getCodigoPuntoEmision() : "001");
-                infoTrib.setSecuencial(invoice.getNumeroComprobante() != null ? invoice.getNumeroComprobante()
-                                : String.format("%09d", invoice.getId()));
+
+                // cosas paa el secuential
+                // 1. Obtenemos el valor crudo
+                String rawSecuencial = invoice.getNumeroComprobante();
+                String secuencialLimpio;
+
+                if (rawSecuencial != null) {
+                        if (rawSecuencial.contains("-")) {
+                                // CASO A: Viene completo "001-001-000000001" -> Tomamos el último pedazo
+                                String[] partes = rawSecuencial.split("-");
+                                secuencialLimpio = partes[partes.length - 1];
+                        } else {
+                                // CASO B: Viene solo el número "1" o "123"
+                                secuencialLimpio = rawSecuencial;
+                        }
+                } else {
+                        // CASO C: Es nulo, usamos el ID como respaldo
+                        secuencialLimpio = String.valueOf(invoice.getId());
+                }
+
+                // 2. IMPORTANTE: Formatear a 9 dígitos (Rellenar con ceros a la izquierda)
+                // El SRI rechaza "1", exige "000000001"
+                try {
+                        long numero = Long.parseLong(secuencialLimpio);
+                        infoTrib.setSecuencial(String.format("%09d", numero));
+                } catch (NumberFormatException e) {
+                        // Por si acaso venga basura que no sea número
+                        infoTrib.setSecuencial("000000001");
+                }
+                // fin secuential
+
                 infoTrib.setDirMatriz(
                                 emisor.getDireccionMatriz() != null ? emisor.getDireccionMatriz()
                                                 : "Direccion Matriz Default");

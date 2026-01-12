@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Expose function to window so the inline onclick works
     window.generateAndDownloadPdf = (id) => {
-        const jsonUrl = `/api/invoices/${id}/xml-data-injsonformat`; // Endpoint correctly targeting JSON
+        const jsonUrl = `/api/invoices/${id}`; // Endpoint correctly targeting JSON
         console.log("Fetching JSON from:", jsonUrl);
 
         fetch(jsonUrl)
