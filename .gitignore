@@ -66,3 +66,4 @@ yarn-error.log*
 **/application-secret.properties
 **/application.properties.local
 **/application-local.properties
+backend/target/classes/com/uce/emprendimiento/backend/BackendApplication.class

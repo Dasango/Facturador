@@ -157,13 +157,34 @@ public class XmlServiceImpl implements XmlService {
 
     public String extraerEmailDeInfoAdicional(String xmlContent) {
         try {
+            if (xmlContent == null || xmlContent.isEmpty()) {
+                return "No hay correo";
+            }
 
-            // no se como hacerle XD
-            return "pruebas@ejemplo.com";
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(new InputSource(new StringReader(xmlContent)));
+
+            org.w3c.dom.NodeList infoAdicionalList = doc.getElementsByTagName("infoAdicional");
+            if (infoAdicionalList.getLength() > 0) {
+                Element infoAdicional = (Element) infoAdicionalList.item(0);
+                org.w3c.dom.NodeList campos = infoAdicional.getElementsByTagName("campoAdicional");
+
+                for (int i = 0; i < campos.getLength(); i++) {
+                    Element campo = (Element) campos.item(i);
+                    String nombre = campo.getAttribute("nombre");
+                    if ("Email".equalsIgnoreCase(nombre)) {
+                        String email = campo.getTextContent();
+                        return (email != null && !email.trim().isEmpty()) ? email : "No hay correo";
+                    }
+                }
+            }
+
+            return "No hay correo";
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return "No hay correo";
         }
     }
 }
