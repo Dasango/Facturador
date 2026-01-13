@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Random; // <--- IMPORTANTE: AGREGAR ESTE IMPORT
+import java.util.Random;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
@@ -50,11 +50,11 @@ public class TestFlujoSRI {
 
         // A. ARREGLAR SECUENCIAL (Quitar los guiones si existen, ej:
         // "001-001-000000001" -> "000000001")
-        if (facturaDTO.getInfoTributaria().getSecuencial() != null &&
-                facturaDTO.getInfoTributaria().getSecuencial().contains("-")) {
-            String[] partes = facturaDTO.getInfoTributaria().getSecuencial().split("-");
-            facturaDTO.getInfoTributaria().setSecuencial(partes[partes.length - 1]);
-        }
+        // if (facturaDTO.getInfoTributaria().getSecuencial() != null &&
+        // facturaDTO.getInfoTributaria().getSecuencial().contains("-")) {
+        // String[] partes = facturaDTO.getInfoTributaria().getSecuencial().split("-");
+        // facturaDTO.getInfoTributaria().setSecuencial(partes[partes.length - 1]);
+        // }
 
         // B. GENERAR CLAVE ÚNICA PARA EVITAR ERROR DE DUPLICADOS
         // Datos fijos para el test

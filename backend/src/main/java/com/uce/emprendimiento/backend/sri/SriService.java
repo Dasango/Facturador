@@ -2,12 +2,19 @@ package com.uce.emprendimiento.backend.sri;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import com.uce.emprendimiento.backend.notification.EmailService;
+import com.uce.emprendimiento.backend.service.XmlService;
+
 import org.springframework.http.*;
 import java.util.ArrayList;
 import java.util.Base64;
 
 @Service
 public class SriService {
+
+    EmailService emailService;
+    XmlService xmlService;
 
     private final String SRI_URL = "https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline";
 
@@ -44,11 +51,7 @@ public class SriService {
         }
     }
 
-    private SriResponse procesarRespuestaSoap(String soapResponse, String originalXml) {
-        // Imprimimos en consola para que puedas copiar el XML largo si quieres
-        System.out.println("======= XML REAL DEL SRI =======");
-        System.out.println(soapResponse);
-        System.out.println("================================");
+    private SriResponse procesarRespuestaSoap(String soapResponse, String xmlFirmado) {
 
         SriResponse dto = new SriResponse();
         dto.setXmlRespuestaSriCrudo(soapResponse); // Guardamos el XML real en el JSON
@@ -59,6 +62,8 @@ public class SriService {
             dto.setEstado("RECIBIDA");
             dto.setClaveAcceso("CLAVE_RECIBIDA_OK");
             dto.setFechaAutorizacion("2025-12-27T10:30:00");
+            String email = xmlService.extraerEmailDeInfoAdicional(xmlFirmado);
+            emailService.enviarNotificacionFactura(email, "Factura procesada exitosamente");
             dto.setMensajes(new ArrayList<>());
         } else {
             dto.setEstado("RECHAZADO");

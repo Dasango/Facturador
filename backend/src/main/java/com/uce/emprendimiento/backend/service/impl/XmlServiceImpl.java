@@ -154,4 +154,16 @@ public class XmlServiceImpl implements XmlService {
 
         return writer.toString();
     }
+
+    public String extraerEmailDeInfoAdicional(String xmlContent) {
+        try {
+
+            // no se como hacerle XD
+            return "pruebas@ejemplo.com";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
