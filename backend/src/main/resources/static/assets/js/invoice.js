@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('/api/user/profile')
         .then(res => res.json())
         .then(user => {
+            console.log('Entrando a invoice.js');
+            console.log(user);
             document.getElementById('companyName').textContent = user.razonSocial || user.nombres + ' ' + user.apellidos;
             document.getElementById('companyRuc').textContent = 'RUC: ' + (user.ruc || '...');
             document.getElementById('companyAddress').textContent = 'Dir: ' + (user.direccionMatriz || '...');

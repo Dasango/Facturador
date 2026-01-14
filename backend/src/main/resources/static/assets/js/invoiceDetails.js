@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const html = `
             <div class="success-message">
-                <h2>✅ Se envio el correo</h2>
+                <h2>✅ Se envió el correo</h2>
                 <p class="client-info">Cliente: <strong>${clientName}</strong></p>
                 
                 <div class="actions-row">
