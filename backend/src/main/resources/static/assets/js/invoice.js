@@ -336,19 +336,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // If action was ENVIAR or we explicitly requested simulation validation
                 if (accion === 'ENVIAR' || simulateSri) {
-                    try {
-                        const xmlResp = await fetch(`/api/invoices/${invoiceId}`);
-                        if (xmlResp.ok) {
-                            const xmlText = await xmlResp.text();
-                            await fetch('/api/sri-prueba/solo-enviar', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/xml' },
-                                body: xmlText
-                            });
+                    // Start background process (do not await)
+                    (async () => {
+                        try {
+                            const xmlResp = await fetch(`/api/invoices/${invoiceId}`);
+                            if (xmlResp.ok) {
+                                const xmlText = await xmlResp.text();
+                                await fetch('/api/sri-prueba/solo-enviar', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/xml' },
+                                    body: xmlText
+                                });
+                            }
+                        } catch (err) {
+                            console.error('Error sending XML to solo-enviar:', err);
                         }
-                    } catch (err) {
-                        console.error('Error sending XML to solo-enviar:', err);
-                    }
+                    })();
+
                     targetUrl = `/invoiceDetails?id=${invoiceId}`;
                 }
 
