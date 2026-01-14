@@ -9,54 +9,67 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest // 1. Cambiamos a SpringBootTest para cargar el JavaMailSender
+@SpringBootTest 
 class EmailServiceTest {
 
     @Autowired
-    @SpyBean // 2. Usamos SpyBean para poder verificar llamadas a métodos internos
+    @SpyBean 
     private EmailService emailService;
+
+    // Tu JSON real para que el PDF no salga vacío
+    String invoice = "{\n" +
+            "  \"id\": \"comprobante\",\n" +
+            "  \"infoTributaria\": {\n" +
+            "    \"razonSocial\": \"JUAN PEREZ SA\",\n" +
+            "    \"nombreComercial\": \"COMERCIAL PEREZ\",\n" +
+            "    \"ruc\": \"1791715772001\",\n" +
+            "    \"secuencial\": \"000000002\"\n" +
+            "  },\n" +
+            "  \"infoFactura\": {\n" +
+            "    \"fechaEmision\": \"05/12/2025\",\n" +
+            "    \"razonSocialComprador\": \"Cliente B\",\n" +
+            "    \"identificacionComprador\": \"1700000002\",\n" +
+            "    \"importeTotal\": \"28.00\"\n" +
+            "  },\n" +
+            "  \"detalles\": [\n" +
+            "    {\n" +
+            "      \"descripcion\": \"Mouse Logitech\",\n" +
+            "      \"cantidad\": \"1.00\",\n" +
+            "      \"precioTotalSinImpuesto\": \"25.00\"\n" +
+            "    }\n" +
+            "  ]\n" +
+            "}";
 
     @Test
     void testNoHayCorreo() {
-        // Caso: Destinatario es "No hay correo"
-        emailService.enviarNotificacionFactura("No hay correo", "{}");
+        // Usamos el JSON invoice para que pase la validación de JSONObject
+        emailService.enviarNotificacionFactura("No hay correo", invoice);
 
-        // Verificamos que NO se intente enviar el email
         try {
+            // CORRECCIÓN: Verificar contra la firma de 3 parámetros
             verify(emailService, never()).sendActualEmail(anyString(), anyString(), any(byte[].class));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
     }
 
     @Test
     void testCorreoInvalido() {
-        // Caso: Destinatario no tiene formato de correo
-        emailService.enviarNotificacionFactura("correo_sin_arroba", "{}");
+        emailService.enviarNotificacionFactura("esto_no_es_un_correo", invoice);
 
         try {
+            // CORRECCIÓN: Verificar contra la firma de 3 parámetros
             verify(emailService, never()).sendActualEmail(anyString(), anyString(), any(byte[].class));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
     }
 
     @Test
     void testCorreoReal() {
-        // 3. CAMBIO IMPORTANTE: Debes usar un JSON válido y tu correo real
-        String destinatario = "sdeddxd@gmail.com"; 
-        
-        // El mensaje DEBE ser un JSON para que JSONObject no de error
-        String mensajeJson = "{"
-                + "\"cliente\": \"Juan Perez\","
-                + "\"total\": 12.50,"
-                + "\"detalles\": \"Prueba de factura\""
-                + "}";
+        // PON TU CORREO AQUÍ PARA PROBAR
+        String destinatario = "dasango@uce.edu.ec"; 
 
-        emailService.enviarNotificacionFactura(destinatario, mensajeJson);
+        emailService.enviarNotificacionFactura(destinatario, invoice);
 
-        // Verificamos que se llame al método de envío real con los 3 parámetros
         try {
+            // Verificamos que se llame al método que genera el PDF y envía
             verify(emailService, times(1)).sendActualEmail(eq(destinatario), anyString(), any(byte[].class));
         } catch (Exception e) {
             e.printStackTrace();
