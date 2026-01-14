@@ -94,8 +94,20 @@
 			<version>1.78.1</version>
 		</dependency>
 
+<!-- Para correos --> 
+
+		<dependency>
+    		<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
 		<!-- Para que spring lea las variables de entorno desde el archivo .env -->
 		
+		<dependency>
+    		<groupId>me.paulschwarz</groupId>
+    		<artifactId>spring-dotenv</artifactId>
+    		<version>4.0.0</version>
+		</dependency>
+
 	<dependency>
 			<groupId>com.github.librepdf</groupId>
 			<artifactId>openpdf</artifactId>

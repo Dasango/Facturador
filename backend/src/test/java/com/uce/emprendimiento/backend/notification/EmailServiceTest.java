@@ -1,48 +1,65 @@
 package com.uce.emprendimiento.backend.notification;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Spy;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest // 1. Cambiamos a SpringBootTest para cargar el JavaMailSender
 class EmailServiceTest {
 
-    @Spy
-    EmailService emailService;
+    @Autowired
+    @SpyBean // 2. Usamos SpyBean para poder verificar llamadas a métodos internos
+    private EmailService emailService;
 
     @Test
     void testNoHayCorreo() {
         // Caso: Destinatario es "No hay correo"
-        // Resultado esperado: No debe intentar enviar nada.
-        emailService.enviarNotificacionFactura("No hay correo", "Mensaje de prueba");
+        emailService.enviarNotificacionFactura("No hay correo", "{}");
 
-        // Verificamos que el metodo protegido de envio NO sea invocado
-        verify(emailService, never()).sendActualEmail(anyString(), anyString());
+        // Verificamos que NO se intente enviar el email
+        try {
+            verify(emailService, never()).sendActualEmail(anyString(), anyString(), any(byte[].class));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
     void testCorreoInvalido() {
-        // Caso: Destinatario es basura "dsandklasda"
-        // Resultado esperado: Debe detectar invalidez y no enviar.
-        emailService.enviarNotificacionFactura("dsandklasda", "Mensaje de prueba");
+        // Caso: Destinatario no tiene formato de correo
+        emailService.enviarNotificacionFactura("correo_sin_arroba", "{}");
 
-        verify(emailService, never()).sendActualEmail(anyString(), anyString());
+        try {
+            verify(emailService, never()).sendActualEmail(anyString(), anyString(), any(byte[].class));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
     void testCorreoReal() {
-        // Caso: Correo valido "correoreal@gmail.com"
-        // Resultado esperado: Debe procesar el envio.
-        String destinatario = "correoreal@gmail.com";
-        String mensaje = "Su factura ha sido emitida";
+        // 3. CAMBIO IMPORTANTE: Debes usar un JSON válido y tu correo real
+        String destinatario = "sdeddxd@gmail.com"; 
+        
+        // El mensaje DEBE ser un JSON para que JSONObject no de error
+        String mensajeJson = "{"
+                + "\"cliente\": \"Juan Perez\","
+                + "\"total\": 12.50,"
+                + "\"detalles\": \"Prueba de factura\""
+                + "}";
 
-        emailService.enviarNotificacionFactura(destinatario, mensaje);
+        emailService.enviarNotificacionFactura(destinatario, mensajeJson);
 
-        // Verificamos que SI se llame al metodo de envio con los argumentos correctos
-        verify(emailService, times(1)).sendActualEmail(destinatario, mensaje);
+        // Verificamos que se llame al método de envío real con los 3 parámetros
+        try {
+            verify(emailService, times(1)).sendActualEmail(eq(destinatario), anyString(), any(byte[].class));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
