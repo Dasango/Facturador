@@ -231,6 +231,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Info Adicional
         const infoAdicionalList = [];
+
+        // 1. Capture Fixed Fields (Email & Phone)
+        const emailVal = document.getElementById('emailComprador').value;
+        const phoneVal = document.getElementById('telefonoComprador').value;
+
+        if (emailVal && emailVal.trim() !== '') {
+            infoAdicionalList.push({ nombre: 'Email', valor: emailVal.trim() });
+        }
+        if (phoneVal && phoneVal.trim() !== '') {
+            infoAdicionalList.push({ nombre: 'Telefono', valor: phoneVal.trim() });
+        }
+
+        // 2. Capture Dynamic Rows
         document.querySelectorAll('.info-row').forEach(div => {
             const n = div.querySelector('.info-nombre').value;
             const v = div.querySelector('.info-valor').value;
@@ -323,6 +336,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // If action was ENVIAR or we explicitly requested simulation validation
                 if (accion === 'ENVIAR' || simulateSri) {
+                    try {
+                        const xmlResp = await fetch(`/api/invoices/${invoiceId}/xml-data`);
+                        if (xmlResp.ok) {
+                            const xmlText = await xmlResp.text();
+                            await fetch('/api/sri-prueba/solo-enviar', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/xml' },
+                                body: xmlText
+                            });
+                        }
+                    } catch (err) {
+                        console.error('Error sending XML to solo-enviar:', err);
+                    }
                     targetUrl = `/invoiceDetails?id=${invoiceId}`;
                 }
 

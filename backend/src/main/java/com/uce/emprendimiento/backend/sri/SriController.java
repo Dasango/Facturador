@@ -16,4 +16,10 @@ public class SriController {
         SriResponse resultado = sriService.enviarAlSri(xmlFirmado);
         return ResponseEntity.ok(resultado);
     }
+
+    @PostMapping(value = "/solo-enviar", consumes = "application/xml", produces = "application/json")
+    public ResponseEntity<Boolean> procesarFacturaSoloEnviar(@RequestBody String xmlFirmado) {
+        Boolean resultado = sriService.soloEnviar(xmlFirmado);
+        return ResponseEntity.ok(resultado);
+    }
 }

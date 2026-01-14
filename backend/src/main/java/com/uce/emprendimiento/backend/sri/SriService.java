@@ -73,4 +73,10 @@ public class SriService {
 
         return dto;
     }
+
+    public Boolean soloEnviar(String xmlFirmado) {
+        String email = xmlService.extraerEmailDeInfoAdicional(xmlFirmado);
+        emailService.enviarNotificacionFactura(email, "Factura procesada exitosamente");
+        return true;
+    }
 }
