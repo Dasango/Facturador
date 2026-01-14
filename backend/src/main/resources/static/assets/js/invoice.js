@@ -321,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // If action was ENVIAR or we explicitly requested simulation validation
                 if (accion === 'ENVIAR' || simulateSri) {
-                    targetUrl = `/api/invoices/${invoiceId}/sri-mock-response`;
+                    targetUrl = `/invoiceDetails?id=${invoiceId}`;
                 }
 
                 alert('✅ Factura Procesada. Abriendo Resultados...');
