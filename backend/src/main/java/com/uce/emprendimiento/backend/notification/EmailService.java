@@ -42,12 +42,16 @@ public class EmailService {
         }
     }
 
+    @org.springframework.beans.factory.annotation.Value("${spring.mail.username}")
+    private String remitente;
+
     protected void sendActualEmail(String destinatario, String asunto, byte[] pdfBytes) throws Exception {
         MimeMessage message = mailSender.createMimeMessage();
 
         // El parámetro 'true' indica que es un mensaje "multipart" (permite adjuntos)
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
+        helper.setFrom(remitente, "Facturación Electrónica");
         helper.setTo(destinatario);
         helper.setSubject(asunto);
         helper.setText(
