@@ -1,13 +1,69 @@
-/* Estilos específicos para invoiceDetails */
-
-.details-placeholder {
-    background-color: #fff;
-    border: 1px solid #e2e8f0;
+.invoice-success-container {
+    background-color: white;
+    padding: 40px;
     border-radius: 12px;
-    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     text-align: center;
-    font-size: 1.2rem;
-    color: #475569;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    margin-top: 20px;
+    max-width: 600px;
+    margin: 40px auto;
+    font-family: 'Inter', sans-serif;
+}
+
+.success-message h2 {
+    color: #10B981;
+    /* Green success color */
+    margin-bottom: 16px;
+    font-size: 24px;
+}
+
+.client-info {
+    font-size: 18px;
+    color: #374151;
+    margin-bottom: 32px;
+}
+
+.actions-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    /* For anchor tags acting as buttons */
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s;
+    border: none;
+    font-size: 16px;
+}
+
+.btn-primary {
+    background-color: #2563EB;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #1D4ED8;
+}
+
+.btn-secondary {
+    background-color: #F3F4F6;
+    color: #1F2937;
+    border: 1px solid #E5E7EB;
+}
+
+.btn-secondary:hover {
+    background-color: #E5E7EB;
+}
+
+.error-msg {
+    color: #EF4444;
+    text-align: center;
+    padding: 20px;
 }
