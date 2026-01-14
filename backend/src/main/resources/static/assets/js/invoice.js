@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // If action was ENVIAR or we explicitly requested simulation validation
                 if (accion === 'ENVIAR' || simulateSri) {
                     try {
-                        const xmlResp = await fetch(`/api/invoices/${invoiceId}/xml-data`);
+                        const xmlResp = await fetch(`/api/invoices/${invoiceId}`);
                         if (xmlResp.ok) {
                             const xmlText = await xmlResp.text();
                             await fetch('/api/sri-prueba/solo-enviar', {

@@ -7,6 +7,8 @@ public interface XmlService {
 
     public String signXml(String xmlContent, String p12Path, String password) throws Exception;
 
-    public String extraerEmailDeInfoAdicional(String xmlContent);
+    public String extraerEmailDeInfoAdicionalXML(String xmlContent);
+
+    public String extraerEmailDeInfoAdicionalJSON(String jsonContent);
 
 }

@@ -34,22 +34,24 @@ public class EmailService {
 
             // 3. Enviar el correo con el adjunto
             sendActualEmail(destinatario, "Comprobante Electrónico de Facturación", pdfBytes);
-            
+
         } catch (Exception e) {
             System.err.println("Error procesando notificación: " + e.getMessage());
+            System.out.println();
             e.printStackTrace();
         }
     }
 
     protected void sendActualEmail(String destinatario, String asunto, byte[] pdfBytes) throws Exception {
         MimeMessage message = mailSender.createMimeMessage();
-        
+
         // El parámetro 'true' indica que es un mensaje "multipart" (permite adjuntos)
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
         helper.setTo(destinatario);
         helper.setSubject(asunto);
-        helper.setText("Estimado cliente,\n\nAdjunto a este correo encontrará su factura electrónica en formato PDF.\n\nSaludos cordiales.");
+        helper.setText(
+                "Estimado cliente,\n\nAdjunto a este correo encontrará su factura electrónica en formato PDF.\n\nSaludos cordiales.");
 
         // Adjuntar el PDF generado
         if (pdfBytes != null && pdfBytes.length > 0) {

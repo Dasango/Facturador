@@ -1,5 +1,6 @@
 package com.uce.emprendimiento.backend.sri;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,7 +14,9 @@ import java.util.Base64;
 @Service
 public class SriService {
 
+    @Autowired
     EmailService emailService;
+    @Autowired
     XmlService xmlService;
 
     private final String SRI_URL = "https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline";
@@ -62,7 +65,7 @@ public class SriService {
             dto.setEstado("RECIBIDA");
             dto.setClaveAcceso("CLAVE_RECIBIDA_OK");
             dto.setFechaAutorizacion("2025-12-27T10:30:00");
-            String email = xmlService.extraerEmailDeInfoAdicional(xmlFirmado);
+            String email = xmlService.extraerEmailDeInfoAdicionalXML(xmlFirmado);
             emailService.enviarNotificacionFactura(email, "Factura procesada exitosamente");
             dto.setMensajes(new ArrayList<>());
         } else {
@@ -74,9 +77,12 @@ public class SriService {
         return dto;
     }
 
-    public Boolean soloEnviar(String xmlFirmado) {
-        String email = xmlService.extraerEmailDeInfoAdicional(xmlFirmado);
-        emailService.enviarNotificacionFactura(email, "Factura procesada exitosamente");
+    public Boolean soloEnviar(String json) {
+        String email = xmlService.extraerEmailDeInfoAdicionalJSON(json);
+        if (email == null || email.isEmpty()) {
+            return false;
+        }
+        emailService.enviarNotificacionFactura(email, json);
         return true;
     }
 }

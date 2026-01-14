@@ -8,7 +8,6 @@ import jakarta.xml.bind.Marshaller;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -25,7 +24,6 @@ import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
 
-import java.security.MessageDigest;
 import java.util.UUID;
 
 @Service
@@ -155,7 +153,8 @@ public class XmlServiceImpl implements XmlService {
         return writer.toString();
     }
 
-    public String extraerEmailDeInfoAdicional(String xmlContent) {
+    public String extraerEmailDeInfoAdicionalXML(String xmlContent) {
+        System.out.println("ENTRAAAAAemail");
         try {
             if (xmlContent == null || xmlContent.isEmpty()) {
                 return "No hay correo";
@@ -179,9 +178,33 @@ public class XmlServiceImpl implements XmlService {
                     }
                 }
             }
-
+            System.out.println("SALeeeeeeeeemail");
             return "No hay correo";
 
+        } catch (Exception e) {
+            System.out.println("SALeeeeeeeeemailpero mal");
+            e.printStackTrace();
+            return "No hay correo";
+        }
+    }
+
+    public String extraerEmailDeInfoAdicionalJSON(String jsonContent) {
+        try {
+            if (jsonContent == null || jsonContent.isEmpty()) {
+                return "No hay correo";
+            }
+            org.json.JSONObject jsonObject = new org.json.JSONObject(jsonContent);
+            if (jsonObject.has("infoAdicional")) {
+                org.json.JSONArray infoAdicional = jsonObject.getJSONArray("infoAdicional");
+                for (int i = 0; i < infoAdicional.length(); i++) {
+                    org.json.JSONObject item = infoAdicional.getJSONObject(i);
+                    if (item.has("nombre") && "Email".equalsIgnoreCase(item.getString("nombre"))) {
+                        String email = item.optString("valor");
+                        return (email != null && !email.trim().isEmpty()) ? email : "No hay correo";
+                    }
+                }
+            }
+            return "No hay correo";
         } catch (Exception e) {
             e.printStackTrace();
             return "No hay correo";
