@@ -146,7 +146,7 @@ public class InvoiceController {
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null)
             return ResponseEntity.status(401).build();
-        System.out.println("SE CREA FACTURA XXDXD OJALA");
+
         try {
             // Vinculación explícita de relaciones anidadas para asegurar integridad
             if (invoice.getPagos() != null) {

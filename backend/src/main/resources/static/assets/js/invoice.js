@@ -1,21 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    /* ==========================================================================
-       INITIALIZATION & PARTIALS
-       ========================================================================== */
-    const loadPartial = (elementId, path) => {
-        fetch(path)
-            .then(res => {
-                if (!res.ok) throw new Error('Failed to load partial ' + path);
-                return res.text();
-            })
-            .then(html => {
-                const el = document.getElementById(elementId);
-                if (el) el.innerHTML = html;
-            })
-            .catch(err => console.error(err));
-    };
-
     // Load Company Info from Backend
     fetch('/api/user/profile')
         .then(res => res.json())
@@ -25,9 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('companyAddress').textContent = 'Dir: ' + (user.direccionMatriz || '...');
 
             if (user.logoPath) {
-                // Check if it's a supabase URL or needs handling
                 const logoUrl = user.logoPath.startsWith('http') ? user.logoPath : user.logoPath;
-                // Simple check, real implementation might need signed URLs if private
                 document.getElementById('companyLogo').innerHTML = `<img src="${logoUrl}" style="width:100%; height:100%; object-fit:contain;">`;
             }
         })
@@ -272,20 +254,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 producto: {
                     codigoPrincipal: prodCode,
                     nombre: prodName,
-                    precioUnitario: price, // This one is constructing the InvoiceDetail DTO, verify if DTO expects precioUnitario or valorUnitario. 
-                    // InvoiceDetail.java -> precioUnitario (Double). This is correct for the Payload.
-                    // The 'product' inside 'detallesList' is for the entity. InvoiceDetail has a Product relation.
-                    // But in the payload builder, we are building DTO-like structure?
-                    // Let's check Invoice.java / Service createFactura.
-                    // Service uses: inputProd.getCodigoPrincipal() etc.
-                    // Step 57 InvoiceServiceImpl:100 -> detalle.setProducto(inputProd);
-                    // The 'producto' object in the details array should match Product structure if we want to update it properly?
-                    // Actually, if we send { producto: { codigoPrincipal... } }, Jackson maps this to Product entity.
-                    // Product entity uses 'valorUnitario'.
+                    precioUnitario: price,
                     valorUnitario: price,
-                    // Default taxes (backend defaults if missing, but sending here helps clarity)
                     codigoImpuesto: "2",
-                    codigoPorcentaje: "4", // 15%
+                    codigoPorcentaje: "4",
                     tarifa: 15.0
                 }
             });
@@ -322,22 +294,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnConfirmSign = document.getElementById('btnConfirmSign');
     const modalClaveP12 = document.getElementById('modalClaveP12');
 
-    // Draft Button - Assuming class btn-fab first child or added ID
-    // Let's rely on text or add ID. The user HTML has '💾 Guardar Borrador' as first button in .action-bar
     const btnSaveDraft = document.querySelector('.action-bar button:first-child');
 
-    // Updated function to allow forced simulation display
     const handleSaveAndOpen = async (accion, simulateSri = false) => {
         const payload = buildInvoicePayload();
-        // Always save first
+
         try {
             const btn = accion === 'BORRADOR' && !simulateSri ? btnSaveDraft : btnConfirmSign;
             const originalText = btn.textContent;
             btn.textContent = 'Procesando...';
             btn.disabled = true;
 
-            // We always send to backend. If simulateSri is true, we might still send BORRADOR to backend 
-            // to avoid signature errors, but we want to SHOW the mock response.
             const resp = await fetch(`/api/invoices?accion=${accion}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
