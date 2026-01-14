@@ -163,7 +163,7 @@ public class InvoiceXmlController {
                     <infoTributaria>
                         <ambiente>1</ambiente>
                         <tipoEmision>1</tipoEmision>
-                        <razonSocial>SANGO PILLALAZA EDGAR ABEL</razonSocial>
+                        <razonSocial>PEREIRA CHILIQUINGA EDGAR ABEL</razonSocial>
                         <nombreComercial>FACTO SYSTEM</nombreComercial>
                         <ruc>1799999999001</ruc>
                         <claveAcceso>2712202501179999999900120010010000000341234567811</claveAcceso>
