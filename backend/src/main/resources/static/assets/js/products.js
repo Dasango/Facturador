@@ -52,13 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         products.forEach(p => {
+            const ivaDisplay = (p.tarifa === 15) ? '15%' : '0%';
             const row = `
                 <tr>
                     <td>${p.codigoPrincipal}</td>
                     <td>${p.codigoAuxiliar || ''}</td>
                     <td>${p.nombre}</td>
                     <td class="text-right">$${p.valorUnitario?.toFixed(2)}</td>
-                    <td>${p.iva}</td>
+                    <td>${ivaDisplay}</td>
                     <td>${p.ice || '-'}</td>
                     <td class="text-right">
                         <button class="action-icon-btn" title="Editar" onclick="window.openEditModal(${p.id})">✏️</button>
@@ -95,7 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('editNombre').value = p.nombre;
         document.getElementById('editPrecio').value = p.valorUnitario;
         const ivaSelect = document.getElementById('editIva');
-        if (ivaSelect) ivaSelect.value = p.iva;
+        if (ivaSelect) {
+            ivaSelect.value = (p.tarifa === 15) ? '15%' : '0%';
+        } 
 
         const title = document.querySelector('#modalEdit .text-h2');
         if (title) title.textContent = 'Editar Producto';
@@ -106,13 +109,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // GUARDAR
     window.saveProduct = () => {
         const id = document.getElementById('editId').value;
+        const ivaVal = document.getElementById('editIva').value;
+        
+        let tarifa = 0.0;
+        let codigoPorcentaje = "0";
+        if (ivaVal === '15%') {
+            tarifa = 15.0;
+            codigoPorcentaje = "4";
+        }
 
         const data = {
             codigoPrincipal: document.getElementById('editCodigoP').value,
             codigoAuxiliar: document.getElementById('editCodigoA').value,
             nombre: document.getElementById('editNombre').value,
             valorUnitario: parseFloat(document.getElementById('editPrecio').value),
-            iva: document.getElementById('editIva').value
+            codigoImpuesto: "2",
+            codigoPorcentaje: codigoPorcentaje,
+            tarifa: tarifa
         };
 
         const method = id ? 'PUT' : 'POST';
