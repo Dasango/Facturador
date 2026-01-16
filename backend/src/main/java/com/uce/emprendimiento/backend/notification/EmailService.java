@@ -2,67 +2,81 @@ package com.uce.emprendimiento.backend.notification;
 
 import com.uce.emprendimiento.backend.util.GeneradorFactura;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
-import jakarta.mail.internet.MimeMessage;
+import org.springframework.web.reactive.function.client.WebClient;
+import java.util.Base64;
+import java.util.Map;
+import java.util.List;
 
 @Service
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+    @Value("${MAIL_PASSWORD}") // Tu API Key de Resend (re_...)
+    private String apiKey;
+
+    private final WebClient webClient;
+
+    // Inicializamos WebClient directamente aquí para no necesitar otra clase Config
+    public EmailService() {
+        this.webClient = WebClient.builder()
+                .baseUrl("https://api.resend.com")
+                .build();
+    }
 
     @Async
     public void enviarNotificacionFactura(String destinatario, String mensajeJson) {
-        // Validaciones de seguridad básicas
+        // Validaciones básicas
         if (destinatario == null || "No hay correo".equals(destinatario) || !destinatario.contains("@")) {
-            System.out.println("Omitiendo envío: Correo inválido o inexistente.");
+            System.out.println("Omitiendo envío: Correo inválido.");
             return;
         }
 
         try {
-            // 1. Convertir el String mensajeJson a JSONObject (según pide tu PdfController)
+            // 1. Procesar datos y generar PDF
             JSONObject data = new JSONObject(mensajeJson);
-
-            // 2. Generar el PDF usando la utilidad que ya usa tu Controller
             byte[] pdfBytes = GeneradorFactura.generarPdfBytes(data);
+            
+            // 2. Convertir PDF a Base64 (Requerido por la API de Resend)
+            String pdfBase64 = Base64.getEncoder().encodeToString(pdfBytes);
 
-            // 3. Enviar el correo con el adjunto
-            sendActualEmail(destinatario, "Comprobante Electrónico de Facturación", pdfBytes);
+            // 3. Llamar al método de envío
+            enviarViaApi(destinatario, pdfBase64);
 
         } catch (Exception e) {
-            System.err.println("Error procesando notificación: " + e.getMessage());
-            System.out.println();
+            System.err.println("Error procesando notificación vía API: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    @org.springframework.beans.factory.annotation.Value("${spring.mail.username}")
-    private String remitente;
+    private void enviarViaApi(String destinatario, String pdfBase64) {
+        // Construcción del cuerpo del JSON para Resend
+        Map<String, Object> body = Map.of(
+            "from", "onboarding@resend.dev",
+            "to", List.of(destinatario),
+            "subject", "Comprobante Electrónico de Facturación",
+            "html", "<p>Estimado cliente, adjunto encontrará su <strong>factura electrónica</strong> en formato PDF.</p>",
+            "attachments", List.of(
+                Map.of(
+                    "content", pdfBase64,
+                    "filename", "Factura.pdf"
+                )
+            )
+        );
 
-    protected void sendActualEmail(String destinatario, String asunto, byte[] pdfBytes) throws Exception {
-        MimeMessage message = mailSender.createMimeMessage();
-
-        // El parámetro 'true' indica que es un mensaje "multipart" (permite adjuntos)
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-        helper.setFrom(remitente, "Facturación Electrónica");
-        helper.setTo(destinatario);
-        helper.setSubject(asunto);
-        helper.setText(
-                "Estimado cliente,\n\nAdjunto a este correo encontrará su factura electrónica en formato PDF.\n\nSaludos cordiales.");
-
-        // Adjuntar el PDF generado
-        if (pdfBytes != null && pdfBytes.length > 0) {
-            helper.addAttachment("Factura.pdf", new ByteArrayResource(pdfBytes));
-        }
-
-        mailSender.send(message);
-        System.out.println("Correo enviado con éxito a: " + destinatario);
+        // Petición HTTP POST (Puerto 443 - HTTPS)
+        webClient.post()
+            .uri("/emails")
+            .header("Authorization", "Bearer " + apiKey)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(body)
+            .retrieve()
+            .bodyToMono(String.class)
+            .subscribe(
+                response -> System.out.println("Éxito API Resend: " + response),
+                error -> System.err.println("Fallo total API Resend: " + error.getMessage())
+            );
     }
 }
