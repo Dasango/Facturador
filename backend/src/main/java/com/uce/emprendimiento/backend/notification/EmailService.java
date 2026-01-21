@@ -38,7 +38,7 @@ public class EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             // IMPORTANTE: Este correo debe ser el que registraste en Brevo
-            helper.setFrom("tu-correo-de-brevo@gmail.com"); 
+            helper.setFrom("sdeddxd@gmail.com"); 
             helper.setTo(destinatario);
             helper.setSubject("Comprobante Electrónico de Facturación");
             
