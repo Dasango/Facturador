@@ -16,7 +16,7 @@ public class EmailService {
     private final RestTemplate restTemplate;
     
     // Tu API Key de Brevo (V3)
-    private final String BREVO_API_KEY = "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"; // Reemplaza por la completa
+    private final String BREVO_API_KEY = "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"; // Reemplaza por la completa
     private final String BREVO_URL = "https://api.brevo.com/v3/smtp/email";
 
     public EmailService() {
