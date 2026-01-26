@@ -3,6 +3,7 @@ package com.uce.emprendimiento.backend.notification;
 import com.uce.emprendimiento.backend.util.GeneradorFactura;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -14,10 +15,13 @@ import java.util.Base64;
 public class EmailService {
 
     private final RestTemplate restTemplate;
-    
-    // Tu API Key de Brevo (V3)
-    private final String BREVO_API_KEY = "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"; // Reemplaza por la completa
     private final String BREVO_URL = "https://api.brevo.com/v3/smtp/email";
+
+    @Value("${brevo.api.key}")
+    private String brevoApiKey;
+
+    @Value("${brevo.sender.email}")
+    private String senderEmail;
 
     public EmailService() {
         this.restTemplate = new RestTemplate();
@@ -31,26 +35,28 @@ public class EmailService {
         }
 
         try {
-            // 1. Generar el PDF
+            // 1. Preparar datos y PDF
             JSONObject data = new JSONObject(mensajeJson);
             byte[] pdfBytes = GeneradorFactura.generarPdfBytes(data);
             String pdfBase64 = Base64.getEncoder().encodeToString(pdfBytes);
 
-            // 2. Construir el JSON para la API de Brevo
+            // 2. Construir el cuerpo de la petición (JSON)
             JSONObject emailRequest = new JSONObject();
             
-            // Emisor
-            emailRequest.put("sender", new JSONObject().put("email", "sdeddxd@gmail.com").put("name", "Facto Facturación"));
+            // Sender: Usando la variable configurada
+            emailRequest.put("sender", new JSONObject()
+                    .put("email", senderEmail)
+                    .put("name", "Facto Facturación"));
             
-            // Destinatario (es una lista)
+            // To: Lista de destinatarios
             JSONArray to = new JSONArray();
             to.put(new JSONObject().put("email", destinatario));
             emailRequest.put("to", to);
             
             emailRequest.put("subject", "Comprobante Electrónico de Facturación");
-            emailRequest.put("htmlContent", "<html><body><p>Estimado cliente, adjunto encontrará su <strong>factura electrónica</strong> en formato PDF.</p></body></html>");
+            emailRequest.put("htmlContent", "<html><body><p>Estimado cliente, adjunto encontrará su factura.</p></body></html>");
 
-            // Adjunto (Base64)
+            // Attachment
             JSONArray attachments = new JSONArray();
             JSONObject file = new JSONObject();
             file.put("content", pdfBase64);
@@ -58,24 +64,24 @@ public class EmailService {
             attachments.put(file);
             emailRequest.put("attachments", attachments);
 
-            // 3. Configurar Headers
+            // 3. Configurar Headers (Autenticación por API Key)
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("api-key", BREVO_API_KEY);
+            headers.set("api-key", brevoApiKey.trim());
 
             HttpEntity<String> entity = new HttpEntity<>(emailRequest.toString(), headers);
 
-            // 4. Enviar vía POST
+            // 4. Ejecutar la llamada HTTP POST
             ResponseEntity<String> response = restTemplate.postForEntity(BREVO_URL, entity, String.class);
 
             if (response.getStatusCode().is2xxSuccessful()) {
-                System.out.println("Éxito: Correo enviado vía API HTTP a " + destinatario);
+                System.out.println("Éxito Railway: Correo enviado vía API a " + destinatario);
             } else {
-                System.err.println("Error API Brevo: " + response.getBody());
+                System.err.println("Error API Brevo: " + response.getStatusCode() + " - " + response.getBody());
             }
 
         } catch (Exception e) {
-            System.err.println("Error enviando correo vía API: " + e.getMessage());
+            System.err.println("Error crítico en EmailService: " + e.getMessage());
             e.printStackTrace();
         }
     }
