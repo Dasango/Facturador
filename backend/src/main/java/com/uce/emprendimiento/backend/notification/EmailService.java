@@ -35,53 +35,63 @@ public class EmailService {
         }
 
         try {
-            // 1. Preparar datos y PDF
+            // 1. Parsear el JSON recibido para generar el PDF
             JSONObject data = new JSONObject(mensajeJson);
+            
+            // Generar los bytes del PDF usando tu utilidad
             byte[] pdfBytes = GeneradorFactura.generarPdfBytes(data);
+            
+            // Convertir a Base64 (Brevo requiere esto para los adjuntos)
             String pdfBase64 = Base64.getEncoder().encodeToString(pdfBytes);
 
-            // 2. Construir el cuerpo de la petición (JSON)
+            // 2. Construir el objeto principal de la petición para Brevo
             JSONObject emailRequest = new JSONObject();
             
-            // Sender: Usando la variable configurada
+            // Emisor
             emailRequest.put("sender", new JSONObject()
                     .put("email", senderEmail)
                     .put("name", "Facto Facturación"));
             
-            // To: Lista de destinatarios
+            // Destinatario
             JSONArray to = new JSONArray();
             to.put(new JSONObject().put("email", destinatario));
             emailRequest.put("to", to);
             
+            // Asunto y Contenido
             emailRequest.put("subject", "Comprobante Electrónico de Facturación");
-            emailRequest.put("htmlContent", "<html><body><p>Estimado cliente, adjunto encontrará su factura.</p></body></html>");
+            emailRequest.put("htmlContent", "<html><body>" +
+                    "<h3>Su factura electrónica está lista</h3>" +
+                    "<p>Estimado cliente, adjunto a este correo encontrará su comprobante en formato PDF.</p>" +
+                    "<p>Gracias por usar nuestro servicio.</p>" +
+                    "</body></html>");
 
-            // Attachment
+            // 3. SECCIÓN DE ADJUNTOS (Asegúrate de que esta estructura sea exacta)
             JSONArray attachments = new JSONArray();
-            JSONObject file = new JSONObject();
-            file.put("content", pdfBase64);
-            file.put("name", "Factura.pdf");
-            attachments.put(file);
-            emailRequest.put("attachments", attachments);
+            JSONObject attachment = new JSONObject();
+            attachment.put("content", pdfBase64);    // El contenido en Base64
+            attachment.put("name", "Factura.pdf");   // Nombre del archivo
+            attachments.put(attachment);
+            
+            emailRequest.put("attachment", attachments); // Ojo: Brevo usa "attachment" (singular) en su JSON API
 
-            // 3. Configurar Headers (Autenticación por API Key)
+            // 4. Configurar Headers de autenticación
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("api-key", brevoApiKey.trim());
 
             HttpEntity<String> entity = new HttpEntity<>(emailRequest.toString(), headers);
 
-            // 4. Ejecutar la llamada HTTP POST
+            // 5. Enviar la petición POST
             ResponseEntity<String> response = restTemplate.postForEntity(BREVO_URL, entity, String.class);
 
             if (response.getStatusCode().is2xxSuccessful()) {
-                System.out.println("Éxito Railway: Correo enviado vía API a " + destinatario);
+                System.out.println("Éxito en Railway: Correo con PDF enviado a " + destinatario);
             } else {
                 System.err.println("Error API Brevo: " + response.getStatusCode() + " - " + response.getBody());
             }
 
         } catch (Exception e) {
-            System.err.println("Error crítico en EmailService: " + e.getMessage());
+            System.err.println("Error al procesar o enviar el PDF: " + e.getMessage());
             e.printStackTrace();
         }
     }
