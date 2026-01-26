@@ -10,6 +10,98 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Estilos específicos para el Modal de Pago */
+        .payment-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .payment-content {
+            background: #ffffff;
+            color: #1a1a1a;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            animation: modalSlideUp 0.4s ease-out;
+        }
+
+        @keyframes modalSlideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close-payment {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s;
+        }
+
+        .close-payment:hover { color: #000; }
+
+        .payment-header { text-align: center; margin-bottom: 30px; }
+        .payment-header h3 { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
+        .payment-header span { color: #666; font-size: 14px; }
+
+        .pay-form-group { margin-bottom: 20px; }
+        .pay-form-group label { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; color: #444; }
+        .pay-input { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; transition: border-color 0.3s; }
+        .pay-input:focus { border-color: #000; outline: none; }
+
+        .pay-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        #btn-process-payment {
+            width: 100%;
+            padding: 16px;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        #btn-process-payment:hover { transform: translateY(-2px); background: #333; }
+
+        .payment-status-overlay {
+            display: none;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden { display: none; }
+    </style>
 </head>
 
 <body>
@@ -219,7 +311,7 @@
                     <li>Emisión Normal (Offline)</li>
                     <li>Soporte básico</li>
                 </ul>
-                <a href="#" class="btn btn-secondary" style="width: 100%; border: 1px solid #ddd;">
+                <a href="/signup" class="btn btn-secondary" style="width: 100%; border: 1px solid #ddd;">
                     Comenzar
                 </a>
             </div>
@@ -239,10 +331,10 @@
                     <li>Gestión de clientes frecuente</li>
                     <li>Soporte prioritario</li>
                 </ul>
-                <a href="#" class="btn btn-primary"
-                    style="width: 100%; background: #000; color: #fff; border: 1px solid #fff;">
+                <button class="btn btn-primary btn-contract" data-plan="Plan Profesional"
+                    style="width: 100%; background: #000; color: #fff; border: 1px solid #fff; cursor: pointer;">
                     Contratar
-                </a>
+                </button>
             </div>
 
             <div class="pricing-card" style="width: 300px;">
@@ -260,9 +352,10 @@
                     <li>Múltiples usuarios</li>
                     <li>Atención Personalizada</li>
                 </ul>
-                <a href="#" class="btn btn-secondary" style="width: 100%; border: 1px solid #ddd;">
+                <button class="btn btn-secondary btn-contract" data-plan="Plan Estudio" 
+                    style="width: 100%; border: 1px solid #ddd; cursor: pointer;">
                     Contratar
-                </a>
+                </button>
             </div>
         </div>
     </section>
@@ -329,9 +422,94 @@
         </div>
     </section>
 
+    <div id="paymentModal" class="payment-modal" style="display: none;">
+        <div class="payment-content">
+            <span class="close-payment" id="closePayment">&times;</span>
+            <div class="payment-header">
+                <h3 id="planTitleDisplay">Plan Profesional</h3>
+                <span>Simulación de pago seguro</span>
+            </div>
+            
+            <form id="fakePaymentForm">
+                <div class="pay-form-group">
+                    <label>Nombre en la tarjeta</label>
+                    <input type="text" class="pay-input" placeholder="Nombre Apellido" required>
+                </div>
+                <div class="pay-form-group">
+                    <label>Número de tarjeta</label>
+                    <input type="text" class="pay-input" placeholder="4242 4242 4242 4242" required maxlength="19">
+                </div>
+                <div class="pay-row">
+                    <div class="pay-form-group">
+                        <label>Expiración</label>
+                        <input type="text" class="pay-input" placeholder="MM/AA" required maxlength="5">
+                    </div>
+                    <div class="pay-form-group">
+                        <label>CVC</label>
+                        <input type="password" class="pay-input" placeholder="123" required maxlength="3">
+                    </div>
+                </div>
+                <button type="submit" id="btn-process-payment">Confirmar Pago</button>
+            </form>
+
+            <div id="paymentLoading" class="payment-status-overlay">
+                <div class="spinner"></div>
+                <p style="font-weight: 600;">Validando con el banco...</p>
+            </div>
+
+            <div id="paymentSuccess" class="payment-status-overlay">
+                <div style="font-size: 50px; margin-bottom: 15px;">✅</div>
+                <h4 style="font-size: 20px; margin-bottom: 10px;">¡Pago Exitoso!</h4>
+                <p style="color: #666; margin-bottom: 20px;">Tu suscripción se ha activado correctamente en esta beta.</p>
+                <button class="btn btn-primary" style="width: 100%; border-radius: 10px;" onclick="location.reload()">Regresar</button>
+            </div>
+        </div>
+    </div>
+
     <div id="footer-container"></div>
 
     <script src="/assets/js/landing.js"></script>
+    
+    <script>
+        // Lógica de la Pasarela Simidada integrada
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('paymentModal');
+            const contractBtns = document.querySelectorAll('.btn-contract');
+            const closeBtn = document.getElementById('closePayment');
+            const planTitle = document.getElementById('planTitleDisplay');
+            const paymentForm = document.getElementById('fakePaymentForm');
+            const loadingArea = document.getElementById('paymentLoading');
+            const successArea = document.getElementById('paymentSuccess');
+
+            // Abrir Modal
+            contractBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const planName = btn.getAttribute('data-plan');
+                    planTitle.innerText = planName;
+                    modal.style.display = 'flex';
+                    paymentForm.classList.remove('hidden');
+                    successArea.style.display = 'none';
+                    loadingArea.style.display = 'none';
+                });
+            });
+
+            // Cerrar Modal
+            closeBtn.onclick = () => { modal.style.display = 'none'; };
+            window.onclick = (event) => { if (event.target == modal) modal.style.display = 'none'; };
+
+            // Simular Proceso
+            paymentForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                paymentForm.classList.add('hidden');
+                loadingArea.style.display = 'block';
+
+                setTimeout(() => {
+                    loadingArea.style.display = 'none';
+                    successArea.style.display = 'block';
+                }, 2500);
+            });
+        });
+    </script>
 </body>
 
 </html>
