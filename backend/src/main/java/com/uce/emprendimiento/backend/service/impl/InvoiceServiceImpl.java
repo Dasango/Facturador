@@ -18,6 +18,7 @@ import java.util.Optional;
 public class InvoiceServiceImpl implements InvoiceService {
 
         private final InvoiceRepository invoiceRepository;
+        private final com.uce.emprendimiento.backend.repository.UserRepository userRepository;
         private final com.uce.emprendimiento.backend.repository.ProductRepository productRepository;
         private final com.uce.emprendimiento.backend.service.impl.XmlServiceImpl sriService;
         private final com.uce.emprendimiento.backend.sri.SriService sriServiceCine;
@@ -120,7 +121,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                         }
 
                         try {
-                                User fullUser = invoiceRepository.findById(factura.getId()).get().getUsuario();
+                                // Reload EXACT User from DB to ensure we have firmaPath
+                                User fullUser = userRepository.findById(userId)
+                                                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
                                 FacturaDTO dto = getFacturaDTO(factura.getId(), userId);
                                 String xmlContent = sriService.objectToXml(dto);

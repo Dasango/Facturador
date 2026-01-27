@@ -72,7 +72,15 @@ public class XmlServiceImpl implements XmlService {
         // FileInputStream
         // por un ByteArrayInputStream con los bytes que le pases al método.
         KeyStore ks = KeyStore.getInstance("PKCS12");
-        try (InputStream is = new FileInputStream(p12Path)) {
+
+        InputStream sourceStream = null;
+        if (p12Path.startsWith("http")) {
+            sourceStream = new java.net.URL(p12Path).openStream();
+        } else {
+            sourceStream = new FileInputStream(p12Path);
+        }
+
+        try (InputStream is = sourceStream) {
             ks.load(is, password.toCharArray());
         } catch (java.io.FileNotFoundException e) {
             throw new Exception(
