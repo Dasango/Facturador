@@ -342,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Factura Procesada Exitosamente');
             window.location.href = `/invoiceDetails?id=${jsonResp.id}`;
 
-            if (simulateSri || accion === 'ENVIAR') {
+            if (accion === 'ENVIAR') {
                 document.getElementById('signModal').style.display = 'none';
             }
 
