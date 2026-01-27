@@ -311,16 +311,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const btnSaveDraft = document.querySelector('.action-bar button:first-child');
 
-    const handleSaveAndOpen = async (accion, simulateSri = false) => {
+    const handleSaveAndOpen = async (accion, claveFirma = null) => {
         const payload = buildInvoicePayload();
 
         try {
-            const btn = accion === 'BORRADOR' && !simulateSri ? btnSaveDraft : btnConfirmSign;
+            const btn = accion === 'BORRADOR' ? btnSaveDraft : btnConfirmSign;
             const originalText = btn.textContent;
             btn.textContent = 'Procesando...';
             btn.disabled = true;
 
-            const resp = await fetch(`/api/invoices?accion=${accion}`, {
+            let url = `/api/invoices?accion=${accion}`;
+            if (accion === 'ENVIAR' && claveFirma) {
+                url += `&claveFirma=${encodeURIComponent(claveFirma)}`;
+            }
+
+            const resp = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -328,45 +333,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const jsonResp = await resp.json();
 
-            if (resp.ok) {
-                alert('✅ Factura Procesada. Abriendo Resultados...');
-                
-                window.location.href = `/invoiceDetails?id=${jsonResp.id}`;
+            alert('Factura Procesada Exitosamente');
+            window.location.href = `/invoiceDetails?id=${jsonResp.id}`;
 
-                if (simulateSri || accion === 'ENVIAR') {
-                    document.getElementById('signModal').style.display = 'none';
-                }
-            } else {
-                alert('Error: ' + (jsonResp.message || 'Error desconocido'));
+            if (simulateSri || accion === 'ENVIAR') {
+                document.getElementById('signModal').style.display = 'none';
             }
-
-            btn.textContent = originalText;
-            btn.disabled = false;
 
         } catch (e) {
             console.error(e);
-            alert('Error de conexión');
+            alert('Error: ' + e.message); // Mostramos el mensaje real del backend
+        } finally {
+            if (typeof btn !== 'undefined') {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
         }
     };
 
     if (btnSaveDraft) {
-        btnSaveDraft.addEventListener('click', () => handleSaveAndOpen('BORRADOR', false));
+        btnSaveDraft.addEventListener('click', () => handleSaveAndOpen('BORRADOR'));
     }
 
     if (btnOpenSignModal) {
         btnOpenSignModal.addEventListener('click', (e) => {
             e.preventDefault();
+            modalClaveP12.value = '';
             signModal.style.display = 'flex';
+            modalClaveP12.focus();
         });
     }
 
     if (btnConfirmSign) {
-        // User requested "generate xml without signature for now" but show the FAKE SRI RESPONSE.
-        // We save as BORRADOR to bypass backend signature requirement, but pass true to open the mock URL.
         btnConfirmSign.addEventListener('click', () => {
-            // Close modal first
-            document.getElementById('signModal').style.display = 'none';
-            handleSaveAndOpen('BORRADOR', true);
+            const password = modalClaveP12.value;
+            
+            if (!password || password.trim() === '') {
+                alert("Por favor ingrese su contraseña de firma electrónica.");
+                return;
+            }
+
+            handleSaveAndOpen('ENVIAR', password);
         });
     }
 });
