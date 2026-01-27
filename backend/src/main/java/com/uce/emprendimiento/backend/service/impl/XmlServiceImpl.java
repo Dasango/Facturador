@@ -74,6 +74,14 @@ public class XmlServiceImpl implements XmlService {
         KeyStore ks = KeyStore.getInstance("PKCS12");
         try (InputStream is = new FileInputStream(p12Path)) {
             ks.load(is, password.toCharArray());
+        } catch (java.io.FileNotFoundException e) {
+            throw new Exception(
+                    "El archivo de firma electrónica no existe en la ruta configurada (verifique su perfil).");
+        } catch (java.io.IOException e) {
+            if (e.getMessage() != null && e.getMessage().toLowerCase().contains("password")) {
+                throw new Exception("La contraseña de la firma es incorrecta.");
+            }
+            throw new Exception("Error cargando firma electrónica: " + e.getMessage());
         }
 
         // Obtener el alias (usualmente hay uno solo)

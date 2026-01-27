@@ -314,9 +314,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleSaveAndOpen = async (accion, claveFirma = null) => {
         const payload = buildInvoicePayload();
 
+        let btn;
+        let originalText;
         try {
-            const btn = accion === 'BORRADOR' ? btnSaveDraft : btnConfirmSign;
-            const originalText = btn.textContent;
+            btn = accion === 'BORRADOR' ? btnSaveDraft : btnConfirmSign;
+            originalText = btn.textContent;
             btn.textContent = 'Procesando...';
             btn.disabled = true;
 
@@ -332,6 +334,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const jsonResp = await resp.json();
+
+            if (!resp.ok) {
+                throw new Error(jsonResp.message || 'Error procesando factura');
+            }
 
             alert('Factura Procesada Exitosamente');
             window.location.href = `/invoiceDetails?id=${jsonResp.id}`;

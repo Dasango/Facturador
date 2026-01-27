@@ -102,7 +102,8 @@ public class InvoiceController {
             return ResponseEntity.ok(nuevaFactura);
         } catch (Exception e) {
             e.printStackTrace(); // Para que veas el error en consola
-            return ResponseEntity.badRequest().body("Error creando factura: " + e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(java.util.Collections.singletonMap("message", e.getMessage()));
         }
     }
 }
