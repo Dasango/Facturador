@@ -10,6 +10,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
+import javax.xml.crypto.dsig.CanonicalizationMethod;
+import javax.xml.crypto.dsig.DigestMethod;
+import javax.xml.crypto.dsig.SignatureMethod;
+import javax.xml.crypto.dsig.SignedInfo;
+import javax.xml.crypto.dsig.XMLSignature;
+import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.dom.DOMSignContext;
+import javax.xml.crypto.dsig.keyinfo.KeyInfo;
+import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
+import javax.xml.crypto.dsig.keyinfo.X509Data;
+import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
+import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -19,12 +31,15 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import java.util.Base64;
+import java.util.ArrayList;
 
-import java.util.UUID;
+import javax.xml.crypto.dsig.*;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class XmlServiceImpl implements XmlService {
@@ -50,105 +65,84 @@ public class XmlServiceImpl implements XmlService {
     // o Java Security estándar para firmar el digest.
     public String signXml(String xmlContent, String p12Path, String password) throws Exception {
 
-        // 1. Cargar Keystore
+        // ---------------------------------------------------------
+        // 1. CARGAR EL KEYSTORE Y CERTIFICADO (REAL)
+        // ---------------------------------------------------------
+        // Nota: Si quieres usar la "memoria" como hablamos antes, cambia
+        // FileInputStream
+        // por un ByteArrayInputStream con los bytes que le pases al método.
         KeyStore ks = KeyStore.getInstance("PKCS12");
-        try (FileInputStream fis = new FileInputStream(p12Path)) {
-            ks.load(fis, password.toCharArray());
+        try (InputStream is = new FileInputStream(p12Path)) {
+            ks.load(is, password.toCharArray());
         }
+
+        // Obtener el alias (usualmente hay uno solo)
         String alias = ks.aliases().nextElement();
         PrivateKey privateKey = (PrivateKey) ks.getKey(alias, password.toCharArray());
         X509Certificate cert = (X509Certificate) ks.getCertificate(alias);
 
-        // 2. Parsear XML a DOM
+        // ---------------------------------------------------------
+        // 2. PREPARAR EL XML PARA FIRMAR
+        // ---------------------------------------------------------
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
+        dbf.setNamespaceAware(true); // CRÍTICO para firmas XML
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.parse(new InputSource(new StringReader(xmlContent)));
 
-        // 3. Calcular Digest del Comprobante (Canonicalizado)
-        // Simplificación: SRI requiere canonicalizar el XML antes de hashear.
-        // Aquí asumiremos que el XML ya viene "limpio" o usaremos una transformación
-        // identidad.
-        // En producción: usar org.apache.xml.security.init() y Canonicalizer.
+        // ---------------------------------------------------------
+        // 3. CONFIGURAR LA FIRMA (XMLDSig)
+        // ---------------------------------------------------------
+        // Crear factory para firmas XML
+        XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
 
-        // --- CONSTRUCCIÓN DEL BLOQUE DE FIRMA (Template) ---
-        // Generamos los valores hash y firma (RSA-SHA1 o SHA256 según SRI)
-        // SRI acepta RSA-SHA1 (obsoleto pero común) o SHA256.
+        // a. Crear la REFERENCIA (Qué vamos a firmar: Todo el documento)
+        // El URI="" significa "la raíz del documento".
+        // Transform: ENVELOPED (La firma estará DENTRO del XML, no afuera)
+        Reference ref = fac.newReference(
+                "",
+                fac.newDigestMethod(DigestMethod.SHA1, null), // SRI suele usar SHA1, aunque acepta SHA256
+                Collections.singletonList(
+                        fac.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null)),
+                null,
+                null);
 
-        // Calcular HASH del documento (DigestValue)
-        // Para esto necesitamos el XML canonicalizado.
-        // Como no tengo librerías externas de XML Security aquí, haré una aproximación
-        // funcional:
-        // Firmar el texto plano NO es correcto para SRI, pero generaré la estructura
-        // correcta.
+        // b. Crear el SIGNEDINFO (Cómo vamos a firmar)
+        // Canonicalization: INCLUSIVE (Para estandarizar el XML antes del hash)
+        // SignatureMethod: RSA_SHA1
+        SignedInfo si = fac.newSignedInfo(
+                fac.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE, (C14NMethodParameterSpec) null),
+                fac.newSignatureMethod(SignatureMethod.RSA_SHA1, null),
+                Collections.singletonList(ref));
 
-        // Mock de valores criptográficos reales para ilustrar la estructura:
-        String signatureID = "Signature-" + UUID.randomUUID().toString();
-        String digestValue = "H4sH/SiMuLaDo/PaR4/Ej3mPl0=";
-        String signatureValue = "F1rM4/Dig1t4l/G3n3r4d4/M4nu4lm3nt3==";
-        String x509CertificateBase64 = Base64.getEncoder().encodeToString(cert.getEncoded());
+        // c. Crear el KEYINFO (Datos públicos para que el SRI verifique)
+        // Incluimos el Certificado X509
+        KeyInfoFactory kif = fac.getKeyInfoFactory();
+        List<Object> x509Content = new ArrayList<>();
+        x509Content.add(cert);
+        X509Data x509Data = kif.newX509Data(x509Content);
+        KeyInfo ki = kif.newKeyInfo(Collections.singletonList(x509Data));
 
-        // Construcción manual del nodo Signature para inyectar
-        // <ds:Signature ...>
-        Element signatureDetails = doc.createElementNS("http://www.w3.org/2000/09/xmldsig#", "ds:Signature");
-        signatureDetails.setAttribute("Id", signatureID);
+        // ---------------------------------------------------------
+        // 4. EJECUTAR LA FIRMA CRIPTOGRÁFICA
+        // ---------------------------------------------------------
+        // El contexto de firma define DÓNDE se pondrá la firma y con qué llave privada
+        DOMSignContext dsc = new DOMSignContext(privateKey, doc.getDocumentElement());
 
-        // SignedInfo
-        Element signedInfo = doc.createElement("ds:SignedInfo");
-        Element c14nMethod = doc.createElement("ds:CanonicalizationMethod");
-        c14nMethod.setAttribute("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
-        signedInfo.appendChild(c14nMethod);
+        // Crear el objeto XMLSignature y firmar
+        XMLSignature signature = fac.newXMLSignature(si, ki);
 
-        Element sigMethod = doc.createElement("ds:SignatureMethod");
-        sigMethod.setAttribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
-        signedInfo.appendChild(sigMethod);
+        // ¡AQUÍ OCURRE LA MAGIA REAL! (Nada de mocks)
+        // Calcula el hash, cifra con RSA y modifica el DOM insertando el nodo
+        // <Signature>
+        signature.sign(dsc);
 
-        Element reference = doc.createElement("ds:Reference");
-        reference.setAttribute("URI", "#comprobante");
-        Element transforms = doc.createElement("ds:Transforms");
-        Element transform = doc.createElement("ds:Transform");
-        transform.setAttribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#enveloped-signature");
-        transforms.appendChild(transform);
-        reference.appendChild(transforms);
-
-        Element digestMethod = doc.createElement("ds:DigestMethod");
-        digestMethod.setAttribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
-        reference.appendChild(digestMethod);
-
-        Element digestVal = doc.createElement("ds:DigestValue");
-        digestVal.setTextContent(digestValue);
-        reference.appendChild(digestVal);
-
-        signedInfo.appendChild(reference);
-        signatureDetails.appendChild(signedInfo);
-
-        // SignatureValue
-        Element sigVal = doc.createElement("ds:SignatureValue");
-        sigVal.setTextContent(signatureValue);
-        signatureDetails.appendChild(sigVal);
-
-        // KeyInfo
-        Element keyInfo = doc.createElement("ds:KeyInfo");
-        Element x509Data = doc.createElement("ds:X509Data");
-        Element x509Cert = doc.createElement("ds:X509Certificate");
-        x509Cert.setTextContent(x509CertificateBase64);
-        x509Data.appendChild(x509Cert);
-        keyInfo.appendChild(x509Data);
-        signatureDetails.appendChild(keyInfo);
-
-        // Object (QualifyingProperties - XAdES) - Omitido por brevedad, pero SRI lo
-        // pide.
-        // Lo dejaremos como XMLDSig básico que a veces pasa en pruebas o se rechaza con
-        // error específico.
-
-        // Insertar firma en el documento raíz
-        doc.getDocumentElement().appendChild(signatureDetails);
-
-        // Convertir DOM de vuelta a String
+        // ---------------------------------------------------------
+        // 5. CONVERTIR DOM FIRMADO A STRING
+        // ---------------------------------------------------------
         TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer transformer = tf.newTransformer();
+        Transformer trans = tf.newTransformer();
         StringWriter writer = new StringWriter();
-        transformer.transform(new DOMSource(doc), new StreamResult(writer));
+        trans.transform(new DOMSource(doc), new StreamResult(writer));
 
         return writer.toString();
     }

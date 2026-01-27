@@ -329,35 +329,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const jsonResp = await resp.json();
 
             if (resp.ok) {
-                // Success - Open XML or Mock
-                const invoiceId = jsonResp.id;
-
-                let targetUrl = `/api/invoices/${invoiceId}/xml-data`;
-
-                // If action was ENVIAR or we explicitly requested simulation validation
-                if (accion === 'ENVIAR' || simulateSri) {
-                    // Start background process (do not await)
-                    (async () => {
-                        try {
-                            const xmlResp = await fetch(`/api/invoices/${invoiceId}`);
-                            if (xmlResp.ok) {
-                                const xmlText = await xmlResp.text();
-                                await fetch('/api/sri-prueba/solo-enviar', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/xml' },
-                                    body: xmlText
-                                });
-                            }
-                        } catch (err) {
-                            console.error('Error sending XML to solo-enviar:', err);
-                        }
-                    })();
-
-                    targetUrl = `/invoiceDetails?id=${invoiceId}`;
-                }
-
                 alert('✅ Factura Procesada. Abriendo Resultados...');
-                window.open(targetUrl, '_blank');
+                
+                window.location.href = `/invoiceDetails?id=${jsonResp.id}`;
 
                 if (simulateSri || accion === 'ENVIAR') {
                     document.getElementById('signModal').style.display = 'none';

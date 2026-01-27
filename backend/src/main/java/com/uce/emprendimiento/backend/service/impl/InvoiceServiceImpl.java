@@ -2,6 +2,7 @@ package com.uce.emprendimiento.backend.service.impl;
 
 import com.uce.emprendimiento.backend.dto.xml.*;
 import com.uce.emprendimiento.backend.entity.Invoice;
+import com.uce.emprendimiento.backend.entity.Product;
 import com.uce.emprendimiento.backend.entity.User;
 import com.uce.emprendimiento.backend.repository.InvoiceRepository;
 import com.uce.emprendimiento.backend.service.InvoiceService;
@@ -63,25 +64,20 @@ public class InvoiceServiceImpl implements InvoiceService {
                 return crearFactura(factura, userId, accion, null);
         }
 
-        // Overloaded internal method to handle signature
         @Transactional
         public Invoice crearFactura(Invoice factura, Long userId, String accion, String claveFirma) {
-                // 1. Vincular usuario
+
                 User user = new User();
                 user.setId(userId);
                 factura.setUsuario(user);
 
-                // 2. Procesar Detalles y Productos
-                // La UI manda productos transitorios (con nombre/codigo). Debemos buscarlos o
-                // crearlos.
                 if (factura.getDetalles() != null) {
                         for (var detalle : factura.getDetalles()) {
                                 detalle.setFactura(factura);
 
-                                com.uce.emprendimiento.backend.entity.Product inputProd = detalle.getProducto();
+                                Product inputProd = detalle.getProducto();
                                 if (inputProd != null) {
-                                        // Buscar producto existente por código y usuario
-                                        Optional<com.uce.emprendimiento.backend.entity.Product> existingProd = productRepository
+                                        Optional<Product> existingProd = productRepository
                                                         .findByCodigoPrincipalAndUsuarioId(
                                                                         inputProd.getCodigoPrincipal(), userId);
 
@@ -115,58 +111,44 @@ public class InvoiceServiceImpl implements InvoiceService {
                         }
                 }
 
-                // Primero guardamos como borrador para tener ID y persistencia básica
                 factura.setEstado("PENDIENTE");
                 factura = invoiceRepository.save(factura);
 
-                // 3. Lógica según tipo
                 if ("ENVIAR".equals(accion)) {
                         if (claveFirma == null || claveFirma.isEmpty()) {
                                 throw new RuntimeException("Se requiere clave de firma para enviar al SRI");
                         }
 
                         try {
-                                // Recuperar usuario completo para obtener paths con seguridad
                                 User fullUser = invoiceRepository.findById(factura.getId()).get().getUsuario();
-                                // Nota: invoiceRepository.findById...getUser puede ser Proxy. Mejor:
-                                // Pero 'userId' ya lo tenemos.
 
-                                // Generar XML
                                 FacturaDTO dto = getFacturaDTO(factura.getId(), userId);
                                 String xmlContent = sriService.objectToXml(dto);
 
-                                // Firmar XML
                                 if (fullUser.getFirmaPath() == null)
                                         throw new RuntimeException(
                                                         "El usuario no tiene configurada firma electrónica (.p12)");
                                 String signedXml = sriService.signXml(xmlContent, fullUser.getFirmaPath(), claveFirma);
 
-                                // Enviar al SRI
                                 var sriResponse = sriServiceCine.enviarAlSri(signedXml);
 
-                                // Actualizar Factura
-                                factura.setXmlContent(signedXml); // Guardamos el XML firmado
+                                factura.setXmlContent(signedXml);
                                 factura.setEstado(sriResponse.getEstado());
-                                factura.setMensajeSri(sriService.toString()); // Guardar logs o mensajes estructurados
-                                                                              // si fuera posible
+                                factura.setMensajeSri(sriService.toString());
                                 if (sriResponse.getMensajes() != null && !sriResponse.getMensajes().isEmpty()) {
                                         factura.setMensajeSri(sriResponse.getMensajes().toString());
                                 }
 
                                 if ("AUTORIZADO".equals(sriResponse.getEstado())) {
                                         factura.setFechaAutorizacion(java.time.LocalDateTime.now());
-                                        // Clave de acceso viene en el XML firmado o respuesta, idealmente parsear
-                                        // Por ahora confiamos en la generada o la recibida
                                         if (sriResponse.getClaveAcceso() != null)
                                                 factura.setClaveAcceso(sriResponse.getClaveAcceso());
                                 }
 
-                                // Guardar cambios finales
                                 factura = invoiceRepository.save(factura);
 
                         } catch (Exception e) {
                                 e.printStackTrace();
-                                // Si falla firma o envío, queda como borrador/error pero guardamos el error
                                 factura.setMensajeSri("Error envío: " + e.getMessage());
                                 invoiceRepository.save(factura);
                                 throw new RuntimeException("Error en proceso SRI: " + e.getMessage(), e);
