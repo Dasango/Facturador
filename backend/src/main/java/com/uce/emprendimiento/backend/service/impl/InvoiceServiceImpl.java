@@ -154,7 +154,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                                         factura.setMensajeSri(sriResponse.getMensajes().toString());
                                 }
 
-                                if ("AUTORIZADO".equals(sriResponse.getEstado())) {
+                                if ("RECIBIDA".equals(sriResponse.getEstado())) {
                                         factura.setFechaAutorizacion(java.time.LocalDateTime.now());
                                         if (sriResponse.getClaveAcceso() != null)
                                                 factura.setClaveAcceso(sriResponse.getClaveAcceso());

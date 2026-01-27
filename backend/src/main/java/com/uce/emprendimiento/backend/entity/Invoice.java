@@ -33,7 +33,7 @@ public class Invoice {
     private String clienteIdentificacion;
 
     private Double total;
-    private String estado; // PENDIENTE, AUTORIZADA, RECHAZADA
+    private String estado; // RECIBIDA O NO
 
     // --- Campos SRI ---
     @Column(name = "clave_acceso", length = 49, unique = true)
