@@ -44,6 +44,59 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginForm) {
         loginForm.addEventListener('submit', handleLogin);
     }
+
+    // --- LÓGICA DE PASARELA DE PAGOS (NUEVO) ---
+    const modal = document.getElementById('paymentModal');
+    const contractBtns = document.querySelectorAll('.btn-contract');
+    const closeBtn = document.getElementById('closePayment');
+    const planTitle = document.getElementById('planTitleDisplay');
+    const fakePaymentForm = document.getElementById('fakePaymentForm');
+    const loadingArea = document.getElementById('paymentLoading');
+    const successArea = document.getElementById('paymentSuccess');
+
+    if (modal && contractBtns.length > 0) {
+        // Abrir Modal y configurar el plan
+        contractBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const planName = btn.getAttribute('data-plan');
+                planTitle.innerText = planName;
+                
+                // Resetear estado del modal
+                modal.style.display = 'flex';
+                fakePaymentForm.classList.remove('hidden');
+                loadingArea.style.display = 'none';
+                successArea.style.display = 'none';
+            });
+        });
+
+        // Cerrar Modal (Botón X)
+        if (closeBtn) {
+            closeBtn.onclick = () => { modal.style.display = 'none'; };
+        }
+
+        // Cerrar al hacer clic fuera del contenido
+        window.onclick = (event) => {
+            if (event.target == modal) modal.style.display = 'none';
+        };
+
+        // Simular Proceso de Pago
+        if (fakePaymentForm) {
+            fakePaymentForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Mostrar estado de carga
+                fakePaymentForm.classList.add('hidden');
+                loadingArea.style.display = 'block';
+
+                // Simular validación bancaria de 2.5 segundos
+                setTimeout(() => {
+                    loadingArea.style.display = 'none';
+                    successArea.style.display = 'block';
+                }, 2500);
+            });
+        }
+    }
 });
 
 async function handleLogin(e) {
@@ -82,21 +135,19 @@ async function handleLogin(e) {
             console.warn('Login failed:', data.message);
 
             // Set message on the specific input (or both)
-            // User asked for "native alerts" (setCustomValidity)
-            userInput.setCustomValidity(" "); // Just to mark invalid if needed, or specific msg
+            userInput.setCustomValidity(" "); 
             passwordInput.setCustomValidity(data.message || "Credenciales incorrectas");
 
             // Trigger the bubble
             passwordInput.reportValidity();
 
-            // Clear validity on input so user can type again without error immediately popping up
+            // Clear validity on input
             userInput.addEventListener('input', () => userInput.setCustomValidity(''), { once: true });
             passwordInput.addEventListener('input', () => passwordInput.setCustomValidity(''), { once: true });
         }
 
     } catch (error) {
         console.error('Login error:', error);
-        // Network error handling
         passwordInput.setCustomValidity("Error de conexión. Intente más tarde.");
         passwordInput.reportValidity();
     }

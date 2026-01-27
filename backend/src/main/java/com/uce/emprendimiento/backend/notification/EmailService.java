@@ -1,62 +1,97 @@
 package com.uce.emprendimiento.backend.notification;
 
 import com.uce.emprendimiento.backend.util.GeneradorFactura;
-import jakarta.mail.internet.MimeMessage;
+import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Base64;
 
 @Service
 public class EmailService {
 
-    // Ya no usamos WebClient, usamos JavaMailSender
-    private final JavaMailSender mailSender;
+    private final RestTemplate restTemplate;
+    private final String BREVO_URL = "https://api.brevo.com/v3/smtp/email";
 
-    public EmailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
+    @Value("${brevo.api.key}")
+    private String brevoApiKey;
+
+    @Value("${brevo.sender.email}")
+    private String senderEmail;
+
+    public EmailService() {
+        this.restTemplate = new RestTemplate();
     }
 
     @Async
     public void enviarNotificacionFactura(String destinatario, String mensajeJson) {
-        // Validaciones básicas
         if (destinatario == null || "No hay correo".equals(destinatario) || !destinatario.contains("@")) {
             System.out.println("Omitiendo envío: Correo inválido.");
             return;
         }
 
         try {
-            // 1. Procesar datos y generar PDF
+            // 1. Parsear el JSON recibido para generar el PDF
             JSONObject data = new JSONObject(mensajeJson);
+            
+            // Generar los bytes del PDF usando tu utilidad
             byte[] pdfBytes = GeneradorFactura.generarPdfBytes(data);
             
-            // 2. Crear el mensaje preparado para adjuntos (MIME)
-            MimeMessage message = mailSender.createMimeMessage();
-            // El 'true' indica que el mensaje es multiparte (texto + adjuntos)
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            // Convertir a Base64 (Brevo requiere esto para los adjuntos)
+            String pdfBase64 = Base64.getEncoder().encodeToString(pdfBytes);
 
-            // IMPORTANTE: Este correo debe ser el que registraste en Brevo
-            helper.setFrom("sdeddxd@gmail.com"); 
-            helper.setTo(destinatario);
-            helper.setSubject("Comprobante Electrónico de Facturación");
+            // 2. Construir el objeto principal de la petición para Brevo
+            JSONObject emailRequest = new JSONObject();
             
-            // Cuerpo del correo en HTML
-            String contenidoHtml = "<html><body>" +
-                                   "<p>Estimado cliente, adjunto encontrará su <strong>factura electrónica</strong> en formato PDF.</p>" +
-                                   "</body></html>";
-            helper.setText(contenidoHtml, true);
+            // Emisor
+            emailRequest.put("sender", new JSONObject()
+                    .put("email", senderEmail)
+                    .put("name", "Facto Facturación"));
+            
+            // Destinatario
+            JSONArray to = new JSONArray();
+            to.put(new JSONObject().put("email", destinatario));
+            emailRequest.put("to", to);
+            
+            // Asunto y Contenido
+            emailRequest.put("subject", "Comprobante Electrónico de Facturación");
+            emailRequest.put("htmlContent", "<html><body>" +
+                    "<h3>Su factura electrónica está lista</h3>" +
+                    "<p>Estimado cliente, adjunto a este correo encontrará su comprobante en formato PDF.</p>" +
+                    "<p>Gracias por usar nuestro servicio.</p>" +
+                    "</body></html>");
 
-            // 3. Adjuntar el PDF directamente desde los bytes
-            helper.addAttachment("Factura.pdf", new ByteArrayResource(pdfBytes));
+            // 3. SECCIÓN DE ADJUNTOS (Asegúrate de que esta estructura sea exacta)
+            JSONArray attachments = new JSONArray();
+            JSONObject attachment = new JSONObject();
+            attachment.put("content", pdfBase64);    // El contenido en Base64
+            attachment.put("name", "Factura.pdf");   // Nombre del archivo
+            attachments.put(attachment);
+            
+            emailRequest.put("attachment", attachments); // Ojo: Brevo usa "attachment" (singular) en su JSON API
 
-            // 4. Enviar mediante el SMTP configurado en properties
-            mailSender.send(message);
-            System.out.println("Éxito: Correo enviado a " + destinatario + " vía SMTP (Puerto 2525)");
+            // 4. Configurar Headers de autenticación
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("api-key", brevoApiKey.trim());
+
+            HttpEntity<String> entity = new HttpEntity<>(emailRequest.toString(), headers);
+
+            // 5. Enviar la petición POST
+            ResponseEntity<String> response = restTemplate.postForEntity(BREVO_URL, entity, String.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("Éxito en Railway: Correo con PDF enviado a " + destinatario);
+            } else {
+                System.err.println("Error API Brevo: " + response.getStatusCode() + " - " + response.getBody());
+            }
 
         } catch (Exception e) {
-            System.err.println("Error en el envío SMTP: " + e.getMessage());
+            System.err.println("Error al procesar o enviar el PDF: " + e.getMessage());
             e.printStackTrace();
         }
     }
