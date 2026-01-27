@@ -100,6 +100,14 @@ public class InvoiceServiceImpl implements InvoiceService {
                                                 inputProd = productRepository.save(inputProd);
                                                 detalle.setProducto(inputProd);
                                         }
+
+                                        // Snapshot para integridad
+                                        detalle.setCodigoPrincipal(
+                                                        inputProd != null ? inputProd.getCodigoPrincipal() : "");
+                                        detalle.setCodigoAuxiliar(
+                                                        inputProd != null ? inputProd.getCodigoAuxiliar() : "");
+                                        detalle.setNombreProducto(inputProd != null ? inputProd.getNombre()
+                                                        : "Producto Eliminado");
                                 }
                         }
                 }
@@ -177,6 +185,17 @@ public class InvoiceServiceImpl implements InvoiceService {
                 Invoice invoice = invoiceRepository.findByIdAndUsuarioId(invoiceId, userId)
                                 .orElseThrow(() -> new RuntimeException(
                                                 "Factura no encontrada o no pertenece al usuario"));
+
+                // Si existe XML firmado/guardado, devolver ese para garantizar consistencia
+                // total (incluida firma)
+                if (invoice.getXmlContent() != null && !invoice.getXmlContent().isEmpty()) {
+                        try {
+                                return xmlService.xmlToObject(invoice.getXmlContent());
+                        } catch (Exception e) {
+                                System.err.println("Error deserializando XML guardado: " + e.getMessage());
+                                // Fallback a reconstrucción manual
+                        }
+                }
 
                 // Init lazy para evitar sorpresas durante el mapeo
                 invoice.getPagos().size();
@@ -318,18 +337,32 @@ public class InvoiceServiceImpl implements InvoiceService {
                 if (invoice.getDetalles() != null) {
                         dto.setDetalles(invoice.getDetalles().stream().map(d -> {
                                 var dDto = new DetalleDTO();
-                                // Null-safe access to Product
-                                if (d.getProducto() != null) {
-                                        dDto.setCodigoPrincipal(d.getProducto().getCodigoPrincipal());
-                                        dDto.setCodigoAuxiliar(d.getProducto().getCodigoAuxiliar());
-                                        dDto.setDescripcion(d.getProducto().getNombre());
 
-                                        // Safe Double/Integer handling
+                                // 1. Attempt using Snapshot
+                                String nombre = d.getNombreProducto();
+                                String codigo = d.getCodigoPrincipal();
+                                String aux = d.getCodigoAuxiliar();
+
+                                // 2. Fallback to Relation (Backward Compatibility)
+                                if (d.getProducto() != null) {
+                                        if (nombre == null)
+                                                nombre = d.getProducto().getNombre();
+                                        if (codigo == null)
+                                                codigo = d.getProducto().getCodigoPrincipal();
+                                        if (aux == null)
+                                                aux = d.getProducto().getCodigoAuxiliar();
+                                }
+
+                                dDto.setCodigoPrincipal(codigo != null ? codigo : "N/A");
+                                dDto.setCodigoAuxiliar(aux != null ? aux : "N/A");
+                                dDto.setDescripcion(nombre != null ? nombre : "PRODUCTO DESCONOCIDO");
+
+                                // 3. Taxes Logic
+                                if (d.getProducto() != null) {
                                         Double tarifa = d.getProducto().getTarifa() != null
                                                         ? d.getProducto().getTarifa()
                                                         : 0.0;
 
-                                        // Impuesto Detalle
                                         var impDto = new ImpuestoDTO();
                                         impDto.setCodigo(
                                                         d.getProducto().getCodigoImpuesto() != null
@@ -344,13 +377,27 @@ public class InvoiceServiceImpl implements InvoiceService {
                                                         String.format("%.2f",
                                                                         d.getSubtotal() != null ? d.getSubtotal() : 0.0)
                                                                         .replace(",", "."));
-                                        impDto.setValor(String.format("%.2f",
-                                                        d.getValorImpuesto() != null ? d.getValorImpuesto() : 0.0)
-                                                        .replace(",", "."));
+
+                                        Double valImp = d.getValorImpuesto();
+                                        if (valImp == null)
+                                                valImp = (d.getSubtotal() != null ? d.getSubtotal() : 0)
+                                                                * (tarifa / 100);
+
+                                        impDto.setValor(String.format("%.2f", valImp).replace(",", "."));
 
                                         dDto.setImpuestos(java.util.Collections.singletonList(impDto));
                                 } else {
-                                        dDto.setDescripcion("PRODUCTO ELIMINADO");
+                                        // Product deleted and no tax snapshot?
+                                        var impDto = new ImpuestoDTO();
+                                        impDto.setCodigo("2"); // IVA Default
+                                        impDto.setCodigoPorcentaje("0"); // 0%
+                                        impDto.setTarifa("0.00");
+                                        impDto.setBaseImponible(
+                                                        String.format("%.2f",
+                                                                        d.getSubtotal() != null ? d.getSubtotal() : 0.0)
+                                                                        .replace(",", "."));
+                                        impDto.setValor("0.00");
+                                        dDto.setImpuestos(java.util.Collections.singletonList(impDto));
                                 }
 
                                 dDto.setCantidad(String

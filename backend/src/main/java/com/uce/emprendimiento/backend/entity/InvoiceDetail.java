@@ -37,6 +37,16 @@ public class InvoiceDetail {
 
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "producto_id", nullable = false)
+    @JoinColumn(name = "producto_id", nullable = true)
     private Product producto;
+
+    // --- Snapshot Data (Para integridad histórica) ---
+    @Column(name = "producto_codigo_principal")
+    private String codigoPrincipal;
+
+    @Column(name = "producto_codigo_auxiliar")
+    private String codigoAuxiliar;
+
+    @Column(name = "producto_nombre")
+    private String nombreProducto;
 }

@@ -51,7 +51,14 @@ public class InvoiceController {
             return ResponseEntity.status(401).build();
         }
         try {
-            var dto = invoiceService.getFacturaDTO(id, userDetails.getUser().getId());
+            Long userId = userDetails.getUser().getId();
+            var optInvoice = invoiceService.getInvoiceByIdAndUserId(id, userId);
+            if (optInvoice.isPresent() && optInvoice.get().getXmlContent() != null
+                    && !optInvoice.get().getXmlContent().isEmpty()) {
+                return ResponseEntity.ok(optInvoice.get().getXmlContent());
+            }
+
+            var dto = invoiceService.getFacturaDTO(id, userId);
             return ResponseEntity.ok(dto);
         } catch (Exception e) {
             e.printStackTrace(); // Log del error en consola

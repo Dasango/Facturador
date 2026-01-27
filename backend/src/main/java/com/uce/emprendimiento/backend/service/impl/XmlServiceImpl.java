@@ -56,6 +56,12 @@ public class XmlServiceImpl implements XmlService {
         return writer.toString();
     }
 
+    public FacturaDTO xmlToObject(String xml) throws Exception {
+        JAXBContext context = JAXBContext.newInstance(FacturaDTO.class);
+        jakarta.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
+        return (FacturaDTO) unmarshaller.unmarshal(new StringReader(xml));
+    }
+
     public String signXml(String xmlContent, String p12Path, String password) throws Exception {
 
         // ---------------------------------------------------------
