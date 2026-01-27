@@ -56,13 +56,6 @@ public class XmlServiceImpl implements XmlService {
         return writer.toString();
     }
 
-    // Firma lógica básica manual (Simulación de estructura XAdES-BES válida para
-    // SRI)
-    // NOTA: Implementar XAdES estricto desde cero es muy complejo y propenso a
-    // errores.
-    // Aquí implementaremos la inyección de la firma calculada usando Bouncy Castle
-    // si fuera necesario,
-    // o Java Security estándar para firmar el digest.
     public String signXml(String xmlContent, String p12Path, String password) throws Exception {
 
         // ---------------------------------------------------------

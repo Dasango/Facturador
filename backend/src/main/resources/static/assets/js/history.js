@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => {
             console.error('Error cargando datos:', error);
-            tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:red;">Error cargando datos simulados</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:red;">Error cargando datos</td></tr>';
         });
 
     function renderTable(data) {
