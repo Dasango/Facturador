@@ -5,7 +5,11 @@ import com.uce.emprendimiento.backend.entity.Invoice;
 import com.uce.emprendimiento.backend.entity.Product;
 import com.uce.emprendimiento.backend.entity.User;
 import com.uce.emprendimiento.backend.repository.InvoiceRepository;
+import com.uce.emprendimiento.backend.repository.ProductRepository;
+import com.uce.emprendimiento.backend.repository.UserRepository;
 import com.uce.emprendimiento.backend.service.InvoiceService;
+import com.uce.emprendimiento.backend.sri.SriService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +22,10 @@ import java.util.Optional;
 public class InvoiceServiceImpl implements InvoiceService {
 
         private final InvoiceRepository invoiceRepository;
-        private final com.uce.emprendimiento.backend.repository.UserRepository userRepository;
-        private final com.uce.emprendimiento.backend.repository.ProductRepository productRepository;
-        private final com.uce.emprendimiento.backend.service.impl.XmlServiceImpl sriService;
-        private final com.uce.emprendimiento.backend.sri.SriService sriServiceCine;
+        private final UserRepository userRepository;
+        private final ProductRepository productRepository;
+        private final XmlServiceImpl xmlService;
+        private final SriService sriServiceCine;
 
         @Override
         @Transactional(readOnly = true)
@@ -126,18 +130,18 @@ public class InvoiceServiceImpl implements InvoiceService {
                                                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
                                 FacturaDTO dto = getFacturaDTO(factura.getId(), userId);
-                                String xmlContent = sriService.objectToXml(dto);
+                                String xmlContent = xmlService.objectToXml(dto);
 
                                 if (fullUser.getFirmaPath() == null)
                                         throw new RuntimeException(
                                                         "El usuario no tiene configurada firma electrónica (.p12)");
-                                String signedXml = sriService.signXml(xmlContent, fullUser.getFirmaPath(), claveFirma);
+                                String signedXml = xmlService.signXml(xmlContent, fullUser.getFirmaPath(), claveFirma);
 
                                 var sriResponse = sriServiceCine.enviarAlSri(signedXml);
 
                                 factura.setXmlContent(signedXml);
                                 factura.setEstado(sriResponse.getEstado());
-                                factura.setMensajeSri(sriService.toString());
+                                factura.setMensajeSri(xmlService.toString());
                                 if (sriResponse.getMensajes() != null && !sriResponse.getMensajes().isEmpty()) {
                                         factura.setMensajeSri(sriResponse.getMensajes().toString());
                                 }
