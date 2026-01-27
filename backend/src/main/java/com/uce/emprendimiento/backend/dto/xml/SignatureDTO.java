@@ -12,8 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SignatureDTO {
-    // This catches the 'Signature' content as raw DOM elements to allow standard
-    // JAXB marshalling/unmarshalling preserving the signature structure.
+
     @XmlAnyElement
     private List<Element> content;
 }

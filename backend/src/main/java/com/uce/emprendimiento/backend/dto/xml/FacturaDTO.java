@@ -38,11 +38,5 @@ public class FacturaDTO {
     private List<CampoAdicionalDTO> infoAdicional;
 
     @XmlElement(name = "Signature", namespace = "http://www.w3.org/2000/09/xmldsig#")
-    private SignatureDTO signature; // Placeholder for JAXB to put the signature block if needed, but usually we
-                                    // inject it manually or use a wrapper.
-    // Actually, handling Signature via JAXB is tricky because standard JAXB doesn't
-    // know Digital Signatures.
-    // We will keep this field here to allow mapping, but the signing process
-    // usually manipulates the DOM or appends the node.
-    // However, for the "Mockup -> JSON" requirement, having it here helps.
+    private SignatureDTO signature;
 }
